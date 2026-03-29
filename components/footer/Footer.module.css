@@ -1,0 +1,67 @@
+.footer {
+    background: linear-gradient(180deg, #1a1a1a 0%, #111 100%);
+    color: #fff;
+    margin-top: 80px;
+}
+
+.top {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 20px;
+}
+
+.contacts h2 {
+    font-size: 28px;
+    margin-bottom: 24px;
+}
+
+.contacts p {
+    margin: 8px 0;
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.socials {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.socials a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #4caf8d;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+.socials a:hover {
+    background: #4caf8d;
+    color: #111;
+}
+
+.bottom {
+    border-top: 1px solid #2a2a2a;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.bottom a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.bottom a:hover {
+    text-decoration: underline;
+}

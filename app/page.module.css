@@ -1,0 +1,89 @@
+:root {
+  /* TravelTrucks palette */
+  --main: #101828;
+  --text: #475467;
+  --gray: #6c717b;
+  --button: #e44848;
+  --button-hover: #d84343;
+  --rating: #ffc531;
+  --gray-light: #dadde1;
+  --badges: #f2f4f7;
+  --inputs: #f7f7f7;
+  --white: #ffffff;
+}
+
+/* ===== CSS Reset ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Base styles ===== */
+html,
+body {
+  height: 100%;
+}
+.title {
+  font-weight: 600;
+  /* Semi Bold */
+}
+
+body {
+  font-family: inherit;
+  font-weight: 600;
+  background-color: var(--white);
+  color: var(--main);
+  line-height: 1.5;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Links ===== */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ===== Buttons ===== */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ===== Images ===== */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ===== Lists ===== */
+ul,
+ol {
+  list-style: none;
+}
+
+/* ===== Container (для макету) ===== */
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 64px;
+}
+/* html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+} */
+
+.main {
+  flex: 1;
+}
