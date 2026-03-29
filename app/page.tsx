@@ -1,10 +1,13 @@
+import Hero from '@/components/hero/Hero';
+import Search from '@/components/search/Search';
+import WhyUs from '@/components/WhyUs/WhyUs';
+
 export default function HomePage() {
   return (
-    <section style={{ padding: '60px 20px', textAlign: 'center' }}>
-      <h1>Ласкаво просимо в SITE-DOORS</h1>
-      <p style={{ marginTop: '20px' }}>
-        Виробництво та продаж сучасних дверей
-      </p>
-    </section>
+    <main>
+      <Hero />
+      <Search />
+      <WhyUs />
+    </main>
   );
 }
