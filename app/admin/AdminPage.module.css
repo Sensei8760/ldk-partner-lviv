@@ -130,3 +130,161 @@
 .styleOption input {
     margin-top: 2px;
 }
+.adminContent {
+    display: grid;
+    gap: 24px;
+}
+
+.formHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.sectionTitle {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.secondaryButton {
+    border: 1px solid #d0d0d0;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+.productsManager {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 24px;
+}
+
+.productsList {
+    display: grid;
+    gap: 14px;
+}
+
+.productRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid #ececec;
+}
+
+.productRow:last-child {
+    border-bottom: none;
+}
+
+.productInfo {
+    min-width: 0;
+}
+
+.productTitle {
+    margin: 0 0 6px;
+    font-weight: 700;
+    color: #111;
+}
+
+.productMeta {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    word-break: break-word;
+}
+
+.productActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.editButton,
+.deleteButton {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.editButton {
+    background: #2f6f60;
+}
+
+.deleteButton {
+    background: #d43b3b;
+}
+
+@media (max-width: 768px) {
+    .formHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .productRow {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .productActions {
+        width: 100%;
+    }
+}
+.productsManagerHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.searchBox {
+    width: 100%;
+    max-width: 320px;
+}
+
+.searchInput {
+    width: 100%;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    outline: none;
+}
+
+.searchInput:focus {
+    border-color: #8a8a8a;
+}
+
+.showMoreProductsButton {
+    margin-top: 18px;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    background: #2f6f60;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.showMoreProductsButton:hover {
+    opacity: 0.95;
+}
+
+@media (max-width: 768px) {
+    .productsManagerHeader {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .searchBox {
+        max-width: 100%;
+    }
+}

@@ -18,13 +18,63 @@ function parseCharacteristics(text: string) {
     .filter((item) => item.label && item.value);
 }
 
-function slugify(value: string) {
+function transliterate(value: string) {
+  const map: Record<string, string> = {
+    а: 'a',
+    б: 'b',
+    в: 'v',
+    г: 'h',
+    ґ: 'g',
+    д: 'd',
+    е: 'e',
+    є: 'ye',
+    ж: 'zh',
+    з: 'z',
+    и: 'y',
+    і: 'i',
+    ї: 'yi',
+    й: 'y',
+    к: 'k',
+    л: 'l',
+    м: 'm',
+    н: 'n',
+    о: 'o',
+    п: 'p',
+    р: 'r',
+    с: 's',
+    т: 't',
+    у: 'u',
+    ф: 'f',
+    х: 'kh',
+    ц: 'ts',
+    ч: 'ch',
+    ш: 'sh',
+    щ: 'shch',
+    ь: '',
+    ю: 'yu',
+    я: 'ya',
+    "'": '',
+    '’': '',
+    '`': '',
+    '"': '',
+  };
+
   return value
+    .split('')
+    .map((char) => {
+      const lower = char.toLowerCase();
+      return map[lower] ?? lower;
+    })
+    .join('');
+}
+
+function slugify(value: string) {
+  return transliterate(value)
     .toLowerCase()
     .trim()
-    .replace(/["']/g, '')
+    .replace(/&/g, ' and ')
     .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9а-яіїєґ-]/gi, '')
+    .replace(/[^a-z0-9-]/g, '')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
@@ -40,6 +90,12 @@ function createUniqueId(title: string, existingIds: string[]) {
   }
 
   return candidate;
+}
+
+function normalizeStyles(styles: unknown) {
+  if (!Array.isArray(styles)) return [];
+
+  return styles.map((item) => String(item).trim()).filter(Boolean);
 }
 
 export async function GET() {
@@ -61,9 +117,7 @@ export async function POST(request: Request) {
   const image = String(body.image || '').trim();
   const description = String(body.description || '').trim();
   const type = body.type === 'street' ? 'street' : 'apartment';
-  const styles = Array.isArray(body.styles)
-    ? body.styles.map((item: unknown) => String(item).trim()).filter(Boolean)
-    : [];
+  const styles = normalizeStyles(body.styles);
   const stock = Number(body.stock || 0);
   const isHit = Boolean(body.isHit);
   const characteristicsText = String(body.characteristicsText || '').trim();
@@ -98,4 +152,98 @@ export async function POST(request: Request) {
   await saveProducts(products);
 
   return NextResponse.json({ ok: true, product: newProduct });
+}
+
+export async function PATCH(request: Request) {
+  const session = await auth();
+
+  if (!session?.user) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const id = String(body.id || '').trim();
+
+  if (!id) {
+    return NextResponse.json(
+      { message: 'Не передано ID товару.' },
+      { status: 400 }
+    );
+  }
+
+  const products = await getProducts();
+  const productIndex = products.findIndex((item) => item.id === id);
+
+  if (productIndex === -1) {
+    return NextResponse.json(
+      { message: 'Товар не знайдено.' },
+      { status: 404 }
+    );
+  }
+
+  const title = String(body.title || '').trim();
+  const price = Number(body.price || 0);
+  const image = String(body.image || '').trim();
+  const description = String(body.description || '').trim();
+  const type = body.type === 'street' ? 'street' : 'apartment';
+  const styles = normalizeStyles(body.styles);
+  const stock = Number(body.stock || 0);
+  const isHit = Boolean(body.isHit);
+  const characteristicsText = String(body.characteristicsText || '').trim();
+
+  if (!title || !price || !image) {
+    return NextResponse.json(
+      { message: 'Заповни хоча б назву, ціну і картинку.' },
+      { status: 400 }
+    );
+  }
+
+  products[productIndex] = {
+    ...products[productIndex],
+    title,
+    price,
+    image,
+    description,
+    type,
+    styles,
+    stock,
+    isHit,
+    characteristics: parseCharacteristics(characteristicsText),
+  };
+
+  await saveProducts(products);
+
+  return NextResponse.json({ ok: true, product: products[productIndex] });
+}
+
+export async function DELETE(request: Request) {
+  const session = await auth();
+
+  if (!session?.user) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const id = String(body.id || '').trim();
+
+  if (!id) {
+    return NextResponse.json(
+      { message: 'Не передано ID товару.' },
+      { status: 400 }
+    );
+  }
+
+  const products = await getProducts();
+  const filteredProducts = products.filter((item) => item.id !== id);
+
+  if (filteredProducts.length === products.length) {
+    return NextResponse.json(
+      { message: 'Товар не знайдено.' },
+      { status: 404 }
+    );
+  }
+
+  await saveProducts(filteredProducts);
+
+  return NextResponse.json({ ok: true, deletedId: id });
 }

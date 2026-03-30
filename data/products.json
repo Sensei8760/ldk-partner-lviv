@@ -1,5 +1,23 @@
 [
   {
+    "id": "mizhkimnatni-dveri-doors-smart-model-c06934",
+    "title": "Міжкімнатні двері \"Doors\" Smart - модель - C06934",
+    "price": 252423424,
+    "image": "/images/doors/door-1.jpg",
+    "description": "dfgdfgdfgd",
+    "type": "street",
+    "styles": [
+      "ТРІО",
+      "Концепт",
+      "РОЗПРОДАЖ",
+      "Стріт",
+      "Стріт ТЕРМО"
+    ],
+    "stock": 5,
+    "isHit": false,
+    "characteristics": []
+  },
+  {
     "id": "rtertete",
     "title": "rtertete",
     "price": 35353,
@@ -12,20 +30,6 @@
     ],
     "stock": 5,
     "isHit": true,
-    "characteristics": []
-  },
-  {
-    "id": "1234",
-    "title": "1234",
-    "price": 111,
-    "image": "/images/doors/door-1.jpg",
-    "description": "sdfsdf",
-    "type": "street",
-    "styles": [
-      "Комфорт NEW"
-    ],
-    "stock": 1,
-    "isHit": false,
     "characteristics": []
   },
   {
