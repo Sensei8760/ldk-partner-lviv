@@ -40,6 +40,10 @@ export default async function ProductPage({ params }: PageProps) {
               {product.price} <span>грн</span>
             </p>
 
+            <p className={styles.stock}>
+              В наявності: <span>{product.stock}</span>
+            </p>
+
             {product.description ? (
               <p className={styles.description}>{product.description}</p>
             ) : null}

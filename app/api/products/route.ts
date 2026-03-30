@@ -18,14 +18,28 @@ function parseCharacteristics(text: string) {
     .filter((item) => item.label && item.value);
 }
 
-function createIdFromTitle(title: string) {
-  return title
+function slugify(value: string) {
+  return value
     .toLowerCase()
     .trim()
     .replace(/["']/g, '')
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9а-яіїєґ-]/gi, '')
-    .replace(/-+/g, '-');
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function createUniqueId(title: string, existingIds: string[]) {
+  const base = slugify(title) || 'product';
+  let candidate = base;
+  let counter = 2;
+
+  while (existingIds.includes(candidate)) {
+    candidate = `${base}-${counter}`;
+    counter += 1;
+  }
+
+  return candidate;
 }
 
 export async function GET() {
@@ -47,10 +61,12 @@ export async function POST(request: Request) {
   const image = String(body.image || '').trim();
   const description = String(body.description || '').trim();
   const type = body.type === 'street' ? 'street' : 'apartment';
-  const style = String(body.style || '').trim();
+  const styles = Array.isArray(body.styles)
+    ? body.styles.map((item: unknown) => String(item).trim()).filter(Boolean)
+    : [];
+  const stock = Number(body.stock || 0);
   const isHit = Boolean(body.isHit);
   const characteristicsText = String(body.characteristicsText || '').trim();
-  const id = String(body.id || '').trim() || createIdFromTitle(title);
 
   if (!title || !price || !image) {
     return NextResponse.json(
@@ -60,13 +76,10 @@ export async function POST(request: Request) {
   }
 
   const products = await getProducts();
-
-  if (products.some((item) => item.id === id)) {
-    return NextResponse.json(
-      { message: 'Товар з таким ID вже існує.' },
-      { status: 400 }
-    );
-  }
+  const id = createUniqueId(
+    title,
+    products.map((item) => item.id)
+  );
 
   const newProduct: Product = {
     id,
@@ -75,7 +88,8 @@ export async function POST(request: Request) {
     image,
     description,
     type,
-    style,
+    styles,
+    stock,
     isHit,
     characteristics: parseCharacteristics(characteristicsText),
   };

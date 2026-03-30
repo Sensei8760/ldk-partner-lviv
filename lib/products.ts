@@ -13,7 +13,8 @@ export type Product = {
   image: string;
   description: string;
   type: 'street' | 'apartment';
-  style: string;
+  styles: string[];
+  stock: number;
   isHit: boolean;
   characteristics: ProductCharacteristic[];
 };

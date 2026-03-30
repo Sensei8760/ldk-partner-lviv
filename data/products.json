@@ -1,23 +1,45 @@
 [
   {
-    "id": "door-1424",
+    "id": "rtertete",
+    "title": "rtertete",
+    "price": 35353,
+    "image": "/images/doors/door-1.jpg",
+    "description": "dfdfg",
+    "type": "apartment",
+    "styles": [
+      "Модерн",
+      "ТРІО ЛАЙТ"
+    ],
+    "stock": 5,
+    "isHit": true,
+    "characteristics": []
+  },
+  {
+    "id": "1234",
     "title": "1234",
     "price": 111,
     "image": "/images/doors/door-1.jpg",
     "description": "sdfsdf",
     "type": "street",
-    "style": "Комфорт NEW",
+    "styles": [
+      "Комфорт NEW"
+    ],
+    "stock": 1,
     "isHit": false,
     "characteristics": []
   },
   {
-    "id": "door-1",
+    "id": "mizhkimnatni-dveri-doors-smart-model-c067",
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C067",
     "price": 3064,
     "image": "/images/doors/door-1.jpg",
     "description": "Якісні міжкімнатні двері для сучасного інтер’єру.",
     "type": "apartment",
-    "style": "Комфорт NEW",
+    "styles": [
+      "Комфорт NEW",
+      "Модерн"
+    ],
+    "stock": 2,
     "isHit": true,
     "characteristics": [
       {

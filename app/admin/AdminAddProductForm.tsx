@@ -3,14 +3,35 @@
 import { useState } from 'react';
 import styles from './AdminPage.module.css';
 
+const styleOptions = [
+  'ПОРТАЛА',
+  'ДПМ+МК',
+  'Комфорт NEW',
+  'Елегант NEW',
+  'Концепт',
+  'Модерн',
+  'ЛЮКС',
+  'ТРІО ЛАЙТ',
+  'ТРІО',
+  'ТРІО ТЕРМО',
+  'ТРІО MOTTURA',
+  'Квадро',
+  'Стріт',
+  'Стріт ТЕРМО',
+  'PROF GUARD',
+  'Протипожежні + Економ + Епік',
+  'РОЗПРОДАЖ',
+  'РОЗПРОДАЖ Преміум NEW',
+];
+
 const emptyForm = {
-  id: '',
   title: '',
   price: '',
   image: '',
   description: '',
   type: 'apartment',
-  style: '',
+  styles: [] as string[],
+  stock: '',
   isHit: false,
   characteristicsText: '',
 };
@@ -20,6 +41,15 @@ export default function AdminAddProductForm() {
   const [message, setMessage] = useState('');
   const [errorText, setErrorText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  function handleToggleStyle(style: string) {
+    setForm((prev) => ({
+      ...prev,
+      styles: prev.styles.includes(style)
+        ? prev.styles.filter((item) => item !== style)
+        : [...prev.styles, style],
+    }));
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,8 +61,15 @@ export default function AdminAddProductForm() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ...form,
+        title: form.title,
         price: Number(form.price),
+        image: form.image,
+        description: form.description,
+        type: form.type,
+        styles: form.styles,
+        stock: Number(form.stock),
+        isHit: form.isHit,
+        characteristicsText: form.characteristicsText,
       }),
     });
 
@@ -44,22 +81,13 @@ export default function AdminAddProductForm() {
       return;
     }
 
-    setMessage('Товар успішно додано.');
+    setMessage(`Товар успішно додано. ID: ${data.product.id}`);
     setForm(emptyForm);
   }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.grid}>
-        <div className={styles.field}>
-          <label>ID товару</label>
-          <input
-            value={form.id}
-            onChange={(e) => setForm({ ...form, id: e.target.value })}
-            placeholder="door-c067"
-          />
-        </div>
-
         <div className={styles.field}>
           <label>Назва</label>
           <input
@@ -100,12 +128,30 @@ export default function AdminAddProductForm() {
         </div>
 
         <div className={styles.field}>
-          <label>Стиль</label>
+          <label>Кількість в наявності</label>
           <input
-            value={form.style}
-            onChange={(e) => setForm({ ...form, style: e.target.value })}
-            placeholder="Комфорт NEW"
+            type="number"
+            min="0"
+            value={form.stock}
+            onChange={(e) => setForm({ ...form, stock: e.target.value })}
+            placeholder="1"
           />
+        </div>
+      </div>
+
+      <div className={styles.field}>
+        <label>Стилі</label>
+        <div className={styles.stylesGrid}>
+          {styleOptions.map((style) => (
+            <label key={style} className={styles.styleOption}>
+              <input
+                type="checkbox"
+                checked={form.styles.includes(style)}
+                onChange={() => handleToggleStyle(style)}
+              />
+              <span>{style}</span>
+            </label>
+          ))}
         </div>
       </div>
 

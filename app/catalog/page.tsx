@@ -11,7 +11,8 @@ type Product = {
   image: string;
   description: string;
   type: 'street' | 'apartment';
-  style: string;
+  styles: string[];
+  stock: number;
   isHit: boolean;
   characteristics: { label: string; value: string }[];
 };
@@ -44,7 +45,7 @@ const styleItems = [
 
 const VISIBLE_COUNT = 5;
 
-function normalizeStyle(value: string) {
+function normalizeValue(value: string) {
   return value.trim().toLowerCase();
 }
 
@@ -109,9 +110,12 @@ export default function CatalogPage() {
 
   const styleCounts = useMemo(() => {
     return styleItems.reduce<Record<string, number>>((acc, item) => {
-      acc[item.id] = products.filter(
-        (product) => normalizeStyle(product.style) === normalizeStyle(item.label)
+      acc[item.id] = products.filter((product) =>
+        product.styles.some(
+          (style) => normalizeValue(style) === normalizeValue(item.label)
+        )
       ).length;
+
       return acc;
     }, {});
   }, [products]);
@@ -125,8 +129,12 @@ export default function CatalogPage() {
         selectedStyles.length === 0 ||
         selectedStyles.some((styleId) => {
           const style = styleItems.find((item) => item.id === styleId);
+
           return style
-            ? normalizeStyle(product.style) === normalizeStyle(style.label)
+            ? product.styles.some(
+                (productStyle) =>
+                  normalizeValue(productStyle) === normalizeValue(style.label)
+              )
             : false;
         });
 
