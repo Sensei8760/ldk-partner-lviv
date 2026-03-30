@@ -34,3 +34,8 @@
 .nav a:hover {
     opacity: 0.7;
 }
+.rightSide {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

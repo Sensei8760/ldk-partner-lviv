@@ -1,0 +1,36 @@
+.wrapper {
+    position: relative;
+}
+
+.dot {
+    border: none;
+    background: transparent;
+    color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 4px 6px;
+}
+
+.dot:hover {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    width: 290px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+}
+
+.title {
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 700;
+}

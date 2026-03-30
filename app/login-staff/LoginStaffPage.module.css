@@ -1,0 +1,22 @@
+.page {
+    min-height: calc(100vh - 80px);
+    display: grid;
+    place-items: center;
+    padding: 40px 20px;
+    background: #f6f6f6;
+}
+
+.card {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 24px;
+}
+
+.title {
+    margin: 0 0 18px;
+    font-size: 28px;
+    font-weight: 700;
+}

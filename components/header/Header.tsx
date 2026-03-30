@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import styles from './Header.module.css';
+import StaffLoginDot from './StaffLoginDot';
 
 export default function Header() {
   return (
@@ -17,6 +18,10 @@ export default function Header() {
           <Link href="/about">Про нас</Link>
           <Link href="/contacts">Контакти</Link>
         </nav>
+
+        <div className={styles.rightSide}>
+          <StaffLoginDot />
+        </div>
       </div>
     </header>
   );

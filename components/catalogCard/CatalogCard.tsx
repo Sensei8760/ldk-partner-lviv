@@ -28,6 +28,7 @@ export default function CatalogCard({
             alt={title}
             fill
             className={styles.image}
+            sizes="(max-width: 768px) 100vw, 212px"
           />
         </div>
       </Link>
@@ -45,7 +46,7 @@ export default function CatalogCard({
           <Link
             href={`/catalog/${id}`}
             className={styles.cartButton}
-            aria-label="Перейти до товару"
+            aria-label={`Перейти до товару ${title}`}
           >
             →
           </Link>

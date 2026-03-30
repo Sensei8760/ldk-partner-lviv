@@ -1,0 +1,41 @@
+[
+  {
+    "id": "door-1424",
+    "title": "1234",
+    "price": 111,
+    "image": "/images/doors/door-1.jpg",
+    "description": "sdfsdf",
+    "type": "street",
+    "style": "Комфорт NEW",
+    "isHit": false,
+    "characteristics": []
+  },
+  {
+    "id": "door-1",
+    "title": "Міжкімнатні двері \"Doors\" Smart - модель - C067",
+    "price": 3064,
+    "image": "/images/doors/door-1.jpg",
+    "description": "Якісні міжкімнатні двері для сучасного інтер’єру.",
+    "type": "apartment",
+    "style": "Комфорт NEW",
+    "isHit": true,
+    "characteristics": [
+      {
+        "label": "Тип",
+        "value": "Квартира"
+      },
+      {
+        "label": "Модель",
+        "value": "C067"
+      },
+      {
+        "label": "Матеріал",
+        "value": "МДФ"
+      },
+      {
+        "label": "Колір",
+        "value": "Сірий дуб"
+      }
+    ]
+  }
+]
