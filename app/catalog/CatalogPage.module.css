@@ -1,0 +1,214 @@
+.catalogPage {
+    padding: 40px 20px 100px;
+    background: #f6f6f6;
+}
+
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0 0 32px;
+    color: #111111;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
+    align-items: start;
+}
+
+.sidebar {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    padding: 20px 16px;
+    border-radius: 12px;
+    position: sticky;
+    top: 20px;
+}
+
+.sidebarTitle {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 18px;
+    color: #111111;
+}
+
+.filterGroup+.filterGroup {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid #ececec;
+}
+
+.groupTitle {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 14px;
+    color: #111111;
+}
+
+.filtersList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.filterLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.customCheckbox {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border: 1px solid #cfcfcf;
+    border-radius: 4px;
+    background: #ffffff;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.checkbox:checked+.customCheckbox {
+    background: #2f6f60;
+    border-color: #2f6f60;
+    position: relative;
+}
+
+.checkbox:checked+.customCheckbox::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid #ffffff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.filterText {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    line-height: 1.2;
+}
+
+.filterName {
+    font-size: 16px;
+    color: #111111;
+}
+
+.filterNameActive {
+    color: #0a9b43;
+}
+
+.count {
+    font-size: 16px;
+    color: #7c7c7c;
+}
+
+.showMoreButton {
+    margin-top: 18px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #222222;
+}
+
+.showMoreArrow {
+    font-size: 18px;
+    line-height: 1;
+    transform: translateY(-1px);
+    transition: transform 0.2s ease;
+}
+
+.showMoreArrowUp {
+    transform: rotate(180deg);
+}
+
+.products {
+    min-width: 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+@media (max-width: 1200px) {
+    .layout {
+        grid-template-columns: 260px 1fr;
+        gap: 24px;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: static;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .catalogPage {
+        padding: 30px 12px 70px;
+    }
+
+    .title {
+        font-size: 30px;
+        margin-bottom: 24px;
+    }
+
+    .sidebar {
+        padding: 18px 14px;
+    }
+
+    .sidebarTitle {
+        font-size: 22px;
+    }
+
+    .groupTitle {
+        font-size: 17px;
+    }
+
+    .filterName,
+    .count,
+    .showMoreButton {
+        font-size: 15px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
