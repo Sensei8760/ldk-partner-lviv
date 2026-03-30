@@ -1,0 +1,170 @@
+.productPage {
+    padding: 40px 20px 80px;
+    background: #f3f3f3;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 560px) 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.imageBlock {
+    width: 100%;
+}
+
+.imageWrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #e5e5e5;
+}
+
+.image {
+    object-fit: contain;
+}
+
+.infoBlock {
+    padding-top: 4px;
+}
+
+.title {
+    margin: 0 0 20px;
+    font-size: 48px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: #111111;
+}
+
+.price {
+    margin: 0 0 28px;
+    font-size: 40px;
+    font-weight: 700;
+    color: #111111;
+}
+
+.price span {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.description {
+    margin: 0 0 34px;
+    font-size: 20px;
+    line-height: 1.7;
+    color: #222222;
+}
+
+.characteristics {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 24px;
+}
+
+.characteristicsTitle {
+    margin: 0 0 18px;
+    font-size: 28px;
+    font-weight: 700;
+    color: #111111;
+}
+
+.characteristicsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.characteristicItem {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #222222;
+}
+
+.characteristicLabel {
+    font-weight: 700;
+}
+
+.characteristicValue {
+    font-weight: 400;
+}
+
+@media (max-width: 992px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .title {
+        font-size: 36px;
+    }
+
+    .price {
+        font-size: 32px;
+    }
+
+    .price span {
+        font-size: 20px;
+    }
+
+    .description {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 640px) {
+    .productPage {
+        padding: 24px 12px 60px;
+    }
+
+    .layout {
+        gap: 24px;
+    }
+
+    .imageWrapper {
+        border-radius: 16px;
+    }
+
+    .title {
+        font-size: 28px;
+        margin-bottom: 16px;
+    }
+
+    .price {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .price span {
+        font-size: 18px;
+    }
+
+    .description {
+        font-size: 16px;
+        margin-bottom: 24px;
+    }
+
+    .characteristics {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .characteristicsTitle {
+        font-size: 22px;
+    }
+
+    .characteristicItem {
+        font-size: 16px;
+    }
+}

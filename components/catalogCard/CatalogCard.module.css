@@ -2,7 +2,11 @@
     position: relative;
     background: #ffffff;
     border: 1px solid #e6e6e6;
-    padding: 18px 14px;
+    overflow: hidden;
+    padding: 18px 14px 18px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
 }
 
 .badge {
@@ -13,9 +17,14 @@
     color: #ffffff;
     font-size: 14px;
     font-weight: 700;
+    line-height: 1;
     padding: 6px 10px;
     border-radius: 8px;
     z-index: 2;
+}
+
+.imageLink {
+    text-decoration: none;
 }
 
 .imageWrapper {
@@ -32,6 +41,12 @@
 .content {
     display: flex;
     flex-direction: column;
+    flex: 1;
+}
+
+.titleLink {
+    text-decoration: none;
+    color: inherit;
 }
 
 .title {
@@ -43,6 +58,7 @@
 }
 
 .bottom {
+    margin-top: auto;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -53,6 +69,7 @@
     margin: 0;
     font-size: 32px;
     font-weight: 700;
+    line-height: 1;
     color: #111111;
 }
 
@@ -68,6 +85,16 @@
     border-radius: 16px;
     background: #4d79e6;
     color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    font-size: 22px;
+    text-decoration: none;
+    font-size: 26px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.cartButton:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
 }

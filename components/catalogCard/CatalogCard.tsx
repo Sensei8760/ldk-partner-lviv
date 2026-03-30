@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from './CatalogCard.module.css';
 
 type CatalogCardProps = {
@@ -10,6 +11,7 @@ type CatalogCardProps = {
 };
 
 export default function CatalogCard({
+  id,
   title,
   price,
   image,
@@ -19,26 +21,34 @@ export default function CatalogCard({
     <article className={styles.card}>
       {isHit && <span className={styles.badge}>ХІТ</span>}
 
-      <div className={styles.imageWrapper}>
-        <Image
-          src={image}
-          alt={title}
-          fill
-          className={styles.image}
-        />
-      </div>
+      <Link href={`/catalog/${id}`} className={styles.imageLink}>
+        <div className={styles.imageWrapper}>
+          <Image
+            src={image}
+            alt={title}
+            fill
+            className={styles.image}
+          />
+        </div>
+      </Link>
 
       <div className={styles.content}>
-        <h3 className={styles.title}>{title}</h3>
+        <Link href={`/catalog/${id}`} className={styles.titleLink}>
+          <h3 className={styles.title}>{title}</h3>
+        </Link>
 
         <div className={styles.bottom}>
           <p className={styles.price}>
             {price} <span>грн</span>
           </p>
 
-          <button className={styles.cartButton} aria-label="Додати в кошик">
-            🛒
-          </button>
+          <Link
+            href={`/catalog/${id}`}
+            className={styles.cartButton}
+            aria-label="Перейти до товару"
+          >
+            →
+          </Link>
         </div>
       </div>
     </article>
