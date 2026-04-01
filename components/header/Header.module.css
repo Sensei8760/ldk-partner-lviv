@@ -1,41 +1,146 @@
 .header {
     width: 100%;
-    background: #111;
-    color: white;
+    background-color: #0C0F0E;
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1440px;
+    height: 96px;
     margin: 0 auto;
-    padding: 16px;
+    padding: 0 48px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+}
+
+.logoLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-decoration: none;
+    color: #ffffff;
 }
 
 .logo {
-    font-size: 20px;
-    font-weight: 600;
-    text-decoration: none;
-    color: white;
+    display: block;
+    width: 103px;
+    height: 76px;
+    fill: currentColor;
 }
 
 .nav {
-    display: flex;
-    gap: 24px;
-}
-
-.nav a {
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.nav a:hover {
-    opacity: 0.7;
-}
-.rightSide {
+    margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 48px;
+}
+
+.navLink {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    font-family: var(--font-family);
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 129%;
+}
+
+.navLink:hover,
+.navLink:focus-visible,
+.userLink:hover,
+.userLink:focus-visible {
+    color: #13833f;
+}
+
+.navLink:active,
+.userLink:active {
+    color: #0B5328;
+}
+
+.userLink {
+    margin-left: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+}
+
+.userIcon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+@media (max-width: 1024px) {
+    .container {
+        height: 84px;
+        padding: 0 24px;
+    }
+
+    .nav {
+        gap: 32px;
+    }
+
+    .userLink {
+        margin-left: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        height: 72px;
+        padding: 0 16px;
+    }
+
+    .logo {
+        width: 72px;
+        height: 38px;
+    }
+
+    .nav {
+        gap: 20px;
+    }
+
+    .navLink {
+        font-size: 14px;
+    }
+
+    .userLink {
+        margin-left: 20px;
+    }
+
+    .userIcon {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+@media (max-width: 560px) {
+    .container {
+        justify-content: space-between;
+    }
+
+    .nav {
+        gap: 14px;
+        margin-left: 20px;
+    }
+
+    .navLink {
+        font-size: 13px;
+    }
+
+    .userLink {
+        margin-left: 14px;
+    }
+}
+.activeLink {
+    color: #0B5328;
+}
+
+.activeUser {
+    color: #0B5328;
 }

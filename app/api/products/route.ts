@@ -2,22 +2,6 @@ import { auth } from '@/auth';
 import { getProducts, saveProducts, type Product } from '@/lib/products';
 import { NextResponse } from 'next/server';
 
-function parseCharacteristics(text: string) {
-  return text
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const [label, ...rest] = line.split(':');
-
-      return {
-        label: (label || '').trim(),
-        value: rest.join(':').trim(),
-      };
-    })
-    .filter((item) => item.label && item.value);
-}
-
 function transliterate(value: string) {
   const map: Record<string, string> = {
     а: 'a',
@@ -98,6 +82,21 @@ function normalizeStyles(styles: unknown) {
   return styles.map((item) => String(item).trim()).filter(Boolean);
 }
 
+function normalizeCharacteristics(characteristics: unknown) {
+  if (!Array.isArray(characteristics)) return [];
+
+  return characteristics
+    .map((item) => {
+      const typed = item as { label?: unknown; value?: unknown };
+
+      return {
+        label: String(typed.label || '').trim(),
+        value: String(typed.value || '').trim(),
+      };
+    })
+    .filter((item) => item.label && item.value);
+}
+
 export async function GET() {
   const products = await getProducts();
   return NextResponse.json({ products });
@@ -120,7 +119,7 @@ export async function POST(request: Request) {
   const styles = normalizeStyles(body.styles);
   const stock = Number(body.stock || 0);
   const isHit = Boolean(body.isHit);
-  const characteristicsText = String(body.characteristicsText || '').trim();
+  const characteristics = normalizeCharacteristics(body.characteristics);
 
   if (!title || !price || !image) {
     return NextResponse.json(
@@ -145,7 +144,7 @@ export async function POST(request: Request) {
     styles,
     stock,
     isHit,
-    characteristics: parseCharacteristics(characteristicsText),
+    characteristics,
   };
 
   products.unshift(newProduct);
@@ -189,7 +188,7 @@ export async function PATCH(request: Request) {
   const styles = normalizeStyles(body.styles);
   const stock = Number(body.stock || 0);
   const isHit = Boolean(body.isHit);
-  const characteristicsText = String(body.characteristicsText || '').trim();
+  const characteristics = normalizeCharacteristics(body.characteristics);
 
   if (!title || !price || !image) {
     return NextResponse.json(
@@ -208,7 +207,7 @@ export async function PATCH(request: Request) {
     styles,
     stock,
     isHit,
-    characteristics: parseCharacteristics(characteristicsText),
+    characteristics,
   };
 
   await saveProducts(products);

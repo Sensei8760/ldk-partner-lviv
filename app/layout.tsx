@@ -11,25 +11,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="uk">
-      <body
-        style={{
-          margin: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-        }}
-      >
+      <body>
         <Header />
-
-        <main style={{ flex: 1 }}>
-          {children}
-        </main>
-
+        <main>{children}</main>
         <Footer />
       </body>
     </html>

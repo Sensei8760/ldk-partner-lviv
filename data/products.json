@@ -1,5 +1,74 @@
 [
   {
+    "id": "mizhkimnatni-dveri-doors-smart-model-c069345",
+    "title": "Міжкімнатні двері \"Doors\" Smart - модель - C069345",
+    "price": 333333,
+    "image": "/images/doors/door-1.jpg",
+    "description": "бла бла бла",
+    "type": "apartment",
+    "styles": [
+      "PROF GUARD",
+      "РОЗПРОДАЖ Преміум NEW",
+      "Квадро"
+    ],
+    "stock": 2,
+    "isHit": false,
+    "characteristics": [
+      {
+        "label": "Короб",
+        "value": "Гнутий 60*40 мм"
+      },
+      {
+        "label": "Полотно",
+        "value": "70 мм"
+      },
+      {
+        "label": "Метал короб/полотно",
+        "value": "1 мм/ 1 мм"
+      },
+      {
+        "label": "МДФ",
+        "value": "10 мм /10 мм"
+      },
+      {
+        "label": "Теплоізоляція",
+        "value": "Мінеральна вата"
+      },
+      {
+        "label": "Ущільнення",
+        "value": "1 контур"
+      },
+      {
+        "label": "Замок верхній",
+        "value": "сувальний Avers 96/S6"
+      },
+      {
+        "label": "Замок нижній",
+        "value": "Apecs 2600 циліндр ключ-поворотник"
+      },
+      {
+        "label": "Ручка",
+        "value": "На розеті"
+      },
+      {
+        "label": "Вічко",
+        "value": "Так"
+      },
+      {
+        "label": "Антизрізи",
+        "value": "2 шт"
+      },
+      {
+        "label": "Петлі",
+        "value": "2 шт."
+      },
+      {
+        "label": "Лиштва",
+        "value": "Так,прихованого кріплення"
+      }
+    ]
+  },
+  {
     "id": "mizhkimnatni-dveri-doors-smart-model-c06934",
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C06934",
     "price": 252423424,

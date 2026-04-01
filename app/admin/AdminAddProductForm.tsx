@@ -26,6 +26,22 @@ const styleOptions = [
   'РОЗПРОДАЖ Преміум NEW',
 ];
 
+const characteristicLabels = [
+  'Короб',
+  'Полотно',
+  'Метал короб/полотно',
+  'МДФ',
+  'Теплоізоляція',
+  'Ущільнення',
+  'Замок верхній',
+  'Замок нижній',
+  'Ручка',
+  'Вічко',
+  'Антизрізи',
+  'Петлі',
+  'Лиштва',
+] as const;
+
 type Product = {
   id: string;
   title: string;
@@ -39,6 +55,16 @@ type Product = {
   characteristics: { label: string; value: string }[];
 };
 
+type CharacteristicField = {
+  label: string;
+  value: string;
+};
+
+const emptyCharacteristics: CharacteristicField[] = characteristicLabels.map((label) => ({
+  label,
+  value: '',
+}));
+
 const emptyForm = {
   id: '',
   title: '',
@@ -49,16 +75,23 @@ const emptyForm = {
   styles: [] as string[],
   stock: '',
   isHit: false,
-  characteristicsText: '',
+  characteristics: emptyCharacteristics,
 };
 
 const INITIAL_VISIBLE_COUNT = 5;
 const LOAD_MORE_STEP = 10;
 
-function characteristicsToText(
+function mapCharacteristicsToFields(
   characteristics: { label: string; value: string }[]
-) {
-  return characteristics.map((item) => `${item.label}: ${item.value}`).join('\n');
+): CharacteristicField[] {
+  return characteristicLabels.map((label) => {
+    const found = characteristics.find((item) => item.label === label);
+
+    return {
+      label,
+      value: found?.value || '',
+    };
+  });
 }
 
 export default function AdminAddProductForm() {
@@ -124,8 +157,23 @@ export default function AdminAddProductForm() {
     }));
   }
 
+  function handleCharacteristicChange(label: string, value: string) {
+    setForm((prev) => ({
+      ...prev,
+      characteristics: prev.characteristics.map((item) =>
+        item.label === label ? { ...item, value } : item
+      ),
+    }));
+  }
+
   function resetForm() {
-    setForm(emptyForm);
+    setForm({
+      ...emptyForm,
+      characteristics: characteristicLabels.map((label) => ({
+        label,
+        value: '',
+      })),
+    });
     setEditingId(null);
   }
 
@@ -142,7 +190,7 @@ export default function AdminAddProductForm() {
       styles: product.styles,
       stock: String(product.stock),
       isHit: product.isHit,
-      characteristicsText: characteristicsToText(product.characteristics),
+      characteristics: mapCharacteristicsToFields(product.characteristics),
     });
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -203,7 +251,12 @@ export default function AdminAddProductForm() {
       styles: form.styles,
       stock: Number(form.stock),
       isHit: form.isHit,
-      characteristicsText: form.characteristicsText,
+      characteristics: form.characteristics
+        .map((item) => ({
+          label: item.label,
+          value: item.value.trim(),
+        }))
+        .filter((item) => item.value),
     };
 
     const response = await fetch('/api/products', {
@@ -365,17 +418,21 @@ export default function AdminAddProductForm() {
 
           <div className={styles.field}>
             <label>Характеристики</label>
-            <textarea
-              rows={8}
-              value={form.characteristicsText}
-              onChange={(e) =>
-                setForm({ ...form, characteristicsText: e.target.value })
-              }
-              placeholder={`Тип: Квартира
-Модель: C067
-Матеріал: МДФ
-Колір: Сірий дуб`}
-            />
+            <div className={styles.characteristicsGrid}>
+              {form.characteristics.map((item) => (
+                <div key={item.label} className={styles.characteristicField}>
+                  <label>{item.label}</label>
+                  <input
+                    type="text"
+                    value={item.value}
+                    onChange={(e) =>
+                      handleCharacteristicChange(item.label, e.target.value)
+                    }
+                    placeholder={`Вкажіть значення для "${item.label}"`}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           <label className={styles.hitRow}>
