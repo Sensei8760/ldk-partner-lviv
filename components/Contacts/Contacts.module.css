@@ -1,0 +1,218 @@
+.section {
+    width: 100%;
+    background-color: #181818;
+    padding: 64px 0;
+}
+
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 46px;
+    display: grid;
+    grid-template-columns: 598px 634px;
+    gap: 48px;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.card {
+    min-height: 563px;
+    padding: 40px 48px;
+    border-radius: 12px;
+    border: 0.2px solid #0E6C33;
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.025),
+        0 4px 16px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.title {
+    margin-bottom: 40px;
+    color: #fff;
+    font-family: var(--second-family);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 131%;
+    letter-spacing: 0.01em;
+    text-align: center;
+}
+
+.infoList {
+    width: 100%;
+    max-width: 286px;
+    margin: 0 auto 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.infoItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.iconCircle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #2d2f36;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.infoIcon {
+    width: 22px;
+    height: 22px;
+    display: block;
+    color: #4EB376;
+    flex-shrink: 0;
+}
+
+.infoContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    color: #fff;
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 140%;
+    letter-spacing: 0.01em;
+}
+
+.text,
+.contactLink {
+    color: #fff;
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 140%;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+}
+
+.contactLink:hover,
+.contactLink:focus-visible {
+    color: #4EB376;
+}
+
+.socials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+}
+
+.socialLink {
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
+    background: #107c41;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.socialLink:hover,
+.socialLink:focus-visible {
+    background-color: #13833f;
+}
+
+.socialLink:active {
+    background-color: #0B5328;
+}
+
+.socialIcon {
+    width: 18px;
+    height: 18px;
+    display: block;
+    color: #fff;
+}
+
+.mapWrap {
+    width: 634px;
+    min-height: 563px;
+    height: 563px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.mapFrame {
+    width: 634px;
+    height: 563px;
+    border: 0;
+    display: block;
+}
+
+@media (max-width: 1100px) {
+    .container {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .card {
+        min-height: auto;
+        padding: 36px 28px;
+    }
+
+    .mapWrap,
+    .mapFrame {
+        min-height: 420px;
+    }
+}
+
+@media (max-width: 768px) {
+    .section {
+        padding: 48px 0;
+    }
+
+    .container {
+        padding: 0 16px;
+        gap: 24px;
+    }
+
+    .card {
+        padding: 28px 20px 32px;
+    }
+
+    .title {
+        margin-bottom: 28px;
+        font-size: 32px;
+    }
+
+    .infoList {
+        max-width: 100%;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .label,
+    .text,
+    .contactLink {
+        font-size: 16px;
+    }
+
+    .mapWrap,
+    .mapFrame {
+        min-height: 320px;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 28px;
+    }
+
+    .socials {
+        gap: 16px;
+    }
+}

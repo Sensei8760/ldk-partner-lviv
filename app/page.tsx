@@ -2,6 +2,7 @@ import Hero from '@/components/hero/Hero';
 import AboutUs from '@/components/AboutUs/AboutUs';
 import Trust from '@/components/Trust/Trust';
 import Consultation from "@/components/Consultation/Consultation";
+import Contacts from '@/components/Contacts/Contacts';
 
 export default function HomePage() {
   return (
@@ -10,6 +11,7 @@ export default function HomePage() {
       <AboutUs />
       <Trust />
       <Consultation />
+      <Contacts />
     </main>
   );
 }
