@@ -1,0 +1,157 @@
+.section {
+    width: 100%;
+    background-color: #181818;
+    padding: 64px 0;
+}
+
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 46px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title {
+    margin-bottom: 12px;
+    text-align: center;
+    color: #fff;
+    font-family: var(--second-family);
+    font-weight: 600;
+    font-size: 48px;
+    line-height: 117%;
+    letter-spacing: 0.01em;
+}
+
+.subtitle {
+    margin-bottom: 40px;
+    text-align: center;
+    color: #fff;
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 125%;
+    letter-spacing: 0.01em;
+}
+
+.button {
+    margin-bottom: 40px;
+    min-width: 382px;
+    height: 70px;
+    padding: 20px 30px;
+    border-radius: 16px;
+    background-color: #107c41;
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 125%;
+    letter-spacing: 0.01em;
+    transition: background-color 0.2s ease;
+}
+
+.button:hover,
+.button:focus-visible {
+    background-color: #13833f;
+}
+
+.button:active {
+    background-color: #0B5328;
+}
+
+.arrow {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    padding: 0;
+    margin: 0;
+}
+
+.listItem {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: #fff;
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 131%;
+    letter-spacing: 0.01em;
+}
+
+.checkIcon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    display: block;
+}
+
+.checkIcon use {
+    fill: unset;
+}
+
+@media (max-width: 1024px) {
+    .title {
+        font-size: 52px;
+    }
+
+    .subtitle {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 768px) {
+    .section {
+        padding: 48px 0;
+    }
+
+    .container {
+        padding: 0 16px;
+    }
+
+    .title {
+        font-size: 40px;
+        margin-bottom: 20px;
+    }
+
+    .subtitle {
+        font-size: 18px;
+        margin-bottom: 28px;
+    }
+
+    .button {
+        min-width: 320px;
+        height: 58px;
+        padding: 16px 24px;
+        font-size: 20px;
+        border-radius: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 32px;
+    }
+
+    .button {
+        min-width: 100%;
+        width: 100%;
+        font-size: 18px;
+    }
+
+    .list {
+        width: 100%;
+    }
+}
