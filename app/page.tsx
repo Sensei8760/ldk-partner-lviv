@@ -1,12 +1,12 @@
 import Hero from '@/components/hero/Hero';
-import Search from '@/components/search/Search';
 import WhyUs from '@/components/WhyUs/WhyUs';
+import AboutUs from '@/components/AboutUs/AboutUs';
 
 export default function HomePage() {
   return (
     <main>
       <Hero />
-      <Search />
+      <AboutUs />
       <WhyUs />
     </main>
   );
