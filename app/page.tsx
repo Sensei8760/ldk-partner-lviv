@@ -1,13 +1,13 @@
 import Hero from '@/components/hero/Hero';
-import WhyUs from '@/components/WhyUs/WhyUs';
 import AboutUs from '@/components/AboutUs/AboutUs';
+import Trust from '@/components/Trust/Trust';
 
 export default function HomePage() {
   return (
     <main>
       <Hero />
       <AboutUs />
-      <WhyUs />
+      <Trust />
     </main>
   );
 }
