@@ -1,67 +1,206 @@
 .footer {
-    background: linear-gradient(180deg, #1a1a1a 0%, #111 100%);
-    color: #fff;
-    margin-top: 80px;
+    background: #040909;
+    color: #ffffff;
+    padding: 48px 0 40px 0;
 }
 
-.top {
-    max-width: 1200px;
+.container {
+    max-width: 1440px;
     margin: 0 auto;
-    padding: 80px 20px;
+    padding: 0 116px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 80px;
 }
 
-.contacts h2 {
-    font-size: 28px;
-    margin-bottom: 24px;
+.logoBlock {
+    min-width: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.contacts p {
-    margin: 8px 0;
-    font-size: 16px;
-    opacity: 0.9;
+.logoLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    text-decoration: none;
+}
+
+.logo {
+    width: 103px;
+    height: 76px;
+    fill: #ffffff;
+    flex-shrink: 0;
+}
+
+.copy {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-family);
+        font-weight: 100;
+        font-size: 11px;
+        line-height: 182%;
+        text-align: center;
+}
+
+.content {
+    /* flex: 1; */
+    display: grid;
+    grid-template-columns: repeat(4, max-content);
+    justify-content: space-between;
+    gap: 64px;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    margin: 0 0 12px 0;
+    color: #ffffff;
+    font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 150%;
+}
+
+.list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* .list li:not(:last-child),
+.contacts a:not(:last-child) {
+    margin-bottom: 10px;
+} */
+
+.link,
+.text {
+    font-weight: 400;
+    color: #ffffff;
+    font-family: var(--font-family);
+    font-size: 14px;
+    line-height: 143%;
+}
+
+.link {
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.link:hover {
+    color: #13833f;
+}
+.link:active {
+    color: #0B5328;
+}
+
+.contacts {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
 }
 
 .socials {
     display: flex;
-    gap: 16px;
-    margin-top: 24px;
+    align-items: center;
+    gap: 10px;
 }
 
-.socials a {
+.social {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    background: #2a2a2a;
-    display: flex;
+    border-radius: 5px;
+    background: #1d6f3b;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    color: #ffffff;
     text-decoration: none;
-    color: #4caf8d;
-    font-weight: bold;
-    transition: 0.3s ease;
+    font-size: 15px;
+    font-weight: 700;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.socials a:hover {
-    background: #4caf8d;
-    color: #111;
+.social:hover {
+    background: #13833f;
+    transform: translateY(-2px);
 }
 
-.bottom {
-    border-top: 1px solid #2a2a2a;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    opacity: 0.8;
+.social:active {
+    background: #0B5328;
+    transform: translateY(0);
 }
 
-.bottom a {
-    color: #fff;
-    text-decoration: none;
+@media (max-width: 1200px) {
+    .container {
+        padding: 0 40px;
+        gap: 48px;
+    }
+
+    .content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 36px 48px;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .link,
+    .text {
+        font-size: 17px;
+    }
 }
 
-.bottom a:hover {
-    text-decoration: underline;
+@media (max-width: 768px) {
+    .footer {
+        padding: 40px 0;
+    }
+
+    .container {
+        padding: 0 20px;
+        flex-direction: column;
+        gap: 36px;
+    }
+
+    .logoBlock {
+        min-width: auto;
+    }
+
+    .content {
+        width: 100%;
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .title {
+        margin-bottom: 14px;
+        font-size: 18px;
+    }
+
+    .link,
+    .text {
+        font-size: 16px;
+    }
+
+    .logo {
+        width: 84px;
+        height: 62px;
+    }
+
+    .copy {
+        font-size: 12px;
+    }
+
+    .social {
+        width: 38px;
+        height: 38px;
+        font-size: 13px;
+    }
 }
