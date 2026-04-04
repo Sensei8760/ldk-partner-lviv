@@ -1,5 +1,10 @@
 import { auth } from '@/auth';
-import { getProducts, saveProducts, type Product } from '@/lib/products';
+import {
+  getProducts,
+  saveProducts,
+  type Product,
+} from '@/lib/products';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 const STYLE_OPTIONS = [
@@ -220,13 +225,9 @@ function normalizeImages(body: Record<string, unknown>) {
   };
 }
 
-function validateAndNormalizeProduct(body: unknown): {
-  success: true;
-  data: NormalizedPayload;
-} | {
-  success: false;
-  errors: ValidationErrors;
-} {
+function validateAndNormalizeProduct(body: unknown):
+  | { success: true; data: NormalizedPayload }
+  | { success: false; errors: ValidationErrors } {
   const raw = (body ?? {}) as Record<string, unknown>;
   const errors: ValidationErrors = {};
 
@@ -346,6 +347,15 @@ function unauthorizedResponse() {
   return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 }
 
+function revalidateProductsCache(productId?: string) {
+  revalidateTag('products', 'max');
+  revalidatePath('/catalog');
+
+  if (productId) {
+    revalidatePath(`/catalog/${productId}`);
+  }
+}
+
 export async function GET() {
   const products = await getProducts();
   return NextResponse.json({ products });
@@ -394,6 +404,7 @@ export async function POST(request: Request) {
 
   products.unshift(newProduct);
   await saveProducts(products);
+  revalidateProductsCache(id);
 
   return NextResponse.json({ ok: true, product: newProduct });
 }
@@ -458,6 +469,7 @@ export async function PATCH(request: Request) {
   };
 
   await saveProducts(products);
+  revalidateProductsCache(id);
 
   return NextResponse.json({ ok: true, product: products[productIndex] });
 }
@@ -490,6 +502,7 @@ export async function DELETE(request: Request) {
   }
 
   await saveProducts(filteredProducts);
+  revalidateProductsCache(id);
 
   return NextResponse.json({ ok: true, deletedId: id });
 }

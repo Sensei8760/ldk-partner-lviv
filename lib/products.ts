@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { unstable_cache } from 'next/cache';
 
 export type ProductCharacteristic = {
   label: string;
@@ -107,7 +108,7 @@ function normalizeProduct(raw: unknown): Product | null {
   return normalizeImages(normalizedRaw);
 }
 
-export async function getProducts(): Promise<Product[]> {
+async function readProductsFile(): Promise<Product[]> {
   try {
     const file = await fs.readFile(productsFilePath, 'utf-8');
     const parsed = JSON.parse(file) as unknown;
@@ -116,18 +117,45 @@ export async function getProducts(): Promise<Product[]> {
       return [];
     }
 
-    return parsed
-      .map(normalizeProduct)
-      .filter(Boolean) as Product[];
+    return parsed.map(normalizeProduct).filter(Boolean) as Product[];
   } catch (error) {
     console.error('Failed to read products:', error);
     return [];
   }
 }
 
+const getCachedProductsInternal = unstable_cache(
+  async () => {
+    return readProductsFile();
+  },
+  ['products-list'],
+  {
+    tags: ['products'],
+    revalidate: 300,
+  }
+);
+
+export async function getProducts(): Promise<Product[]> {
+  return readProductsFile();
+}
+
+export async function getProductsCached(): Promise<Product[]> {
+  return getCachedProductsInternal();
+}
+
 export async function getProductById(id: string): Promise<Product | null> {
   const products = await getProducts();
   return products.find((item) => item.id === id) || null;
+}
+
+export async function getProductByIdCached(id: string): Promise<Product | null> {
+  const products = await getProductsCached();
+  return products.find((item) => item.id === id) || null;
+}
+
+export async function getAllProductIdsCached(): Promise<string[]> {
+  const products = await getProductsCached();
+  return products.map((item) => item.id);
 }
 
 export async function saveProducts(products: Product[]) {
