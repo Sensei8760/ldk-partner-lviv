@@ -45,6 +45,7 @@ const styleItems = [
 
 const VISIBLE_COUNT = 5;
 const MIN_GAP = 0;
+const PRODUCTS_STEP = 9;
 
 function normalizeValue(value: string) {
   return value.trim().toLowerCase();
@@ -66,6 +67,8 @@ export default function CatalogPage() {
   const [priceTo, setPriceTo] = useState(0);
   const [priceFromInput, setPriceFromInput] = useState('');
   const [priceToInput, setPriceToInput] = useState('');
+
+  const [visibleProductsCount, setVisibleProductsCount] = useState(PRODUCTS_STEP);
 
   useEffect(() => {
     let isMounted = true;
@@ -137,6 +140,10 @@ export default function CatalogPage() {
     setPriceToInput(String(priceBounds.max));
   }, [priceBounds.min, priceBounds.max]);
 
+  useEffect(() => {
+    setVisibleProductsCount(PRODUCTS_STEP);
+  }, [selectedTypes, selectedStyles, priceFrom, priceTo]);
+
   const typeCounts = useMemo(() => {
     return {
       street: products.filter((product) => product.type === 'street').length,
@@ -190,6 +197,9 @@ export default function CatalogPage() {
       return 0;
     });
   }, [products, selectedTypes, selectedStyles, priceFrom, priceTo]);
+
+  const visibleProducts = filteredProducts.slice(0, visibleProductsCount);
+  const hasMoreProducts = visibleProductsCount < filteredProducts.length;
 
   const handleToggleType = (id: string) => {
     setSelectedTypes((prev) =>
@@ -262,6 +272,10 @@ export default function CatalogPage() {
     priceBounds.max > priceBounds.min
       ? ((priceFrom - priceBounds.min) / (priceBounds.max - priceBounds.min)) * 100
       : 0;
+
+  const handleShowMoreProducts = () => {
+    setVisibleProductsCount((prev) => prev + PRODUCTS_STEP);
+  };
 
   return (
     <main className={styles.catalogPage}>
@@ -434,25 +448,42 @@ export default function CatalogPage() {
 
           <section className={styles.products}>
             {isLoading ? (
-              <p>Завантаження товарів...</p>
+              <div className={styles.loader}>
+                <span className={styles.loaderSpinner}></span>
+                <span>Завантаження...</span>
+              </div>
             ) : errorText ? (
               <p>{errorText}</p>
             ) : filteredProducts.length === 0 ? (
               <p>За вибраними фільтрами товарів не знайдено.</p>
             ) : (
-              <div className={styles.grid}>
-                {filteredProducts.map((product) => (
-                  <CatalogCard
-                    key={product.id}
-                    id={product.id}
-                    title={product.title}
-                    price={product.price}
-                    image={product.image}
-                    stock={product.stock}
-                    isHit={product.isHit}
-                  />
-                ))}
-              </div>
+              <>
+                <div className={styles.grid}>
+                  {visibleProducts.map((product) => (
+                    <CatalogCard
+                      key={product.id}
+                      id={product.id}
+                      title={product.title}
+                      price={product.price}
+                      image={product.image}
+                      stock={product.stock}
+                      isHit={product.isHit}
+                    />
+                  ))}
+                </div>
+
+                {hasMoreProducts ? (
+                  <div className={styles.showMoreWrap}>
+                    <button
+                      type="button"
+                      className={styles.showMoreProductsButton}
+                      onClick={handleShowMoreProducts}
+                    >
+                      Показати ще
+                    </button>
+                  </div>
+                ) : null}
+              </>
             )}
           </section>
         </div>

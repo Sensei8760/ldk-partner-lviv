@@ -78,7 +78,6 @@ function createUniqueId(title: string, existingIds: string[]) {
 
 function normalizeStyles(styles: unknown) {
   if (!Array.isArray(styles)) return [];
-
   return styles.map((item) => String(item).trim()).filter(Boolean);
 }
 
@@ -97,6 +96,26 @@ function normalizeCharacteristics(characteristics: unknown) {
     .filter((item) => item.label && item.value);
 }
 
+function normalizeImages(body: Record<string, unknown>) {
+  const directImages = Array.isArray(body.images)
+    ? body.images.map((item) => String(item).trim()).filter(Boolean)
+    : [];
+
+  const imageFront = String(body.imageFront || '').trim();
+  const imageBack = String(body.imageBack || '').trim();
+  const singleImage = String(body.image || '').trim();
+
+  const images = directImages.length
+    ? directImages
+    : [imageFront, imageBack].filter(Boolean);
+
+  if (images.length > 0) {
+    return images;
+  }
+
+  return singleImage ? [singleImage] : [];
+}
+
 export async function GET() {
   const products = await getProducts();
   return NextResponse.json({ products });
@@ -113,7 +132,7 @@ export async function POST(request: Request) {
 
   const title = String(body.title || '').trim();
   const price = Number(body.price || 0);
-  const image = String(body.image || '').trim();
+  const images = normalizeImages(body);
   const description = String(body.description || '').trim();
   const type = body.type === 'street' ? 'street' : 'apartment';
   const styles = normalizeStyles(body.styles);
@@ -121,9 +140,9 @@ export async function POST(request: Request) {
   const isHit = Boolean(body.isHit);
   const characteristics = normalizeCharacteristics(body.characteristics);
 
-  if (!title || !price || !image) {
+  if (!title || !price || images.length === 0) {
     return NextResponse.json(
-      { message: 'Заповни хоча б назву, ціну і картинку.' },
+      { message: 'Заповни хоча б назву, ціну і хоча б одне фото.' },
       { status: 400 }
     );
   }
@@ -138,7 +157,8 @@ export async function POST(request: Request) {
     id,
     title,
     price,
-    image,
+    image: images[0],
+    images,
     description,
     type,
     styles,
@@ -182,7 +202,7 @@ export async function PATCH(request: Request) {
 
   const title = String(body.title || '').trim();
   const price = Number(body.price || 0);
-  const image = String(body.image || '').trim();
+  const images = normalizeImages(body);
   const description = String(body.description || '').trim();
   const type = body.type === 'street' ? 'street' : 'apartment';
   const styles = normalizeStyles(body.styles);
@@ -190,9 +210,9 @@ export async function PATCH(request: Request) {
   const isHit = Boolean(body.isHit);
   const characteristics = normalizeCharacteristics(body.characteristics);
 
-  if (!title || !price || !image) {
+  if (!title || !price || images.length === 0) {
     return NextResponse.json(
-      { message: 'Заповни хоча б назву, ціну і картинку.' },
+      { message: 'Заповни хоча б назву, ціну і хоча б одне фото.' },
       { status: 400 }
     );
   }
@@ -201,7 +221,8 @@ export async function PATCH(request: Request) {
     ...products[productIndex],
     title,
     price,
-    image,
+    image: images[0],
+    images,
     description,
     type,
     styles,

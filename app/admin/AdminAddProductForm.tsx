@@ -47,6 +47,7 @@ type Product = {
   title: string;
   price: number;
   image: string;
+  images?: string[];
   description: string;
   type: 'street' | 'apartment';
   styles: string[];
@@ -69,9 +70,10 @@ const emptyForm = {
   id: '',
   title: '',
   price: '',
-  image: '',
+  imageFront: '',
+  imageBack: '',
   description: '',
-  type: 'apartment',
+  type: 'apartment' as 'street' | 'apartment',
   styles: [] as string[],
   stock: '',
   isHit: false,
@@ -178,19 +180,29 @@ export default function AdminAddProductForm() {
   }
 
   function handleEdit(product: Product) {
+    const productImages =
+      Array.isArray(product.images) && product.images.length > 0
+        ? product.images
+        : product.image
+          ? [product.image]
+          : [];
+
     setEditingId(product.id);
 
     setForm({
-      id: product.id,
-      title: product.title,
-      price: String(product.price),
-      image: product.image,
-      description: product.description,
-      type: product.type,
-      styles: product.styles,
-      stock: String(product.stock),
-      isHit: product.isHit,
-      characteristics: mapCharacteristicsToFields(product.characteristics),
+      id: product.id || '',
+      title: product.title || '',
+      price: String(product.price ?? ''),
+      imageFront: productImages[0] || '',
+      imageBack: productImages[1] || '',
+      description: product.description || '',
+      type: product.type === 'street' ? 'street' : 'apartment',
+      styles: Array.isArray(product.styles) ? product.styles : [],
+      stock: String(product.stock ?? ''),
+      isHit: Boolean(product.isHit),
+      characteristics: mapCharacteristicsToFields(
+        Array.isArray(product.characteristics) ? product.characteristics : []
+      ),
     });
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -241,11 +253,15 @@ export default function AdminAddProductForm() {
     event.preventDefault();
     setIsLoading(true);
 
+    const images = [form.imageFront.trim(), form.imageBack.trim()].filter(Boolean);
+
     const payload = {
       id: form.id,
       title: form.title,
       price: Number(form.price),
-      image: form.image,
+      images,
+      imageFront: form.imageFront.trim(),
+      imageBack: form.imageBack.trim(),
       description: form.description,
       type: form.type,
       styles: form.styles,
@@ -342,7 +358,7 @@ export default function AdminAddProductForm() {
             <div className={styles.field}>
               <label>Назва</label>
               <input
-                value={form.title}
+                value={form.title ?? ''}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 placeholder='Міжкімнатні двері "Doors" Smart - модель - C067'
               />
@@ -352,26 +368,40 @@ export default function AdminAddProductForm() {
               <label>Ціна</label>
               <input
                 type="number"
-                value={form.price}
+                value={form.price ?? ''}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
                 placeholder="3064"
               />
             </div>
 
             <div className={styles.field}>
-              <label>Шлях до картинки</label>
+              <label>Фото 1 (одна сторона)</label>
               <input
-                value={form.image}
-                onChange={(e) => setForm({ ...form, image: e.target.value })}
-                placeholder="/images/doors/door-2.jpg"
+                value={form.imageFront ?? ''}
+                onChange={(e) => setForm({ ...form, imageFront: e.target.value })}
+                placeholder="/images/doors/door-front.jpg"
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label>Фото 2 (друга сторона)</label>
+              <input
+                value={form.imageBack ?? ''}
+                onChange={(e) => setForm({ ...form, imageBack: e.target.value })}
+                placeholder="/images/doors/door-back.jpg"
               />
             </div>
 
             <div className={styles.field}>
               <label>Тип</label>
               <select
-                value={form.type}
-                onChange={(e) => setForm({ ...form, type: e.target.value })}
+                value={form.type ?? 'apartment'}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    type: e.target.value as 'street' | 'apartment',
+                  })
+                }
               >
                 <option value="apartment">Квартира</option>
                 <option value="street">Вулиця</option>
@@ -383,7 +413,7 @@ export default function AdminAddProductForm() {
               <input
                 type="number"
                 min="0"
-                value={form.stock}
+                value={form.stock ?? ''}
                 onChange={(e) => setForm({ ...form, stock: e.target.value })}
                 placeholder="1"
               />
@@ -410,7 +440,7 @@ export default function AdminAddProductForm() {
             <label>Опис</label>
             <textarea
               rows={5}
-              value={form.description}
+              value={form.description ?? ''}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               placeholder="Короткий опис товару..."
             />
@@ -424,7 +454,7 @@ export default function AdminAddProductForm() {
                   <label>{item.label}</label>
                   <input
                     type="text"
-                    value={item.value}
+                    value={item.value ?? ''}
                     onChange={(e) =>
                       handleCharacteristicChange(item.label, e.target.value)
                     }
@@ -448,8 +478,8 @@ export default function AdminAddProductForm() {
             {isLoading
               ? 'Збереження...'
               : editingId
-              ? 'Оновити товар'
-              : 'Додати товар'}
+                ? 'Оновити товар'
+                : 'Додати товар'}
           </button>
         </form>
 

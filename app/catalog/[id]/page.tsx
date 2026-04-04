@@ -1,6 +1,6 @@
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getProductById } from '@/lib/products';
+import ProductGallery from './ProductGallery';
 import styles from './ProductPage.module.css';
 
 type PageProps = {
@@ -17,20 +17,14 @@ export default async function ProductPage({ params }: PageProps) {
     notFound();
   }
 
+  const isOutOfStock = product.stock <= 0;
+
   return (
     <main className={styles.productPage}>
       <div className={styles.container}>
         <div className={styles.layout}>
           <div className={styles.imageBlock}>
-            <div className={styles.imageWrapper}>
-              <Image
-                src={product.image}
-                alt={product.title}
-                fill
-                className={styles.image}
-                priority
-              />
-            </div>
+            <ProductGallery title={product.title} images={product.images} />
           </div>
 
           <div className={styles.infoBlock}>
@@ -40,8 +34,14 @@ export default async function ProductPage({ params }: PageProps) {
               {product.price} <span>грн</span>
             </p>
 
-            <p className={styles.stock}>
-              В наявності: <span>{product.stock}</span>
+            <p className={`${styles.stock} ${isOutOfStock ? styles.stockEmpty : ''}`}>
+              {isOutOfStock ? (
+                'Немає в наявності'
+              ) : (
+                <>
+                  В наявності: <span>{product.stock}</span>
+                </>
+              )}
             </p>
 
             {product.description ? (

@@ -1,5 +1,114 @@
 [
   {
+    "id": "dsfsfsf",
+    "title": "dsfsfsf",
+    "price": 234242,
+    "image": "/images/doors/door-1.jpg",
+    "images": [
+      "/images/doors/door-1.jpg",
+      "/images/doors/door-1.jpg"
+    ],
+    "description": "",
+    "type": "apartment",
+    "styles": [],
+    "stock": 4,
+    "isHit": false,
+    "characteristics": []
+  },
+  {
+    "id": "eqfda",
+    "title": "eqfda",
+    "price": 532,
+    "image": "/images/doors/door-1.jpg",
+    "description": "",
+    "type": "apartment",
+    "styles": [],
+    "stock": 6,
+    "isHit": false,
+    "characteristics": [],
+    "images": [
+      "/images/doors/door-1.jpg"
+    ]
+  },
+  {
+    "id": "etheh",
+    "title": "etheh",
+    "price": 252,
+    "image": "/images/doors/door-1.jpg",
+    "description": "",
+    "type": "apartment",
+    "styles": [],
+    "stock": 23,
+    "isHit": false,
+    "characteristics": [],
+    "images": [
+      "/images/doors/door-1.jpg"
+    ]
+  },
+  {
+    "id": "gdfgs",
+    "title": "gdfgs",
+    "price": 25256,
+    "image": "/images/doors/door-1.jpg",
+    "description": "",
+    "type": "apartment",
+    "styles": [],
+    "stock": 8,
+    "isHit": false,
+    "characteristics": [],
+    "images": [
+      "/images/doors/door-1.jpg"
+    ]
+  },
+  {
+    "id": "jytjtyj",
+    "title": "jytjtyj",
+    "price": 63556,
+    "image": "/images/doors/door-1.jpg",
+    "description": "",
+    "type": "apartment",
+    "styles": [],
+    "stock": 3,
+    "isHit": false,
+    "characteristics": [],
+    "images": [
+      "/images/doors/door-1.jpg"
+    ]
+  },
+  {
+    "id": "fsxzx",
+    "title": "fsxzx",
+    "price": 343,
+    "image": "/images/doors/door-1.jpg",
+    "description": "",
+    "type": "apartment",
+    "styles": [],
+    "stock": 5,
+    "isHit": false,
+    "characteristics": [],
+    "images": [
+      "/images/doors/door-1.jpg"
+    ]
+  },
+  {
+    "id": "fasfas",
+    "title": "fasfas",
+    "price": 134141,
+    "image": "/images/doors/door-1.jpg",
+    "description": "",
+    "type": "apartment",
+    "styles": [
+      "ЛЮКС",
+      "ТРІО"
+    ],
+    "stock": 0,
+    "isHit": false,
+    "characteristics": [],
+    "images": [
+      "/images/doors/door-1.jpg"
+    ]
+  },
+  {
     "id": "mizhkimnatni-dveri-doors-smart-model-c069345",
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C069345",
     "price": 333333,
@@ -66,6 +175,9 @@
         "label": "Лиштва",
         "value": "Так,прихованого кріплення"
       }
+    ],
+    "images": [
+      "/images/doors/door-1.jpg"
     ]
   },
   {
@@ -84,7 +196,10 @@
     ],
     "stock": 5,
     "isHit": false,
-    "characteristics": []
+    "characteristics": [],
+    "images": [
+      "/images/doors/door-1.jpg"
+    ]
   },
   {
     "id": "rtertete",
@@ -99,7 +214,10 @@
     ],
     "stock": 0,
     "isHit": true,
-    "characteristics": []
+    "characteristics": [],
+    "images": [
+      "/images/doors/door-1.jpg"
+    ]
   },
   {
     "id": "mizhkimnatni-dveri-doors-smart-model-c067",
@@ -131,6 +249,9 @@
         "label": "Колір",
         "value": "Сірий дуб"
       }
+    ],
+    "images": [
+      "/images/doors/door-1.jpg"
     ]
   }
 ]
