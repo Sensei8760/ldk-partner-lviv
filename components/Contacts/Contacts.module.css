@@ -16,19 +16,41 @@
 }
 
 .card {
+    position: relative;
     min-height: 563px;
     padding: 40px 48px;
     border-radius: 12px;
-    border: 0.2px solid #0E6C33;
     background: rgba(0, 0, 0, 0.2);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.025),
-        0 4px 16px rgba(0, 0, 0, 0.35);
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow: hidden;
+}
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    pointer-events: none;
+    border: 0.1px solid rgba(14, 108, 51, 0.95);
+    box-shadow:
+        0 0 8px rgba(14, 108, 51, 0.18),
+        0 0 2px rgba(14, 108, 51, 0.22);
 }
 
+.card::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: 11px;
+    pointer-events: none;
+    border: 0.1px solid rgba(255, 255, 255, 0.42);
+    box-shadow:
+        inset 14px 0 20px -20px rgba(255, 255, 255, 0.08),
+        inset -14px 0 20px -20px rgba(255, 255, 255, 0.04),
+        inset 0 14px 20px -20px rgba(255, 255, 255, 0.06),
+        inset 0 -14px 20px -20px rgba(255, 255, 255, 0.03);
+}
 .title {
     margin-bottom: 40px;
     color: #fff;
@@ -146,7 +168,7 @@
     width: 634px;
     min-height: 563px;
     height: 563px;
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
 }
 
