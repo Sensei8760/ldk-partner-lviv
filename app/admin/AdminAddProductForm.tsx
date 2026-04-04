@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Toast from '@/components/ui/Toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { FALLBACK_PRODUCT_IMAGE } from '@/utils/productImages';
@@ -250,6 +250,7 @@ export default function AdminAddProductForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+  const [productsLoadError, setProductsLoadError] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [toastMessage, setToastMessage] = useState('');
@@ -263,7 +264,7 @@ export default function AdminAddProductForm() {
   const [searchQuery, setSearchQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
 
-  function triggerToast(message: string, type: 'success' | 'error' = 'success') {
+  const triggerToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
@@ -271,29 +272,44 @@ export default function AdminAddProductForm() {
     setTimeout(() => {
       setShowToast(false);
     }, 3000);
-  }
+  }, []);
 
-  async function loadProducts() {
-    try {
-      setIsLoadingProducts(true);
+  const loadProducts = useCallback(
+    async (showErrorToast = false) => {
+      try {
+        setIsLoadingProducts(true);
+        setProductsLoadError('');
 
-      const response = await fetch('/api/products', {
-        method: 'GET',
-        cache: 'no-store',
-      });
+        const response = await fetch('/api/products', {
+          method: 'GET',
+          cache: 'no-store',
+        });
 
-      const data = await response.json();
-      const loadedProducts = Array.isArray(data.products) ? data.products : [];
+        if (!response.ok) {
+          throw new Error('Не вдалося завантажити товари.');
+        }
 
-      setProducts(loadedProducts);
-    } finally {
-      setIsLoadingProducts(false);
-    }
-  }
+        const data = await response.json();
+        const loadedProducts = Array.isArray(data.products) ? data.products : [];
+
+        setProducts(loadedProducts);
+      } catch {
+        setProducts([]);
+        setProductsLoadError('Не вдалося завантажити список товарів. Спробуйте ще раз.');
+
+        if (showErrorToast) {
+          triggerToast('Не вдалося завантажити список товарів.', 'error');
+        }
+      } finally {
+        setIsLoadingProducts(false);
+      }
+    },
+    [triggerToast]
+  );
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [loadProducts]);
 
   useEffect(() => {
     setVisibleCount(INITIAL_VISIBLE_COUNT);
@@ -390,29 +406,34 @@ export default function AdminAddProductForm() {
 
     setIsDeleting(true);
 
-    const response = await fetch('/api/products', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: productToDelete.id }),
-    });
+    try {
+      const response = await fetch('/api/products', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: productToDelete.id }),
+      });
 
-    const data = await response.json();
-    setIsDeleting(false);
+      const data = await response.json();
 
-    if (!response.ok) {
-      triggerToast(data.message || 'Не вдалося видалити товар.', 'error');
-      return;
+      if (!response.ok) {
+        triggerToast(data.message || 'Не вдалося видалити товар.', 'error');
+        return;
+      }
+
+      if (editingId === productToDelete.id) {
+        resetForm();
+      }
+
+      setDeleteModalOpen(false);
+      setProductToDelete(null);
+
+      await loadProducts();
+      triggerToast('Товар успішно видалено.', 'success');
+    } catch {
+      triggerToast('Сталася помилка під час видалення товару.', 'error');
+    } finally {
+      setIsDeleting(false);
     }
-
-    if (editingId === productToDelete.id) {
-      resetForm();
-    }
-
-    setDeleteModalOpen(false);
-    setProductToDelete(null);
-
-    await loadProducts();
-    triggerToast('Товар успішно видалено.', 'success');
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -475,6 +496,8 @@ export default function AdminAddProductForm() {
         wasEditing ? 'Товар успішно оновлено.' : 'Товар успішно додано.',
         'success'
       );
+    } catch {
+      triggerToast('Сталася помилка під час збереження товару.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -583,10 +606,10 @@ export default function AdminAddProductForm() {
               ) : null}
 
               <ProductImagePreview
-  key={`front-${form.imageFront}`}
-  src={form.imageFront}
-  alt={form.title ? `${form.title} - фото 1` : 'Фото 1'}
-/>
+                key={`front-${form.imageFront}`}
+                src={form.imageFront}
+                alt={form.title ? `${form.title} - фото 1` : 'Фото 1'}
+              />
             </div>
 
             <div className={styles.field}>
@@ -604,10 +627,10 @@ export default function AdminAddProductForm() {
               ) : null}
 
               <ProductImagePreview
-  key={`back-${form.imageBack}`}
-  src={form.imageBack}
-  alt={form.title ? `${form.title} - фото 2` : 'Фото 2'}
-/>
+                key={`back-${form.imageBack}`}
+                src={form.imageBack}
+                alt={form.title ? `${form.title} - фото 2` : 'Фото 2'}
+              />
             </div>
 
             <div className={styles.field}>
@@ -731,14 +754,34 @@ export default function AdminAddProductForm() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Пошук по назві..."
                 className={styles.searchInput}
+                disabled={Boolean(productsLoadError)}
               />
             </div>
           </div>
 
           {isLoadingProducts ? (
             <p>Завантаження товарів...</p>
+          ) : productsLoadError ? (
+            <div className={styles.stateBox}>
+              <h3 className={styles.stateTitle}>Не вдалося завантажити товари</h3>
+              <p className={styles.stateText}>{productsLoadError}</p>
+              <button
+                type="button"
+                className={styles.retryButton}
+                onClick={() => loadProducts(true)}
+              >
+                Спробувати ще раз
+              </button>
+            </div>
           ) : filteredProducts.length === 0 ? (
-            <p>Товарів не знайдено.</p>
+            <div className={styles.stateBox}>
+              <h3 className={styles.stateTitle}>Товарів не знайдено</h3>
+              <p className={styles.stateText}>
+                {searchQuery.trim()
+                  ? 'Спробуйте змінити пошуковий запит.'
+                  : 'Поки що в каталозі немає доданих товарів.'}
+              </p>
+            </div>
           ) : (
             <>
               <div className={styles.productsList}>
