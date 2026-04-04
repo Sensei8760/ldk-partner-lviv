@@ -1,5 +1,39 @@
 [
   {
+    "id": "werwrwrwrwerwrwrw",
+    "title": "werwrwrwrwerwrwrw",
+    "price": 23424,
+    "image": "/images/doors/door-1.jpg",
+    "images": [
+      "/images/doors/door-1.jpg",
+      "/images/doors/door-2.jpg"
+    ],
+    "description": "",
+    "type": "apartment",
+    "styles": [],
+    "stock": 23,
+    "isHit": false,
+    "characteristics": []
+  },
+  {
+    "id": "mizhkimnatni-dveri-doors-smart-model-c06934534",
+    "title": "Міжкімнатні двері \"Doors\" Smart - модель - C06934534",
+    "price": 42515,
+    "image": "/image/doors/door-1.jpg",
+    "images": [
+      "/image/doors/door-1.jpg"
+    ],
+    "description": "",
+    "type": "apartment",
+    "styles": [
+      "Стріт",
+      "ТРІО ЛАЙТ"
+    ],
+    "stock": 231,
+    "isHit": false,
+    "characteristics": []
+  },
+  {
     "id": "dsfsfsf",
     "title": "dsfsfsf",
     "price": 234242,

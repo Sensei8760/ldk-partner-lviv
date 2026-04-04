@@ -1,8 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import Toast from '@/components/ui/Toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import { FALLBACK_PRODUCT_IMAGE } from '@/utils/productImages';
 import styles from './AdminPage.module.css';
 
 const styleOptions = [
@@ -206,6 +208,40 @@ function validateForm(form: FormState): FormErrors {
   }
 
   return errors;
+}
+
+function ProductImagePreview({
+  src,
+  alt,
+}: {
+  src: string;
+  alt: string;
+}) {
+  const normalizedSrc = src.trim();
+  const fallbackSrc = normalizedSrc || FALLBACK_PRODUCT_IMAGE;
+  const [hasError, setHasError] = useState(false);
+
+  const displaySrc = hasError ? FALLBACK_PRODUCT_IMAGE : fallbackSrc;
+
+  return (
+    <div className={styles.imagePreviewBox}>
+      <div className={styles.imagePreviewFrame}>
+        <Image
+          key={fallbackSrc}
+          src={displaySrc}
+          alt={alt}
+          fill
+          className={styles.imagePreview}
+          sizes="160px"
+          onError={() => {
+            if (displaySrc !== FALLBACK_PRODUCT_IMAGE) {
+              setHasError(true);
+            }
+          }}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default function AdminAddProductForm() {
@@ -545,6 +581,12 @@ export default function AdminAddProductForm() {
               {errors.imageFront ? (
                 <p className={styles.fieldError}>{errors.imageFront}</p>
               ) : null}
+
+              <ProductImagePreview
+  key={`front-${form.imageFront}`}
+  src={form.imageFront}
+  alt={form.title ? `${form.title} - фото 1` : 'Фото 1'}
+/>
             </div>
 
             <div className={styles.field}>
@@ -560,6 +602,12 @@ export default function AdminAddProductForm() {
               {errors.imageBack ? (
                 <p className={styles.fieldError}>{errors.imageBack}</p>
               ) : null}
+
+              <ProductImagePreview
+  key={`back-${form.imageBack}`}
+  src={form.imageBack}
+  alt={form.title ? `${form.title} - фото 2` : 'Фото 2'}
+/>
             </div>
 
             <div className={styles.field}>

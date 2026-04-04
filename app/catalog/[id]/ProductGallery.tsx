@@ -3,6 +3,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import styles from './ProductPage.module.css';
+import {
+  FALLBACK_PRODUCT_IMAGE,
+  getSafeProductImages,
+} from '@/utils/productImages';
 
 type ProductGalleryProps = {
   title: string;
@@ -10,27 +14,36 @@ type ProductGalleryProps = {
 };
 
 export default function ProductGallery({ title, images }: ProductGalleryProps) {
-  const safeImages = useMemo(
-    () => (images.length > 0 ? images : ['/images/doors/door-1.jpg']),
-    [images]
-  );
+  const safeImages = useMemo(() => getSafeProductImages(images), [images]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
+  const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
+
+  const resolvedImages = safeImages.map((src) =>
+    brokenImages[src] ? FALLBACK_PRODUCT_IMAGE : src
+  );
 
   const normalizedIndex =
-    safeImages.length > 0 ? currentIndex % safeImages.length : 0;
+    resolvedImages.length > 0
+      ? ((currentIndex % resolvedImages.length) + resolvedImages.length) %
+        resolvedImages.length
+      : 0;
 
-  const currentImage = safeImages[normalizedIndex] || safeImages[0];
-  const hasMultipleImages = safeImages.length > 1;
+  const currentImage = resolvedImages[normalizedIndex] || FALLBACK_PRODUCT_IMAGE;
+  const hasMultipleImages = resolvedImages.length > 1;
 
   const showPrev = useCallback(() => {
-    setCurrentIndex((prev) => (prev === 0 ? safeImages.length - 1 : prev - 1));
-  }, [safeImages.length]);
+    setCurrentIndex((prev) =>
+      prev === 0 ? resolvedImages.length - 1 : prev - 1
+    );
+  }, [resolvedImages.length]);
 
   const showNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev === safeImages.length - 1 ? 0 : prev + 1));
-  }, [safeImages.length]);
+    setCurrentIndex((prev) =>
+      prev === resolvedImages.length - 1 ? 0 : prev + 1
+    );
+  }, [resolvedImages.length]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -52,6 +65,19 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isZoomOpen, showPrev, showNext]);
+
+  useEffect(() => {
+    if (resolvedImages.length <= 1) return;
+
+    const nextIndex =
+      normalizedIndex === resolvedImages.length - 1 ? 0 : normalizedIndex + 1;
+    const nextImage = resolvedImages[nextIndex];
+
+    if (!nextImage || nextImage === FALLBACK_PRODUCT_IMAGE) return;
+
+    const preloadImage = new window.Image();
+    preloadImage.src = nextImage;
+  }, [normalizedIndex, resolvedImages]);
 
   return (
     <>
@@ -75,9 +101,16 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
             fill
             className={styles.image}
             priority
+            sizes="(max-width: 992px) 100vw, 560px"
+            onError={() => {
+              const originalSrc = safeImages[normalizedIndex];
+              if (originalSrc && originalSrc !== FALLBACK_PRODUCT_IMAGE) {
+                setBrokenImages((prev) => ({ ...prev, [originalSrc]: true }));
+              }
+            }}
           />
 
-          {hasMultipleImages ? (
+          {hasMultipleImages && (
             <>
               <button
                 type="button"
@@ -103,11 +136,33 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
                 →
               </button>
             </>
-          ) : null}
+          )}
         </div>
+
+        {hasMultipleImages && (
+          <div className={styles.galleryFooter}>
+            <div className={styles.galleryDots}>
+              {resolvedImages.map((_, index) => (
+                <button
+                  key={`${title}-${index}`}
+                  type="button"
+                  className={`${styles.galleryDot} ${
+                    index === normalizedIndex ? styles.galleryDotActive : ''
+                  }`}
+                  onClick={() => setCurrentIndex(index)}
+                  aria-label={`Перейти до фото ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            <div className={styles.galleryCounter}>
+              {normalizedIndex + 1} / {resolvedImages.length}
+            </div>
+          </div>
+        )}
       </div>
 
-      {isZoomOpen ? (
+      {isZoomOpen && (
         <div
           className={styles.zoomOverlay}
           onClick={() => setIsZoomOpen(false)}
@@ -126,7 +181,7 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
               ✕
             </button>
 
-            {hasMultipleImages ? (
+            {hasMultipleImages && (
               <button
                 type="button"
                 className={`${styles.zoomArrow} ${styles.zoomArrowLeft}`}
@@ -135,7 +190,7 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
               >
                 ←
               </button>
-            ) : null}
+            )}
 
             <div className={styles.zoomImageWrapper}>
               <Image
@@ -144,10 +199,16 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
                 fill
                 className={styles.zoomImage}
                 sizes="100vw"
+                onError={() => {
+                  const originalSrc = safeImages[normalizedIndex];
+                  if (originalSrc && originalSrc !== FALLBACK_PRODUCT_IMAGE) {
+                    setBrokenImages((prev) => ({ ...prev, [originalSrc]: true }));
+                  }
+                }}
               />
             </div>
 
-            {hasMultipleImages ? (
+            {hasMultipleImages && (
               <button
                 type="button"
                 className={`${styles.zoomArrow} ${styles.zoomArrowRight}`}
@@ -156,10 +217,10 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
               >
                 →
               </button>
-            ) : null}
+            )}
           </div>
         </div>
-      ) : null}
+      )}
     </>
   );
 }

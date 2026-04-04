@@ -1,6 +1,13 @@
+'use client';
+
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './CatalogCard.module.css';
+import {
+  FALLBACK_PRODUCT_IMAGE,
+  getPrimaryProductImage,
+} from '@/utils/productImages';
 
 type CatalogCardProps = {
   id: string;
@@ -21,6 +28,9 @@ export default function CatalogCard({
 }: CatalogCardProps) {
   const isOutOfStock = stock <= 0;
 
+  const initialImage = useMemo(() => getPrimaryProductImage(undefined, image), [image]);
+  const [currentImage, setCurrentImage] = useState(initialImage);
+
   return (
     <article className={`${styles.card} ${isOutOfStock ? styles.cardOutOfStock : ''}`}>
       {isHit && <span className={styles.badge}>ХІТ</span>}
@@ -28,11 +38,16 @@ export default function CatalogCard({
       <Link href={`/catalog/${id}`} className={styles.imageLink}>
         <div className={styles.imageWrapper}>
           <Image
-            src={image}
+            src={currentImage}
             alt={title}
             fill
             className={`${styles.image} ${isOutOfStock ? styles.imageOutOfStock : ''}`}
-            sizes="(max-width: 768px) 100vw, 212px"
+            sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={() => {
+              if (currentImage !== FALLBACK_PRODUCT_IMAGE) {
+                setCurrentImage(FALLBACK_PRODUCT_IMAGE);
+              }
+            }}
           />
         </div>
       </Link>
