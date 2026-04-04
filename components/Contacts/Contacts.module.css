@@ -42,61 +42,65 @@
 
 .infoList {
     width: 100%;
-    max-width: 286px;
+    max-width: 330px;
     margin: 0 auto 40px;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    align-items: center;
 }
 
 .infoItem {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    gap: 14px;
 }
 
 .iconCircle {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: #2d2f36;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    margin-top: 2px;
 }
 
 .infoIcon {
-    width: 22px;
-    height: 22px;
+    width: 50px;
+    height: 50px;
     display: block;
-    color: #4EB376;
     flex-shrink: 0;
 }
 
 .infoContent {
     display: flex;
     flex-direction: column;
+    gap: 2px;
+    min-width: 0;
 }
 
 .label {
+    margin: 0;
     color: #fff;
     font-family: var(--font-family);
     font-weight: 400;
     font-size: 20px;
-    line-height: 140%;
     letter-spacing: 0.01em;
+        line-height: 140%;
 }
 
 .text,
 .contactLink {
+    margin: 0;
     color: #fff;
     font-family: var(--font-family);
     font-weight: 400;
     font-size: 20px;
-    line-height: 140%;
     letter-spacing: 0.01em;
     text-decoration: none;
+        line-height: 140%;
+}
+
+.contactLink {
+    display: block;
 }
 
 .contactLink:hover,
@@ -166,6 +170,7 @@
 
     .mapWrap,
     .mapFrame {
+        width: 100%;
         min-height: 420px;
     }
 }
@@ -193,6 +198,16 @@
         max-width: 100%;
         gap: 24px;
         margin-bottom: 28px;
+    }
+
+    .iconCircle {
+        width: 48px;
+        height: 48px;
+    }
+
+    .infoIcon {
+        width: 22px;
+        height: 22px;
     }
 
     .label,

@@ -12,7 +12,7 @@ export default function Contacts() {
             <div className={styles.infoItem}>
               <div className={styles.iconCircle}>
                 <svg className={styles.infoIcon} aria-hidden="true">
-                  <use href="/icons/symbol-defs.svg?v=6#icon-clock-clean" />
+                  <use href="/icons/symbol-defs.svg#icon-Frame-46" />
                 </svg>
               </div>
 
@@ -27,7 +27,7 @@ export default function Contacts() {
             <div className={styles.infoItem}>
               <div className={styles.iconCircle}>
                 <svg className={styles.infoIcon} aria-hidden="true">
-                  <use href="/icons/symbol-defs.svg?v=6#icon-location-clean" />
+                  <use href="/icons/symbol-defs.svg#icon-Frame-44" />
                 </svg>
               </div>
 
@@ -40,7 +40,7 @@ export default function Contacts() {
             <div className={styles.infoItem}>
               <div className={styles.iconCircle}>
                 <svg className={styles.infoIcon} aria-hidden="true">
-                  <use href="/icons/symbol-defs.svg?v=7#icon-phone-clean" />
+                  <use href="/icons/symbol-defs.svg#icon-Frame-45" />
                 </svg>
               </div>
 
@@ -71,7 +71,7 @@ export default function Contacts() {
 
             <Link href="mailto:" className={styles.socialLink} aria-label="Email">
               <svg className={styles.socialIcon} aria-hidden="true">
-                <use href="/icons/symbol-defs.svg?v=7#icon-mail-clean" />
+                <use href="/icons/symbol-defs.svg#?v=7#icon-mail-clean" />
               </svg>
             </Link>
           </div>
