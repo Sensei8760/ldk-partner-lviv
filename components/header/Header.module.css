@@ -1,11 +1,12 @@
 .header {
     width: 100%;
     background-color: #0C0F0E;
+    min-height: 96px;
 }
 
 .container {
     max-width: 1440px;
-    height: 96px;
+    min-height: 96px;
     margin: 0 auto;
     padding: 0 48px;
     display: flex;
@@ -26,6 +27,7 @@
     width: 103px;
     height: 76px;
     fill: currentColor;
+    flex: 0 0 auto;
 }
 
 .nav {
@@ -73,11 +75,16 @@
     width: 24px;
     height: 24px;
     fill: currentColor;
+    flex: 0 0 auto;
 }
 
 @media (max-width: 1024px) {
+    .header {
+        min-height: 84px;
+    }
+
     .container {
-        height: 84px;
+        min-height: 84px;
         padding: 0 24px;
     }
 
@@ -91,8 +98,12 @@
 }
 
 @media (max-width: 768px) {
+    .header {
+        min-height: 72px;
+    }
+
     .container {
-        height: 72px;
+        min-height: 72px;
         padding: 0 16px;
     }
 
@@ -137,6 +148,7 @@
         margin-left: 14px;
     }
 }
+
 .activeLink {
     color: #0B5328;
 }

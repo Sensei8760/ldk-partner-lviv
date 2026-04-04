@@ -1,17 +1,7 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
 
 export default function Header() {
-  const pathname = usePathname();
-
-  const isAboutActive = pathname === "/about";
-  const isCatalogActive = pathname === "/catalog" || pathname.startsWith("/catalog/");
-  const isContactsActive = pathname === "/contacts";
-  const isLoginActive = pathname === "/login-staff";
-
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -22,31 +12,22 @@ export default function Header() {
         </Link>
 
         <nav className={styles.nav} aria-label="Основна навігація">
-          <Link
-            href="/about"
-            className={`${styles.navLink} ${isAboutActive ? styles.activeLink : ""}`}
-          >
+          <Link href="/about" className={styles.navLink}>
             Про нас
           </Link>
 
-          <Link
-            href="/catalog"
-            className={`${styles.navLink} ${isCatalogActive ? styles.activeLink : ""}`}
-          >
+          <Link href="/catalog" className={styles.navLink}>
             Каталог
           </Link>
 
-          <Link
-            href="/contacts"
-            className={`${styles.navLink} ${isContactsActive ? styles.activeLink : ""}`}
-          >
+          <Link href="/contacts" className={styles.navLink}>
             Контакти
           </Link>
         </nav>
 
         <Link
           href="/login-staff"
-          className={`${styles.userLink} ${isLoginActive ? styles.activeUser : ""}`}
+          className={styles.userLink}
           aria-label="Вхід для персоналу"
         >
           <svg className={styles.userIcon}>
