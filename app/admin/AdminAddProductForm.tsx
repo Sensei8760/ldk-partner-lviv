@@ -61,20 +61,48 @@ type CharacteristicField = {
   value: string;
 };
 
+type FormState = {
+  id: string;
+  title: string;
+  price: string;
+  imageFront: string;
+  imageBack: string;
+  description: string;
+  type: 'street' | 'apartment';
+  styles: string[];
+  stock: string;
+  isHit: boolean;
+  characteristics: CharacteristicField[];
+};
+
+type FormErrors = Partial<{
+  title: string;
+  price: string;
+  imageFront: string;
+  imageBack: string;
+  images: string;
+  type: string;
+  styles: string;
+  stock: string;
+  description: string;
+  characteristics: string;
+  general: string;
+}>;
+
 const emptyCharacteristics: CharacteristicField[] = characteristicLabels.map((label) => ({
   label,
   value: '',
 }));
 
-const emptyForm = {
+const emptyForm: FormState = {
   id: '',
   title: '',
   price: '',
   imageFront: '',
   imageBack: '',
   description: '',
-  type: 'apartment' as 'street' | 'apartment',
-  styles: [] as string[],
+  type: 'apartment',
+  styles: [],
   stock: '',
   isHit: false,
   characteristics: emptyCharacteristics,
@@ -96,8 +124,93 @@ function mapCharacteristicsToFields(
   });
 }
 
+function isValidImagePath(value: string) {
+  if (!value) return false;
+
+  const normalized = value.trim();
+
+  const isLocalPath = /^\/[\w\-./%]+$/i.test(normalized);
+  const isRemoteUrl = /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(normalized);
+
+  return isLocalPath || isRemoteUrl;
+}
+
+function validateForm(form: FormState): FormErrors {
+  const errors: FormErrors = {};
+
+  const title = form.title.trim();
+  const price = Number(form.price);
+  const stock = Number(form.stock);
+  const imageFront = form.imageFront.trim();
+  const imageBack = form.imageBack.trim();
+  const description = form.description.trim();
+
+  if (!title) {
+    errors.title = 'Вкажіть назву товару.';
+  } else if (title.length < 5) {
+    errors.title = 'Назва має містити щонайменше 5 символів.';
+  } else if (title.length > 120) {
+    errors.title = 'Назва не повинна перевищувати 120 символів.';
+  }
+
+  if (form.price === '') {
+    errors.price = 'Вкажіть ціну.';
+  } else if (!Number.isFinite(price)) {
+    errors.price = 'Ціна повинна бути числом.';
+  } else if (price <= 0) {
+    errors.price = 'Ціна повинна бути більшою за 0.';
+  } else if (price > 9999999) {
+    errors.price = 'Ціна занадто велика.';
+  }
+
+  if (!imageFront) {
+    errors.imageFront = 'Перше фото є обов’язковим.';
+  } else if (!isValidImagePath(imageFront)) {
+    errors.imageFront = 'Некоректний шлях або URL першого фото.';
+  }
+
+  if (imageBack && !isValidImagePath(imageBack)) {
+    errors.imageBack = 'Некоректний шлях або URL другого фото.';
+  }
+
+  if (form.stock === '') {
+    errors.stock = 'Вкажіть кількість в наявності.';
+  } else if (!Number.isFinite(stock)) {
+    errors.stock = 'Кількість повинна бути числом.';
+  } else if (!Number.isInteger(stock)) {
+    errors.stock = 'Кількість повинна бути цілим числом.';
+  } else if (stock < 0) {
+    errors.stock = 'Кількість не може бути меншою за 0.';
+  } else if (stock > 9999) {
+    errors.stock = 'Кількість занадто велика.';
+  }
+
+  const invalidStyles = form.styles.filter((style) => !styleOptions.includes(style));
+  if (invalidStyles.length > 0) {
+    errors.styles = 'Обрано некоректний стиль.';
+  }
+
+  if (description.length > 1000) {
+    errors.description = 'Опис не повинен перевищувати 1000 символів.';
+  }
+
+  const invalidCharacteristics = form.characteristics.filter(
+    (item) =>
+      !characteristicLabels.includes(item.label as (typeof characteristicLabels)[number]) ||
+      item.value.trim().length > 200
+  );
+
+  if (invalidCharacteristics.length > 0) {
+    errors.characteristics =
+      'Характеристики містять некоректні або занадто довгі значення.';
+  }
+
+  return errors;
+}
+
 export default function AdminAddProductForm() {
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState<FormState>(emptyForm);
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
@@ -150,13 +263,26 @@ export default function AdminAddProductForm() {
     setVisibleCount(INITIAL_VISIBLE_COUNT);
   }, [searchQuery]);
 
+  function clearFieldError(field: keyof FormErrors) {
+    setErrors((prev) => {
+      if (!prev[field]) return prev;
+      return { ...prev, [field]: undefined };
+    });
+  }
+
   function handleToggleStyle(style: string) {
-    setForm((prev) => ({
-      ...prev,
-      styles: prev.styles.includes(style)
+    setForm((prev) => {
+      const nextStyles = prev.styles.includes(style)
         ? prev.styles.filter((item) => item !== style)
-        : [...prev.styles, style],
-    }));
+        : [...prev.styles, style];
+
+      return {
+        ...prev,
+        styles: nextStyles,
+      };
+    });
+
+    clearFieldError('styles');
   }
 
   function handleCharacteristicChange(label: string, value: string) {
@@ -166,6 +292,8 @@ export default function AdminAddProductForm() {
         item.label === label ? { ...item, value } : item
       ),
     }));
+
+    clearFieldError('characteristics');
   }
 
   function resetForm() {
@@ -176,6 +304,7 @@ export default function AdminAddProductForm() {
         value: '',
       })),
     });
+    setErrors({});
     setEditingId(null);
   }
 
@@ -205,6 +334,7 @@ export default function AdminAddProductForm() {
       ),
     });
 
+    setErrors({});
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -251,18 +381,25 @@ export default function AdminAddProductForm() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    const nextErrors = validateForm(form);
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      triggerToast('Перевірте правильність заповнення форми.', 'error');
+      return;
+    }
+
     setIsLoading(true);
 
-    const images = [form.imageFront.trim(), form.imageBack.trim()].filter(Boolean);
-
     const payload = {
-      id: form.id,
-      title: form.title,
+      id: form.id.trim(),
+      title: form.title.trim(),
       price: Number(form.price),
-      images,
+      images: [form.imageFront.trim(), form.imageBack.trim()].filter(Boolean),
       imageFront: form.imageFront.trim(),
       imageBack: form.imageBack.trim(),
-      description: form.description,
+      description: form.description.trim(),
       type: form.type,
       styles: form.styles,
       stock: Number(form.stock),
@@ -275,29 +412,36 @@ export default function AdminAddProductForm() {
         .filter((item) => item.value),
     };
 
-    const response = await fetch('/api/products', {
-      method: editingId ? 'PATCH' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const response = await fetch('/api/products', {
+        method: editingId ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-    const data = await response.json();
-    setIsLoading(false);
+      const data = await response.json();
 
-    if (!response.ok) {
-      triggerToast(data.message || 'Не вдалося зберегти товар.', 'error');
-      return;
+      if (!response.ok) {
+        if (data?.errors && typeof data.errors === 'object') {
+          setErrors(data.errors);
+        }
+
+        triggerToast(data.message || 'Не вдалося зберегти товар.', 'error');
+        return;
+      }
+
+      const wasEditing = Boolean(editingId);
+
+      resetForm();
+      await loadProducts();
+
+      triggerToast(
+        wasEditing ? 'Товар успішно оновлено.' : 'Товар успішно додано.',
+        'success'
+      );
+    } finally {
+      setIsLoading(false);
     }
-
-    const wasEditing = Boolean(editingId);
-
-    resetForm();
-    await loadProducts();
-
-    triggerToast(
-      wasEditing ? 'Товар успішно оновлено.' : 'Товар успішно додано.',
-      'success'
-    );
   }
 
   const filteredProducts = useMemo(() => {
@@ -337,7 +481,7 @@ export default function AdminAddProductForm() {
       />
 
       <div className={styles.adminContent}>
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={handleSubmit} noValidate>
           <div className={styles.formHeader}>
             <h2 className={styles.sectionTitle}>
               {editingId ? 'Редагування товару' : 'Додавання товару'}
@@ -354,58 +498,86 @@ export default function AdminAddProductForm() {
             ) : null}
           </div>
 
+          {errors.general ? (
+            <p className={styles.fieldError}>{errors.general}</p>
+          ) : null}
+
           <div className={styles.grid}>
             <div className={styles.field}>
               <label>Назва</label>
               <input
-                value={form.title ?? ''}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                value={form.title}
+                onChange={(e) => {
+                  setForm({ ...form, title: e.target.value });
+                  clearFieldError('title');
+                }}
                 placeholder='Міжкімнатні двері "Doors" Smart - модель - C067'
               />
+              {errors.title ? <p className={styles.fieldError}>{errors.title}</p> : null}
             </div>
 
             <div className={styles.field}>
               <label>Ціна</label>
               <input
                 type="number"
-                value={form.price ?? ''}
-                onChange={(e) => setForm({ ...form, price: e.target.value })}
+                min="1"
+                value={form.price}
+                onChange={(e) => {
+                  setForm({ ...form, price: e.target.value });
+                  clearFieldError('price');
+                }}
                 placeholder="3064"
               />
+              {errors.price ? <p className={styles.fieldError}>{errors.price}</p> : null}
             </div>
 
             <div className={styles.field}>
               <label>Фото 1 (одна сторона)</label>
               <input
-                value={form.imageFront ?? ''}
-                onChange={(e) => setForm({ ...form, imageFront: e.target.value })}
+                value={form.imageFront}
+                onChange={(e) => {
+                  setForm({ ...form, imageFront: e.target.value });
+                  clearFieldError('imageFront');
+                  clearFieldError('images');
+                }}
                 placeholder="/images/doors/door-front.jpg"
               />
+              {errors.imageFront ? (
+                <p className={styles.fieldError}>{errors.imageFront}</p>
+              ) : null}
             </div>
 
             <div className={styles.field}>
               <label>Фото 2 (друга сторона)</label>
               <input
-                value={form.imageBack ?? ''}
-                onChange={(e) => setForm({ ...form, imageBack: e.target.value })}
+                value={form.imageBack}
+                onChange={(e) => {
+                  setForm({ ...form, imageBack: e.target.value });
+                  clearFieldError('imageBack');
+                }}
                 placeholder="/images/doors/door-back.jpg"
               />
+              {errors.imageBack ? (
+                <p className={styles.fieldError}>{errors.imageBack}</p>
+              ) : null}
             </div>
 
             <div className={styles.field}>
               <label>Тип</label>
               <select
-                value={form.type ?? 'apartment'}
-                onChange={(e) =>
+                value={form.type}
+                onChange={(e) => {
                   setForm({
                     ...form,
                     type: e.target.value as 'street' | 'apartment',
-                  })
-                }
+                  });
+                  clearFieldError('type');
+                }}
               >
                 <option value="apartment">Квартира</option>
                 <option value="street">Вулиця</option>
               </select>
+              {errors.type ? <p className={styles.fieldError}>{errors.type}</p> : null}
             </div>
 
             <div className={styles.field}>
@@ -413,12 +585,19 @@ export default function AdminAddProductForm() {
               <input
                 type="number"
                 min="0"
-                value={form.stock ?? ''}
-                onChange={(e) => setForm({ ...form, stock: e.target.value })}
+                step="1"
+                value={form.stock}
+                onChange={(e) => {
+                  setForm({ ...form, stock: e.target.value });
+                  clearFieldError('stock');
+                }}
                 placeholder="1"
               />
+              {errors.stock ? <p className={styles.fieldError}>{errors.stock}</p> : null}
             </div>
           </div>
+
+          {errors.images ? <p className={styles.fieldError}>{errors.images}</p> : null}
 
           <div className={styles.field}>
             <label>Стилі</label>
@@ -434,16 +613,23 @@ export default function AdminAddProductForm() {
                 </label>
               ))}
             </div>
+            {errors.styles ? <p className={styles.fieldError}>{errors.styles}</p> : null}
           </div>
 
           <div className={styles.field}>
             <label>Опис</label>
             <textarea
               rows={5}
-              value={form.description ?? ''}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              value={form.description}
+              onChange={(e) => {
+                setForm({ ...form, description: e.target.value });
+                clearFieldError('description');
+              }}
               placeholder="Короткий опис товару..."
             />
+            {errors.description ? (
+              <p className={styles.fieldError}>{errors.description}</p>
+            ) : null}
           </div>
 
           <div className={styles.field}>
@@ -454,7 +640,7 @@ export default function AdminAddProductForm() {
                   <label>{item.label}</label>
                   <input
                     type="text"
-                    value={item.value ?? ''}
+                    value={item.value}
                     onChange={(e) =>
                       handleCharacteristicChange(item.label, e.target.value)
                     }
@@ -463,6 +649,9 @@ export default function AdminAddProductForm() {
                 </div>
               ))}
             </div>
+            {errors.characteristics ? (
+              <p className={styles.fieldError}>{errors.characteristics}</p>
+            ) : null}
           </div>
 
           <label className={styles.hitRow}>

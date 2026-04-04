@@ -2,6 +2,74 @@ import { auth } from '@/auth';
 import { getProducts, saveProducts, type Product } from '@/lib/products';
 import { NextResponse } from 'next/server';
 
+const STYLE_OPTIONS = [
+  'ПОРТАЛА',
+  'ДПМ+МК',
+  'Комфорт NEW',
+  'Елегант NEW',
+  'Концепт',
+  'Модерн',
+  'ЛЮКС',
+  'ТРІО ЛАЙТ',
+  'ТРІО',
+  'ТРІО ТЕРМО',
+  'ТРІО MOTTURA',
+  'Квадро',
+  'Стріт',
+  'Стріт ТЕРМО',
+  'PROF GUARD',
+  'Протипожежні + Економ + Епік',
+  'РОЗПРОДАЖ',
+  'РОЗПРОДАЖ Преміум NEW',
+] as const;
+
+const CHARACTERISTIC_LABELS = [
+  'Короб',
+  'Полотно',
+  'Метал короб/полотно',
+  'МДФ',
+  'Теплоізоляція',
+  'Ущільнення',
+  'Замок верхній',
+  'Замок нижній',
+  'Ручка',
+  'Вічко',
+  'Антизрізи',
+  'Петлі',
+  'Лиштва',
+] as const;
+
+type ProductType = 'street' | 'apartment';
+
+type ValidationErrors = Partial<{
+  title: string;
+  price: string;
+  imageFront: string;
+  imageBack: string;
+  images: string;
+  type: string;
+  styles: string;
+  stock: string;
+  description: string;
+  characteristics: string;
+  general: string;
+}>;
+
+type NormalizedPayload = {
+  id?: string;
+  title: string;
+  price: number;
+  images: string[];
+  imageFront: string;
+  imageBack: string;
+  description: string;
+  type: ProductType;
+  styles: string[];
+  stock: number;
+  isHit: boolean;
+  characteristics: { label: string; value: string }[];
+};
+
 function transliterate(value: string) {
   const map: Record<string, string> = {
     а: 'a',
@@ -76,9 +144,27 @@ function createUniqueId(title: string, existingIds: string[]) {
   return candidate;
 }
 
+function isValidImagePath(value: string) {
+  if (!value) return false;
+
+  const normalized = value.trim();
+
+  const isLocalPath = /^\/[\w\-./%]+$/i.test(normalized);
+  const isRemoteUrl = /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(normalized);
+
+  return isLocalPath || isRemoteUrl;
+}
+
+function uniqueStrings(values: string[]) {
+  return [...new Set(values)];
+}
+
 function normalizeStyles(styles: unknown) {
   if (!Array.isArray(styles)) return [];
-  return styles.map((item) => String(item).trim()).filter(Boolean);
+
+  return uniqueStrings(
+    styles.map((item) => String(item).trim()).filter(Boolean)
+  );
 }
 
 function normalizeCharacteristics(characteristics: unknown) {
@@ -109,11 +195,155 @@ function normalizeImages(body: Record<string, unknown>) {
     ? directImages
     : [imageFront, imageBack].filter(Boolean);
 
-  if (images.length > 0) {
-    return images;
+  const normalizedImages = uniqueStrings(images);
+
+  if (normalizedImages.length > 0) {
+    return {
+      images: normalizedImages,
+      imageFront: normalizedImages[0] || '',
+      imageBack: normalizedImages[1] || '',
+    };
   }
 
-  return singleImage ? [singleImage] : [];
+  if (singleImage) {
+    return {
+      images: [singleImage],
+      imageFront: singleImage,
+      imageBack: '',
+    };
+  }
+
+  return {
+    images: [],
+    imageFront: '',
+    imageBack: '',
+  };
+}
+
+function validateAndNormalizeProduct(body: unknown): {
+  success: true;
+  data: NormalizedPayload;
+} | {
+  success: false;
+  errors: ValidationErrors;
+} {
+  const raw = (body ?? {}) as Record<string, unknown>;
+  const errors: ValidationErrors = {};
+
+  const title = String(raw.title || '').trim();
+  const priceRaw = raw.price;
+  const description = String(raw.description || '').trim();
+  const type: ProductType = raw.type === 'street' ? 'street' : 'apartment';
+  const styles = normalizeStyles(raw.styles);
+  const stockRaw = raw.stock;
+  const isHit = Boolean(raw.isHit);
+  const characteristicsRaw = normalizeCharacteristics(raw.characteristics);
+  const { images, imageFront, imageBack } = normalizeImages(raw);
+
+  if (!title) {
+    errors.title = 'Вкажіть назву товару.';
+  } else if (title.length < 5) {
+    errors.title = 'Назва має містити щонайменше 5 символів.';
+  } else if (title.length > 120) {
+    errors.title = 'Назва не повинна перевищувати 120 символів.';
+  }
+
+  const price = Number(priceRaw);
+  if (priceRaw === '' || priceRaw === null || priceRaw === undefined) {
+    errors.price = 'Вкажіть ціну.';
+  } else if (!Number.isFinite(price)) {
+    errors.price = 'Ціна повинна бути числом.';
+  } else if (price <= 0) {
+    errors.price = 'Ціна повинна бути більшою за 0.';
+  } else if (price > 9999999) {
+    errors.price = 'Ціна занадто велика.';
+  }
+
+  if (!imageFront) {
+    errors.imageFront = 'Перше фото є обов’язковим.';
+  } else if (!isValidImagePath(imageFront)) {
+    errors.imageFront = 'Некоректний шлях або URL першого фото.';
+  }
+
+  if (imageBack && !isValidImagePath(imageBack)) {
+    errors.imageBack = 'Некоректний шлях або URL другого фото.';
+  }
+
+  if (images.length === 0) {
+    errors.images = 'Додайте хоча б одне фото.';
+  }
+
+  if (raw.type !== 'street' && raw.type !== 'apartment') {
+    errors.type = 'Некоректний тип товару.';
+  }
+
+  const invalidStyles = styles.filter(
+    (style) => !STYLE_OPTIONS.includes(style as (typeof STYLE_OPTIONS)[number])
+  );
+
+  if (invalidStyles.length > 0) {
+    errors.styles = 'Містить некоректні стилі.';
+  }
+
+  const stock = Number(stockRaw);
+  if (stockRaw === '' || stockRaw === null || stockRaw === undefined) {
+    errors.stock = 'Вкажіть кількість в наявності.';
+  } else if (!Number.isFinite(stock)) {
+    errors.stock = 'Кількість повинна бути числом.';
+  } else if (!Number.isInteger(stock)) {
+    errors.stock = 'Кількість повинна бути цілим числом.';
+  } else if (stock < 0) {
+    errors.stock = 'Кількість не може бути меншою за 0.';
+  } else if (stock > 9999) {
+    errors.stock = 'Кількість занадто велика.';
+  }
+
+  if (description.length > 1000) {
+    errors.description = 'Опис не повинен перевищувати 1000 символів.';
+  }
+
+  const invalidCharacteristics = characteristicsRaw.filter(
+    (item) =>
+      !CHARACTERISTIC_LABELS.includes(
+        item.label as (typeof CHARACTERISTIC_LABELS)[number]
+      ) || item.value.length > 200
+  );
+
+  if (invalidCharacteristics.length > 0) {
+    errors.characteristics =
+      'Характеристики містять некоректні назви або занадто довгі значення.';
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  const characteristics = CHARACTERISTIC_LABELS.map((label) => {
+    const found = characteristicsRaw.find((item) => item.label === label);
+    return found ? { label, value: found.value } : null;
+  }).filter(Boolean) as { label: string; value: string }[];
+
+  return {
+    success: true,
+    data: {
+      id: String(raw.id || '').trim() || undefined,
+      title,
+      price,
+      images,
+      imageFront,
+      imageBack,
+      description,
+      type,
+      styles,
+      stock,
+      isHit,
+      characteristics,
+    },
+  };
+}
+
+function unauthorizedResponse() {
+  return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 }
 
 export async function GET() {
@@ -125,46 +355,41 @@ export async function POST(request: Request) {
   const session = await auth();
 
   if (!session?.user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const body = await request.json();
+  const validated = validateAndNormalizeProduct(body);
 
-  const title = String(body.title || '').trim();
-  const price = Number(body.price || 0);
-  const images = normalizeImages(body);
-  const description = String(body.description || '').trim();
-  const type = body.type === 'street' ? 'street' : 'apartment';
-  const styles = normalizeStyles(body.styles);
-  const stock = Number(body.stock || 0);
-  const isHit = Boolean(body.isHit);
-  const characteristics = normalizeCharacteristics(body.characteristics);
-
-  if (!title || !price || images.length === 0) {
+  if (!validated.success) {
     return NextResponse.json(
-      { message: 'Заповни хоча б назву, ціну і хоча б одне фото.' },
+      {
+        message: 'Перевірте правильність заповнення форми.',
+        errors: validated.errors,
+      },
       { status: 400 }
     );
   }
 
   const products = await getProducts();
+
   const id = createUniqueId(
-    title,
+    validated.data.title,
     products.map((item) => item.id)
   );
 
   const newProduct: Product = {
     id,
-    title,
-    price,
-    image: images[0],
-    images,
-    description,
-    type,
-    styles,
-    stock,
-    isHit,
-    characteristics,
+    title: validated.data.title,
+    price: validated.data.price,
+    image: validated.data.images[0],
+    images: validated.data.images,
+    description: validated.data.description,
+    type: validated.data.type,
+    styles: validated.data.styles,
+    stock: validated.data.stock,
+    isHit: validated.data.isHit,
+    characteristics: validated.data.characteristics,
   };
 
   products.unshift(newProduct);
@@ -177,15 +402,30 @@ export async function PATCH(request: Request) {
   const session = await auth();
 
   if (!session?.user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const body = await request.json();
-  const id = String(body.id || '').trim();
+  const id = String((body as Record<string, unknown>).id || '').trim();
 
   if (!id) {
     return NextResponse.json(
-      { message: 'Не передано ID товару.' },
+      {
+        message: 'Не передано ID товару.',
+        errors: { general: 'Не передано ID товару.' },
+      },
+      { status: 400 }
+    );
+  }
+
+  const validated = validateAndNormalizeProduct(body);
+
+  if (!validated.success) {
+    return NextResponse.json(
+      {
+        message: 'Перевірте правильність заповнення форми.',
+        errors: validated.errors,
+      },
       { status: 400 }
     );
   }
@@ -195,40 +435,26 @@ export async function PATCH(request: Request) {
 
   if (productIndex === -1) {
     return NextResponse.json(
-      { message: 'Товар не знайдено.' },
+      {
+        message: 'Товар не знайдено.',
+        errors: { general: 'Товар не знайдено.' },
+      },
       { status: 404 }
-    );
-  }
-
-  const title = String(body.title || '').trim();
-  const price = Number(body.price || 0);
-  const images = normalizeImages(body);
-  const description = String(body.description || '').trim();
-  const type = body.type === 'street' ? 'street' : 'apartment';
-  const styles = normalizeStyles(body.styles);
-  const stock = Number(body.stock || 0);
-  const isHit = Boolean(body.isHit);
-  const characteristics = normalizeCharacteristics(body.characteristics);
-
-  if (!title || !price || images.length === 0) {
-    return NextResponse.json(
-      { message: 'Заповни хоча б назву, ціну і хоча б одне фото.' },
-      { status: 400 }
     );
   }
 
   products[productIndex] = {
     ...products[productIndex],
-    title,
-    price,
-    image: images[0],
-    images,
-    description,
-    type,
-    styles,
-    stock,
-    isHit,
-    characteristics,
+    title: validated.data.title,
+    price: validated.data.price,
+    image: validated.data.images[0],
+    images: validated.data.images,
+    description: validated.data.description,
+    type: validated.data.type,
+    styles: validated.data.styles,
+    stock: validated.data.stock,
+    isHit: validated.data.isHit,
+    characteristics: validated.data.characteristics,
   };
 
   await saveProducts(products);
@@ -240,7 +466,7 @@ export async function DELETE(request: Request) {
   const session = await auth();
 
   if (!session?.user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const body = await request.json();
