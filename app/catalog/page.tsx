@@ -157,7 +157,7 @@ export default function CatalogPage() {
   }, [products]);
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    const result = products.filter((product) => {
       const matchesType =
         selectedTypes.length === 0 || selectedTypes.includes(product.type);
 
@@ -177,6 +177,17 @@ export default function CatalogPage() {
       const matchesPrice = product.price >= priceFrom && product.price <= priceTo;
 
       return matchesType && matchesStyle && matchesPrice;
+    });
+
+    return [...result].sort((a, b) => {
+      const aOut = a.stock <= 0 ? 1 : 0;
+      const bOut = b.stock <= 0 ? 1 : 0;
+
+      if (aOut !== bOut) {
+        return aOut - bOut;
+      }
+
+      return 0;
     });
   }, [products, selectedTypes, selectedStyles, priceFrom, priceTo]);
 
@@ -437,6 +448,7 @@ export default function CatalogPage() {
                     title={product.title}
                     price={product.price}
                     image={product.image}
+                    stock={product.stock}
                     isHit={product.isHit}
                   />
                 ))}

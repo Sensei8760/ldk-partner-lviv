@@ -7,6 +7,7 @@ type CatalogCardProps = {
   title: string;
   price: number;
   image: string;
+  stock: number;
   isHit?: boolean;
 };
 
@@ -15,10 +16,13 @@ export default function CatalogCard({
   title,
   price,
   image,
+  stock,
   isHit = false,
 }: CatalogCardProps) {
+  const isOutOfStock = stock <= 0;
+
   return (
-    <article className={styles.card}>
+    <article className={`${styles.card} ${isOutOfStock ? styles.cardOutOfStock : ''}`}>
       {isHit && <span className={styles.badge}>ХІТ</span>}
 
       <Link href={`/catalog/${id}`} className={styles.imageLink}>
@@ -27,7 +31,7 @@ export default function CatalogCard({
             src={image}
             alt={title}
             fill
-            className={styles.image}
+            className={`${styles.image} ${isOutOfStock ? styles.imageOutOfStock : ''}`}
             sizes="(max-width: 768px) 100vw, 212px"
           />
         </div>
@@ -39,9 +43,18 @@ export default function CatalogCard({
         </Link>
 
         <div className={styles.bottom}>
-          <p className={styles.price}>
-            {price} <span>грн</span>
-          </p>
+          <div className={styles.meta}>
+            {isOutOfStock ? (
+              <p className={styles.outOfStock}>Немає в наявності</p>
+            ) : (
+              <>
+                <p className={styles.price}>
+                  {price} <span>грн</span>
+                </p>
+                <p className={styles.stock}>В наявності: {stock}</p>
+              </>
+            )}
+          </div>
 
           <Link
             href={`/catalog/${id}`}

@@ -9,6 +9,10 @@
     min-height: 100%;
 }
 
+.cardOutOfStock {
+    opacity: 0.92;
+}
+
 .badge {
     position: absolute;
     top: 14px;
@@ -36,6 +40,12 @@
 
 .image {
     object-fit: contain;
+    transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.imageOutOfStock {
+    filter: grayscale(100%);
+    opacity: 0.7;
 }
 
 .content {
@@ -65,6 +75,12 @@
     gap: 16px;
 }
 
+.meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .price {
     margin: 0;
     font-size: 32px;
@@ -76,6 +92,21 @@
 .price span {
     font-size: 18px;
     font-weight: 400;
+}
+
+.stock {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.2;
+    color: #5e5e5e;
+}
+
+.outOfStock {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #8a8a8a;
 }
 
 .cartButton {
