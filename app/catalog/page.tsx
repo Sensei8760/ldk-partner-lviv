@@ -44,9 +44,14 @@ const styleItems = [
 ];
 
 const VISIBLE_COUNT = 5;
+const MIN_GAP = 0;
 
 function normalizeValue(value: string) {
   return value.trim().toLowerCase();
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
 }
 
 export default function CatalogPage() {
@@ -56,6 +61,11 @@ export default function CatalogPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorText, setErrorText] = useState('');
+
+  const [priceFrom, setPriceFrom] = useState(0);
+  const [priceTo, setPriceTo] = useState(0);
+  const [priceFromInput, setPriceFromInput] = useState('');
+  const [priceToInput, setPriceToInput] = useState('');
 
   useEffect(() => {
     let isMounted = true;
@@ -101,6 +111,32 @@ export default function CatalogPage() {
     ? styleItems
     : styleItems.slice(0, VISIBLE_COUNT);
 
+  const priceBounds = useMemo(() => {
+    if (products.length === 0) {
+      return { min: 0, max: 0 };
+    }
+
+    const prices = products
+      .map((product) => Number(product.price))
+      .filter((price) => Number.isFinite(price));
+
+    if (prices.length === 0) {
+      return { min: 0, max: 0 };
+    }
+
+    return {
+      min: Math.min(...prices),
+      max: Math.max(...prices),
+    };
+  }, [products]);
+
+  useEffect(() => {
+    setPriceFrom(priceBounds.min);
+    setPriceTo(priceBounds.max);
+    setPriceFromInput(String(priceBounds.min));
+    setPriceToInput(String(priceBounds.max));
+  }, [priceBounds.min, priceBounds.max]);
+
   const typeCounts = useMemo(() => {
     return {
       street: products.filter((product) => product.type === 'street').length,
@@ -138,9 +174,11 @@ export default function CatalogPage() {
             : false;
         });
 
-      return matchesType && matchesStyle;
+      const matchesPrice = product.price >= priceFrom && product.price <= priceTo;
+
+      return matchesType && matchesStyle && matchesPrice;
     });
-  }, [products, selectedTypes, selectedStyles]);
+  }, [products, selectedTypes, selectedStyles, priceFrom, priceTo]);
 
   const handleToggleType = (id: string) => {
     setSelectedTypes((prev) =>
@@ -153,6 +191,66 @@ export default function CatalogPage() {
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
+
+  const handlePriceFromSlider = (value: number) => {
+    const nextFrom = clamp(value, priceBounds.min, priceTo - MIN_GAP);
+    setPriceFrom(nextFrom);
+    setPriceFromInput(String(nextFrom));
+  };
+
+  const handlePriceToSlider = (value: number) => {
+    const nextTo = clamp(value, priceFrom + MIN_GAP, priceBounds.max);
+    setPriceTo(nextTo);
+    setPriceToInput(String(nextTo));
+  };
+
+  const handlePriceFromInputChange = (value: string) => {
+    const digitsOnly = value.replace(/[^\d]/g, '');
+    setPriceFromInput(digitsOnly);
+  };
+
+  const handlePriceToInputChange = (value: string) => {
+    const digitsOnly = value.replace(/[^\d]/g, '');
+    setPriceToInput(digitsOnly);
+  };
+
+  const applyPriceFromInput = () => {
+    if (priceFromInput === '') {
+      setPriceFrom(priceBounds.min);
+      setPriceFromInput(String(priceBounds.min));
+      return;
+    }
+
+    const numericValue = Number(priceFromInput);
+    const nextFrom = clamp(numericValue, priceBounds.min, priceTo - MIN_GAP);
+
+    setPriceFrom(nextFrom);
+    setPriceFromInput(String(nextFrom));
+  };
+
+  const applyPriceToInput = () => {
+    if (priceToInput === '') {
+      setPriceTo(priceBounds.max);
+      setPriceToInput(String(priceBounds.max));
+      return;
+    }
+
+    const numericValue = Number(priceToInput);
+    const nextTo = clamp(numericValue, priceFrom + MIN_GAP, priceBounds.max);
+
+    setPriceTo(nextTo);
+    setPriceToInput(String(nextTo));
+  };
+
+  const sliderRangePercent =
+    priceBounds.max > priceBounds.min
+      ? ((priceTo - priceFrom) / (priceBounds.max - priceBounds.min)) * 100
+      : 0;
+
+  const sliderLeftPercent =
+    priceBounds.max > priceBounds.min
+      ? ((priceFrom - priceBounds.min) / (priceBounds.max - priceBounds.min)) * 100
+      : 0;
 
   return (
     <main className={styles.catalogPage}>
@@ -198,6 +296,75 @@ export default function CatalogPage() {
                     </label>
                   );
                 })}
+              </div>
+            </div>
+
+            <div className={styles.filterGroup}>
+              <h3 className={styles.groupTitle}>Ціна, грн</h3>
+
+              <div className={styles.priceInputs}>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={priceFromInput}
+                  onChange={(e) => handlePriceFromInputChange(e.target.value)}
+                  onBlur={applyPriceFromInput}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      applyPriceFromInput();
+                    }
+                  }}
+                  className={styles.priceInput}
+                  placeholder="Від"
+                />
+
+                <span className={styles.priceDivider}>-</span>
+
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={priceToInput}
+                  onChange={(e) => handlePriceToInputChange(e.target.value)}
+                  onBlur={applyPriceToInput}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      applyPriceToInput();
+                    }
+                  }}
+                  className={styles.priceInput}
+                  placeholder="До"
+                />
+              </div>
+
+              <div className={styles.rangeWrapper}>
+                <div className={styles.rangeTrack}></div>
+                <div
+                  className={styles.rangeProgress}
+                  style={{
+                    left: `${sliderLeftPercent}%`,
+                    width: `${sliderRangePercent}%`,
+                  }}
+                ></div>
+
+                <input
+                  type="range"
+                  min={priceBounds.min}
+                  max={priceBounds.max}
+                  value={priceFrom}
+                  onChange={(e) => handlePriceFromSlider(Number(e.target.value))}
+                  className={`${styles.rangeInput} ${styles.rangeInputMin}`}
+                />
+
+                <input
+                  type="range"
+                  min={priceBounds.min}
+                  max={priceBounds.max}
+                  value={priceTo}
+                  onChange={(e) => handlePriceToSlider(Number(e.target.value))}
+                  className={`${styles.rangeInput} ${styles.rangeInputMax}`}
+                />
               </div>
             </div>
 
