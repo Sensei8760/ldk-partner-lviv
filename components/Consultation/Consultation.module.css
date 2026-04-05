@@ -1,13 +1,13 @@
 .section {
     width: 100%;
     background-color: #181818;
-    padding: 64px 0;
+    padding: 74px 0;
 }
 
 .container {
     max-width: 1440px;
     margin: 0 auto;
-    padding: 0 46px;
+    padding: 0 61px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,25 +19,26 @@
     color: #fff;
     font-family: var(--second-family);
     font-weight: 600;
-    font-size: 48px;
-    line-height: 117%;
     letter-spacing: 0.01em;
+        font-size: 40px;
+        line-height: 130%;
 }
 
 .subtitle {
-    margin-bottom: 40px;
+    margin-bottom: 34px;
     text-align: center;
     color: #fff;
     font-family: var(--font-family);
     font-weight: 400;
-    font-size: 28px;
     line-height: 125%;
     letter-spacing: 0.01em;
+        font-size: 22px;
+
 }
 
 .button {
-    margin-bottom: 40px;
-    min-width: 382px;
+    margin-bottom: 34px;
+    min-width: 337px;
     height: 70px;
     padding: 20px 30px;
     border-radius: 16px;
@@ -49,11 +50,11 @@
     justify-content: center;
     gap: 10px;
     font-family: var(--font-family);
-    font-weight: 400;
-    font-size: 24px;
-    line-height: 125%;
     letter-spacing: 0.01em;
     transition: background-color 0.2s ease;
+        font-weight: 500;
+        font-size: 20px;
+        line-height: 120%;
 }
 
 .button:hover,
