@@ -1,0 +1,53 @@
+.button {
+    border: 1px solid #d8d8d8;
+    background: #ffffff;
+    color: #8c8c8c;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    padding: 0;
+}
+
+.button:hover {
+    transform: translateY(-1px);
+    border-color: #0a9b43;
+    color: #0a9b43;
+}
+
+.active {
+    color: #f4b400;
+    border-color: #f4b400;
+    background: #fffaf0;
+}
+
+.sm {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 20px;
+}
+
+.md {
+    min-width: 180px;
+    height: 52px;
+    padding: 0 18px;
+    border-radius: 14px;
+    font-size: 18px;
+}
+
+.star {
+    line-height: 1;
+}
+
+.text {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111111;
+}
+
+.active .text {
+    color: #111111;
+}

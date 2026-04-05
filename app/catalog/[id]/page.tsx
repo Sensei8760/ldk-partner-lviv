@@ -4,6 +4,7 @@ import {
   getProductByIdCached,
 } from '@/lib/products';
 import ProductGallery from './ProductGallery';
+import ProductActions from './ProductActions';
 import styles from './ProductPage.module.css';
 
 type PageProps = {
@@ -56,6 +57,8 @@ export default async function ProductPage({ params }: PageProps) {
                 </>
               )}
             </p>
+
+            <ProductActions productId={product.id} />
 
             {product.description ? (
               <p className={styles.description}>{product.description}</p>

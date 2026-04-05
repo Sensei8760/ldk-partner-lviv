@@ -8,6 +8,7 @@ import {
   FALLBACK_PRODUCT_IMAGE,
   getPrimaryProductImage,
 } from '@/utils/productImages';
+import FavoriteButton from '@/components/ui/FavoriteButton';
 
 type CatalogCardProps = {
   id: string;
@@ -34,6 +35,10 @@ export default function CatalogCard({
   return (
     <article className={`${styles.card} ${isOutOfStock ? styles.cardOutOfStock : ''}`}>
       {isHit && <span className={styles.badge}>ХІТ</span>}
+
+      <div className={styles.favoriteButtonWrap}>
+        <FavoriteButton productId={id} size="sm" />
+      </div>
 
       <Link href={`/catalog/${id}`} className={styles.imageLink}>
         <div className={styles.imageWrapper}>

@@ -1,14 +1,15 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CatalogCard from '@/components/catalogCard/CatalogCard';
 import styles from '@/app/catalog/CatalogPage.module.css';
 import type { Product } from '@/lib/products';
+import { getFavoriteIds } from '@/store/favorites';
 
 const typeItems = [
   { id: 'street', label: 'Вулиця' },
   { id: 'apartment', label: 'Квартира' },
-];
+] as const;
 
 const styleItems = [
   { id: 'portala', label: 'ПОРТАЛА' },
@@ -34,6 +35,8 @@ const styleItems = [
 const VISIBLE_COUNT = 5;
 const MIN_GAP = 0;
 const PRODUCTS_STEP = 9;
+
+type SortValue = 'price-asc' | 'price-desc';
 
 function normalizeValue(value: string) {
   return value.trim().toLowerCase();
@@ -77,6 +80,26 @@ export default function CatalogClient({
   const [priceFromInput, setPriceFromInput] = useState(String(priceBounds.min));
   const [priceToInput, setPriceToInput] = useState(String(priceBounds.max));
   const [visibleProductsCount, setVisibleProductsCount] = useState(PRODUCTS_STEP);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<SortValue>('price-asc');
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+
+  useEffect(() => {
+    const syncFavorites = () => {
+      setFavoriteIds(getFavoriteIds());
+    };
+
+    syncFavorites();
+
+    window.addEventListener('favorites-changed', syncFavorites);
+    window.addEventListener('storage', syncFavorites);
+
+    return () => {
+      window.removeEventListener('favorites-changed', syncFavorites);
+      window.removeEventListener('storage', syncFavorites);
+    };
+  }, []);
 
   const visibleStyles = showAllStyles ? styleItems : styleItems.slice(0, VISIBLE_COUNT);
 
@@ -100,6 +123,8 @@ export default function CatalogClient({
   }, [products]);
 
   const filteredProducts = useMemo(() => {
+    const normalizedSearch = searchQuery.trim().toLowerCase();
+
     const result = products.filter((product) => {
       const matchesType =
         selectedTypes.length === 0 || selectedTypes.includes(product.type);
@@ -119,10 +144,23 @@ export default function CatalogClient({
 
       const matchesPrice = product.price >= priceFrom && product.price <= priceTo;
 
-      return matchesType && matchesStyle && matchesPrice;
+      const matchesSearch =
+        normalizedSearch.length === 0 ||
+        product.title.toLowerCase().includes(normalizedSearch);
+
+      const matchesFavorites =
+        !showOnlyFavorites || favoriteIds.includes(product.id);
+
+      return (
+        matchesType &&
+        matchesStyle &&
+        matchesPrice &&
+        matchesSearch &&
+        matchesFavorites
+      );
     });
 
-    return [...result].sort((a, b) => {
+    const sorted = [...result].sort((a, b) => {
       const aOut = a.stock <= 0 ? 1 : 0;
       const bOut = b.stock <= 0 ? 1 : 0;
 
@@ -130,9 +168,25 @@ export default function CatalogClient({
         return aOut - bOut;
       }
 
-      return 0;
+      if (sortBy === 'price-desc') {
+        return b.price - a.price;
+      }
+
+      return a.price - b.price;
     });
-  }, [products, selectedTypes, selectedStyles, priceFrom, priceTo]);
+
+    return sorted;
+  }, [
+    products,
+    selectedTypes,
+    selectedStyles,
+    priceFrom,
+    priceTo,
+    searchQuery,
+    showOnlyFavorites,
+    favoriteIds,
+    sortBy,
+  ]);
 
   const visibleProducts = filteredProducts.slice(0, visibleProductsCount);
   const hasMoreProducts = visibleProductsCount < filteredProducts.length;
@@ -389,12 +443,59 @@ export default function CatalogClient({
       </aside>
 
       <section className={styles.products}>
+        <div className={styles.topBar}>
+          <div className={styles.searchWrap}>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                resetVisibleCount();
+              }}
+              className={styles.searchInput}
+              placeholder="Пошук по назві"
+              aria-label="Пошук дверей по назві"
+            />
+          </div>
+
+          <div className={styles.topBarActions}>
+            <select
+              value={sortBy}
+              onChange={(e) => {
+                setSortBy(e.target.value as SortValue);
+                resetVisibleCount();
+              }}
+              className={styles.sortSelect}
+              aria-label="Сортування товарів"
+            >
+              <option value="price-asc">Від дешевих до дорогих</option>
+              <option value="price-desc">Від дорогих до дешевих</option>
+            </select>
+
+            <button
+              type="button"
+              className={`${styles.favoriteFilterButton} ${
+                showOnlyFavorites ? styles.favoriteFilterButtonActive : ''
+              }`}
+              onClick={() => {
+                setShowOnlyFavorites((prev) => !prev);
+                resetVisibleCount();
+              }}
+              aria-label="Показати збережені двері"
+              title="Показати збережені двері"
+            >
+              <span className={styles.favoriteFilterStar}>★</span>
+              <span className={styles.favoriteFilterCount}>{favoriteIds.length}</span>
+            </button>
+          </div>
+        </div>
+
         {filteredProducts.length === 0 ? (
           <div className={styles.stateBox}>
             <h2 className={styles.stateTitle}>Товарів не знайдено</h2>
             <p className={styles.stateText}>
-              За вибраними фільтрами немає відповідних дверей. Спробуйте змінити
-              параметри пошуку.
+              За вибраними параметрами немає відповідних дверей. Спробуйте змінити
+              фільтри, пошук або вимкнути показ тільки збережених.
             </p>
           </div>
         ) : (

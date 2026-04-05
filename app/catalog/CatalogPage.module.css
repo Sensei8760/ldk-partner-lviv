@@ -140,7 +140,9 @@
     transition: border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
-.priceInput:focus {
+.priceInput:focus,
+.searchInput:focus,
+.sortSelect:focus {
     border-color: #0a9b43;
     box-shadow: 0 0 0 3px rgba(10, 155, 67, 0.08);
 }
@@ -263,6 +265,102 @@
 
 .products {
     min-width: 0;
+}
+
+.topBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.searchWrap {
+    flex: 1 1 360px;
+    min-width: 280px;
+}
+
+.searchInput {
+    width: 100%;
+    height: 52px;
+    border: 1px solid #d4d4d4;
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 0 16px;
+    font-size: 16px;
+    color: #111111;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.topBarActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.sortSelect {
+    min-width: 250px;
+    height: 52px;
+    border: 1px solid #d4d4d4;
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 0 42px 0 16px;
+    font-size: 16px;
+    color: #111111;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image:
+        linear-gradient(45deg, transparent 50%, #666666 50%),
+        linear-gradient(135deg, #666666 50%, transparent 50%);
+    background-position:
+        calc(100% - 20px) calc(50% - 4px),
+        calc(100% - 14px) calc(50% - 4px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+}
+
+.favoriteFilterButton {
+    min-width: 62px;
+    height: 52px;
+    border: 1px solid #d4d4d4;
+    border-radius: 12px;
+    background: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.favoriteFilterButton:hover {
+    transform: translateY(-1px);
+    border-color: #f4b400;
+}
+
+.favoriteFilterButtonActive {
+    border-color: #f4b400;
+    background: #fffaf0;
+}
+
+.favoriteFilterStar {
+    font-size: 22px;
+    line-height: 1;
+    color: #f4b400;
+}
+
+.favoriteFilterCount {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111111;
+    min-width: 14px;
+    text-align: center;
 }
 
 .grid {
@@ -402,6 +500,25 @@
     .showMoreButton,
     .priceInput {
         font-size: 15px;
+    }
+
+    .topBar {
+        align-items: stretch;
+    }
+
+    .searchWrap {
+        min-width: 100%;
+    }
+
+    .topBarActions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr auto;
+    }
+
+    .sortSelect {
+        min-width: 0;
+        width: 100%;
     }
 
     .grid {
