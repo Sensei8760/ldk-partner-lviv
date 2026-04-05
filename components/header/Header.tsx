@@ -1,5 +1,5 @@
-import Link from "next/link";
-import styles from "./Header.module.css";
+import Link from 'next/link';
+import styles from './Header.module.css';
 
 export default function Header() {
   return (
@@ -24,16 +24,6 @@ export default function Header() {
             Контакти
           </Link>
         </nav>
-
-        <Link
-          href="/login-staff"
-          className={styles.userLink}
-          aria-label="Вхід для персоналу"
-        >
-          <svg className={styles.userIcon}>
-            <use href="/icons/symbol-defs.svg#icon-fi-bs-user" />
-          </svg>
-        </Link>
       </div>
     </header>
   );

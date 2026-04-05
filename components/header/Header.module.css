@@ -1,16 +1,18 @@
 .header {
     width: 100%;
-    background-color: #0C0F0E;
-    min-height: 96px;
+    background-color: #050B09;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .container {
     max-width: 1440px;
-    min-height: 96px;
+    height: 80px;
     margin: 0 auto;
-    padding: 0 48px;
+    padding: 0 68.5px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 32px;
 }
 
 .logoLink {
@@ -24,135 +26,106 @@
 
 .logo {
     display: block;
-    width: 103px;
-    height: 76px;
+    width: 93px;
+    height: 69px;
     fill: currentColor;
     flex: 0 0 auto;
 }
 
 .nav {
-    margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 48px;
+    gap: 72px;
+    margin-left: auto;
 }
 
 .navLink {
     color: #ffffff;
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, opacity 0.2s ease;
+    white-space: nowrap;
     font-family: var(--font-family);
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 129%;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 140%;
 }
 
 .navLink:hover,
-.navLink:focus-visible,
-.userLink:hover,
-.userLink:focus-visible {
+.navLink:focus-visible {
     color: #13833f;
 }
 
-.navLink:active,
-.userLink:active {
+.navLink:active {
     color: #0B5328;
 }
 
-.userLink {
-    margin-left: 56px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    text-decoration: none;
-    flex-shrink: 0;
-    transition: color 0.2s ease;
-}
-
-.userIcon {
-    display: block;
-    width: 24px;
-    height: 24px;
-    fill: currentColor;
-    flex: 0 0 auto;
+.activeLink {
+    color: #13833f;
 }
 
 @media (max-width: 1024px) {
-    .header {
-        min-height: 84px;
+    .container {
+        height: 76px;
+        padding: 0 32px;
     }
 
-    .container {
-        min-height: 84px;
-        padding: 0 24px;
+    .logo {
+        width: 80px;
+        height: 46px;
     }
 
     .nav {
-        gap: 32px;
+        gap: 40px;
     }
 
-    .userLink {
-        margin-left: 32px;
+    .navLink {
+        font-size: 16px;
     }
 }
 
 @media (max-width: 768px) {
-    .header {
-        min-height: 72px;
-    }
-
     .container {
-        min-height: 72px;
-        padding: 0 16px;
+        height: 72px;
+        padding: 0 20px;
+        gap: 20px;
     }
 
     .logo {
         width: 72px;
-        height: 38px;
+        height: 42px;
     }
 
     .nav {
-        gap: 20px;
+        gap: 24px;
     }
 
     .navLink {
         font-size: 14px;
     }
-
-    .userLink {
-        margin-left: 20px;
-    }
-
-    .userIcon {
-        width: 22px;
-        height: 22px;
-    }
 }
 
 @media (max-width: 560px) {
     .container {
-        justify-content: space-between;
+        height: auto;
+        min-height: 72px;
+        padding: 14px 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .logoLink {
+        width: 100%;
     }
 
     .nav {
-        gap: 14px;
-        margin-left: 20px;
+        width: 100%;
+        margin-left: 0;
+        justify-content: center;
+        gap: 18px;
+        flex-wrap: wrap;
     }
 
     .navLink {
         font-size: 13px;
     }
-
-    .userLink {
-        margin-left: 14px;
-    }
-}
-
-.activeLink {
-    color: #0B5328;
-}
-
-.activeUser {
-    color: #0B5328;
 }
