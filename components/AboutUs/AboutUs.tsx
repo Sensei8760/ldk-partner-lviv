@@ -1,5 +1,5 @@
-import Image from "next/image";
-import styles from "./AboutUs.module.css";
+import Image from 'next/image';
+import styles from './AboutUs.module.css';
 
 export default function AboutUs() {
   return (
@@ -8,27 +8,36 @@ export default function AboutUs() {
         <div className={styles.content}>
           <h2 className={styles.title}>Про нас</h2>
 
-          <p className={styles.text}>
-            Ми допомагаємо обрати двері, які ідеально
-            <br />
-            доповнять ваш інтер’єр.
-            <br />
-            Багаторічний досвід роботи у Львові дозволяє нам
-            <br />
-            пропонувати перевірені рішення, які поєднують
-            <br />
-            якість, функціональність і сучасний дизайн.
-          </p>
+          <div className={styles.textBlock}>
+            <p className={styles.text}>
+              LDK Partner забезпечує повний цикл робіт із дверними рішеннями у
+              Львові. Ми беремо на себе підбір, постачання, монтаж і сервісний
+              супровід, щоб ви отримали готовий результат без зайвих витрат часу
+              та складної координації.
+            </p>
+
+            <p className={styles.text}>
+              Працюємо з вхідними, міжкімнатними, технічними та протипожежними
+              дверима. Підбираємо рішення, що поєднують надійність,
+              функціональність і сучасний дизайн для житлових і комерційних
+              просторів.
+            </p>
+
+            <p className={styles.text}>
+              Завдяки досвіду та злагодженим процесам забезпечуємо стабільну
+              якість, дотримання термінів і комфортну співпрацю на кожному етапі
+              реалізації проєкту.
+            </p>
+          </div>
         </div>
 
         <div className={styles.imageWrap}>
           <Image
             src="/images/image-about-us.jpg"
-            alt="Інтер’єр із дверима"
+            alt="Коридор з установленими дверима"
             className={styles.image}
-            width={432}
-            height={566}
-            priority={false}
+            fill
+            sizes="(max-width: 900px) 100vw, 560px"
           />
         </div>
       </div>
