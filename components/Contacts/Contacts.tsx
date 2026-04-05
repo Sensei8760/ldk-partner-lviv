@@ -80,7 +80,7 @@ export default function Contacts() {
         <div className={styles.mapWrap}>
           <iframe
             className={styles.mapFrame}
-            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d939.9220725307831!2d24.062654200611696!3d49.81344968492867!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNDnCsDQ4JzQ4LjUiTiAyNMKwMDMnNDguNyJF!5e0!3m2!1suk!2sua!4v1775074696725!5m2!1suk!2sua"
+            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1082.4619379653548!2d24.062414726623626!3d49.81346110489668!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473ae986227e3bb5%3A0x54732002e82b48c5!2zTERLIFBhcnRuZXIgfCDQm9GM0LLRltCyIHwg0JLRhdGW0LTQvdGWINGC0LAg0LzRltC20LrRltC80L3QsNGC0L3RliDQtNCy0LXRgNGWINCi0JwgIlBvcnRhbGEi!5e0!3m2!1suk!2sua!4v1775328545627!5m2!1suk!2sua"
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
