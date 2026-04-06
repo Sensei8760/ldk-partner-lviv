@@ -1,13 +1,34 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import styles from './Footer.module.css';
 
+const EMAIL = 'ldk.partner.lviv@gmail.com';
+const MAPS_LINK = 'https://maps.app.goo.gl/9NGfCBWctETQbjSC7';
+
 const Footer = () => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setCopied(true);
+
+      window.setTimeout(() => {
+        setCopied(false);
+      }, 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
         <div className={styles.logoBlock}>
           <Link href="/" className={styles.logoLink} aria-label="Перейти на головну">
-            <svg className={styles.logo}>
+            <svg className={styles.logo} aria-hidden="true">
               <use href="/icons/symbol-defs.svg#icon-logo" />
             </svg>
           </Link>
@@ -17,7 +38,10 @@ const Footer = () => {
 
         <div className={styles.content}>
           <div className={styles.column}>
-            <h3 className={styles.title}>Каталог</h3>
+            <Link href="/catalog" className={styles.titleLink}>
+              Каталог
+            </Link>
+
             <ul className={styles.list}>
               <li>
                 <Link href="/catalog/vhidni-dveri" className={styles.link}>
@@ -31,14 +55,28 @@ const Footer = () => {
               </li>
               <li>
                 <Link href="/sale" className={styles.link}>
-                  Акції
+                  Знижки
                 </Link>
               </li>
             </ul>
           </div>
 
           <div className={styles.column}>
+            <h3 className={styles.title}>Адреса</h3>
+
+            <a
+              href={MAPS_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.link}
+            >
+              вул. Зелена, 149 б
+            </a>
+          </div>
+
+          <div className={styles.column}>
             <h3 className={styles.title}>Графік роботи</h3>
+
             <ul className={styles.list}>
               <li className={styles.text}>Пн-пт: 9:00-18:00</li>
               <li className={styles.text}>Сб: 10:00-15:00</li>
@@ -47,8 +85,27 @@ const Footer = () => {
           </div>
 
           <div className={styles.column}>
-            <h3 className={styles.title}>Адреса</h3>
-            <p className={styles.text}>вул. Зелена, 149 б</p>
+            <h3 className={styles.title}>Ел. пошта:</h3>
+
+            <div className={styles.emailWrap}>
+              <button
+                type="button"
+                className={styles.emailButton}
+                onClick={handleCopyEmail}
+                aria-label="Скопіювати електронну пошту"
+                title="Скопіювати електронну пошту"
+              >
+                {EMAIL}
+              </button>
+
+              <span
+                className={`${styles.copyStatus} ${
+                  copied ? styles.copyStatusVisible : ''
+                }`}
+              >
+                Скопійовано
+              </span>
+            </div>
           </div>
 
           <div className={styles.column}>
@@ -64,31 +121,23 @@ const Footer = () => {
             </div>
 
             <div className={styles.socials}>
-              <a
-                href="https://t.me/"
-                target="_blank"
-                rel="noreferrer"
-                className={styles.social}
-                aria-label="Telegram"
-              >
-                TG
-              </a>
+              <Link href="#" className={styles.socialLink} aria-label="Telegram">
+                <svg
+                  className={`${styles.socialIcon} ${styles.telegramIcon}`}
+                  aria-hidden="true"
+                >
+                  <use href="/icons/symbol-defs.svg?v=6#icon-Vector1" />
+                </svg>
+              </Link>
 
-              <a
-                href="viber://chat?number=%2B380989445599"
-                className={styles.social}
-                aria-label="Viber"
-              >
-                VB
-              </a>
-
-              <a
-                href="mailto:example@gmail.com"
-                className={styles.social}
-                aria-label="Email"
-              >
-                @
-              </a>
+              <Link href="#" className={styles.socialLink} aria-label="Viber">
+                <svg
+                  className={`${styles.socialIcon} ${styles.viberIcon}`}
+                  aria-hidden="true"
+                >
+                  <use href="/icons/symbol-defs.svg?v=6#icon-Vector2" />
+                </svg>
+              </Link>
             </div>
           </div>
         </div>
