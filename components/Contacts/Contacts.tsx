@@ -1,12 +1,33 @@
-import Link from "next/link";
-import styles from "./Contacts.module.css";
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import styles from './Contacts.module.css';
+
+const EMAIL = 'ldk.partner.lviv@gmail.com';
+const MAPS_LINK = 'https://maps.app.goo.gl/9NGfCBWctETQbjSC7';
 
 export default function Contacts() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setCopied(true);
+
+      window.setTimeout(() => {
+        setCopied(false);
+      }, 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
         <div className={styles.card}>
-          <h2 className={styles.title}>Зв’яжіться з нами</h2>
+          <h2 className={styles.title}>Зв&apos;яжіться з нами</h2>
 
           <div className={styles.infoList}>
             <div className={styles.infoItem}>
@@ -33,7 +54,15 @@ export default function Contacts() {
 
               <div className={styles.infoContent}>
                 <p className={styles.label}>Адреса:</p>
-                <p className={styles.text}>вул. Зелена, 149 б</p>
+
+                <a
+                  href={MAPS_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${styles.contactLink} ${styles.interactiveLink}`}
+                >
+                  вул. Зелена, 149 б
+                </a>
               </div>
             </div>
 
@@ -46,35 +75,67 @@ export default function Contacts() {
 
               <div className={styles.infoContent}>
                 <p className={styles.label}>Телефон:</p>
+
                 <Link href="tel:+380989445599" className={styles.contactLink}>
                   +380 98 944 55 99
                 </Link>
+
                 <Link href="tel:+380960025599" className={styles.contactLink}>
                   +380 96 002 55 99
                 </Link>
               </div>
             </div>
+
+            <div className={styles.infoItem}>
+              <div className={styles.iconCircle}>
+                <svg className={styles.infoIcon} aria-hidden="true">
+                  <use href="/icons/symbol-defs.svg#icon-Frame-50" />
+                </svg>
+              </div>
+
+              <div className={styles.infoContent}>
+                <p className={styles.label}>Ел. пошта:</p>
+
+                <button
+                  type="button"
+                  className={`${styles.contactButton} ${styles.interactiveLink}`}
+                  onClick={handleCopyEmail}
+                  aria-label="Скопіювати електронну пошту"
+                  title="Скопіювати електронну пошту"
+                >
+                  {EMAIL}
+                </button>
+
+                <span
+                  className={`${styles.copyStatus} ${
+                    copied ? styles.copyStatusVisible : ''
+                  }`}
+                >
+                  Скопійовано
+                </span>
+              </div>
+            </div>
           </div>
 
           <div className={styles.socials}>
-            <Link href="#" className={styles.socialLink} aria-label="Telegram">
-              <svg className={styles.socialIcon} aria-hidden="true">
-                <use href="/icons/symbol-defs.svg?v=6#icon-Vector1" />
-              </svg>
-            </Link>
+  <Link href="#" className={styles.socialLink} aria-label="Telegram">
+    <svg
+      className={`${styles.socialIcon} ${styles.telegramIcon}`}
+      aria-hidden="true"
+    >
+      <use href="/icons/symbol-defs.svg?v=6#icon-Vector1" />
+    </svg>
+  </Link>
 
-            <Link href="#" className={styles.socialLink} aria-label="Viber">
-              <svg className={styles.socialIcon} aria-hidden="true">
-                <use href="/icons/symbol-defs.svg?v=6#icon-Vector2" />
-              </svg>
-            </Link>
-
-            <Link href="mailto:" className={styles.socialLink} aria-label="Email">
-              <svg className={styles.socialIcon} aria-hidden="true">
-                <use href="/icons/symbol-defs.svg#?v=7#icon-mail-clean" />
-              </svg>
-            </Link>
-          </div>
+  <Link href="#" className={styles.socialLink} aria-label="Viber">
+    <svg
+      className={`${styles.socialIcon} ${styles.viberIcon}`}
+      aria-hidden="true"
+    >
+      <use href="/icons/symbol-defs.svg?v=6#icon-Vector2" />
+    </svg>
+  </Link>
+</div>
         </div>
 
         <div className={styles.mapWrap}>

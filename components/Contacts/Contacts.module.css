@@ -1,13 +1,13 @@
 .section {
     width: 100%;
     background-color: #181818;
-    padding: 64px 0;
+    padding: 74px 0;
 }
 
 .container {
     max-width: 1440px;
     margin: 0 auto;
-    padding: 0 46px;
+    padding: 0 80px;
     display: grid;
     grid-template-columns: 598px 634px;
     gap: 48px;
@@ -19,11 +19,15 @@
     position: relative;
     min-height: 563px;
     padding: 40px 48px;
-    border-radius: 12px;
-    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.18);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.025),
+        0 4px 16px rgba(0, 0, 0, 0.35);
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     overflow: hidden;
 }
 
@@ -31,41 +35,37 @@
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: 10px;
-    pointer-events: none;
+    border-radius: inherit;
     padding: 1px;
-    background: 
-    linear-gradient(180deg, 
-    rgb(0, 126, 57) 0%, 
-    rgba(0, 112, 45, 0.596) 30%, 
-    rgba(0, 172, 69, 0.452) 90%);
-    -webkit-mask: linear-gradient(#fff 0 0) 
-    content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) 
-    content-box, linear-gradient(#fff 0 0);
+    background: linear-gradient(180deg,
+            rgba(110, 255, 173, 0.55) 0%,
+            rgba(78, 179, 118, 0.34) 45%,
+            rgba(78, 179, 118, 0.18) 100%);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    box-shadow: 0 0 8px rgba(14, 108, 51, 0.18), 
-    0 0 2px rgba(14, 108, 51, 0.22);
+    pointer-events: none;
 }
 
 .card::after {
     content: "";
     position: absolute;
-    inset: 0.8px;
-    border-radius: 11px;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow:
+        inset 0 0 18px rgba(78, 179, 118, 0.035),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
     pointer-events: none;
-    border: 0.1px solid rgba(255, 255, 255, 0.42);
-    box-shadow: inset 14px 0 20px -20px rgba(255, 255, 255, 0.08), 
-    inset -14px 0 20px -20px 
-    rgba(255, 255, 255, 0.04), 
-    inset 0 14px 20px -20px 
-    rgba(255, 255, 255, 0.06), 
-    inset 0 -14px 20px -20px 
-    rgba(255, 255, 255, 0.03);
 }
+
 .title {
-    margin-bottom: 40px;
+    width: 100%;
+    margin: 0 0 40px;
     color: #fff;
     font-family: var(--second-family);
     font-weight: 600;
@@ -76,18 +76,22 @@
 }
 
 .infoList {
-    width: 100%;
-    max-width: 330px;
+    width: fit-content;
+    max-width: 100%;
     margin: 0 auto 40px;
     display: flex;
     flex-direction: column;
     gap: 24px;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .infoItem {
-    display: flex;
-    gap: 14px;
+    width: fit-content;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: 50px max-content;
+    column-gap: 12px;
+    align-items: center;
 }
 
 .iconCircle {
@@ -95,70 +99,123 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin-top: 2px;
 }
 
 .infoIcon {
     width: 50px;
     height: 50px;
     display: block;
-    flex-shrink: 0;
 }
 
 .infoContent {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    align-items: flex-start;
+    gap: 0;
     min-width: 0;
+    width: fit-content;
+    position: relative;
 }
 
 .label {
-    margin: 0;
+    margin: 0 0 2px;
     color: #fff;
     font-family: var(--font-family);
     font-weight: 400;
-    font-size: 20px;
+    font-size: 18px;
+    line-height: 144%;
     letter-spacing: 0.01em;
-        line-height: 140%;
 }
 
 .text,
-.contactLink {
+.contactLink,
+.contactButton {
     margin: 0;
     color: #fff;
     font-family: var(--font-family);
     font-weight: 400;
-    font-size: 20px;
+    font-size: 18px;
+    line-height: 144%;
     letter-spacing: 0.01em;
     text-decoration: none;
-        line-height: 140%;
+}
+
+.text {
+    display: block;
 }
 
 .contactLink {
     display: block;
+    width: fit-content;
+}
+
+.contactButton {
+    display: inline-block;
+    width: fit-content;
+    padding: 0;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.contactLink,
+.contactButton,
+.interactiveLink {
+    transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .contactLink:hover,
-.contactLink:focus-visible {
-    color: #4EB376;
+.contactLink:focus-visible,
+.contactButton:hover,
+.contactButton:focus-visible,
+.interactiveLink:hover,
+.interactiveLink:focus-visible {
+    color: #4eb376;
+}
+
+.contactLink:active,
+.contactButton:active,
+.interactiveLink:active {
+    color: #0b5328;
+}
+
+.copyStatus {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.3;
+    color: #4eb376;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+.copyStatusVisible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .socials {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 22px;
+    gap: 32px;
 }
 
 .socialLink {
-    width: 34px;
-    height: 34px;
-    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
     background: #107c41;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .socialLink:hover,
@@ -167,27 +224,41 @@
 }
 
 .socialLink:active {
-    background-color: #0B5328;
+    background-color: #0b5328;
 }
 
 .socialIcon {
-    width: 18px;
-    height: 18px;
     display: block;
     color: #fff;
+}
+.socialLink:hover {
+    transform: translateY(-2px);
+}
+
+.socialLink:active {
+    transform: translateY(0);
+}
+.telegramIcon {
+    width: 23px;
+    height: 22px;
+}
+
+.viberIcon {
+    width: 23px;
+    height: 25px;
 }
 
 .mapWrap {
     width: 634px;
-    min-height: 563px;
-    height: 563px;
+    min-height: 613px;
+    height: 613px;
     border-radius: 10px;
     overflow: hidden;
 }
 
 .mapFrame {
     width: 634px;
-    height: 563px;
+    height: 613px;
     border: 0;
     display: block;
 }
@@ -230,9 +301,18 @@
     }
 
     .infoList {
-        max-width: 100%;
+        width: 100%;
+        max-width: 320px;
         gap: 24px;
-        margin-bottom: 28px;
+        margin: 0 auto 28px;
+        align-items: stretch;
+    }
+
+    .infoItem {
+        width: 100%;
+        grid-template-columns: 48px minmax(0, 1fr);
+        column-gap: 12px;
+        align-items: start;
     }
 
     .iconCircle {
@@ -245,9 +325,15 @@
         height: 22px;
     }
 
+    .infoContent {
+        width: auto;
+        padding-top: 2px;
+    }
+
     .label,
     .text,
-    .contactLink {
+    .contactLink,
+    .contactButton {
         font-size: 16px;
     }
 
