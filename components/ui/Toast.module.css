@@ -1,35 +1,65 @@
-.toast {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 2000;
-    min-width: 280px;
-    max-width: 420px;
-    padding: 14px 18px;
-    border-radius: 12px;
+.button {
+    padding: 0;
+    border: none;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.button:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+.sm {
+    width: 20px;
+    height: 20px;
+}
+
+.md {
+    min-width: 168px;
+    height: 42px;
+    border: 1px solid #107c41;
+    border-radius: 8px;
+    background: transparent;
+    padding: 0 14px;
+    gap: 8px;
+}
+
+.star {
+    line-height: 1;
+    font-size: 18px;
+    color: transparent;
+    -webkit-text-stroke: 1.2px #107c41;
+}
+
+.active .star {
+    color: #107c41;
+    -webkit-text-stroke: 0;
+}
+
+.text {
     color: #ffffff;
+    font-family: var(--font-family);
+    font-weight: 500;
     font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
-    animation: fadeIn 0.25s ease;
+    line-height: 1;
 }
 
-.success {
-    background: #1f9d55;
+.active.md {
+    background: rgba(16, 124, 65, 0.14);
 }
 
-.error {
-    background: #d64545;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-8px);
+@media (max-width: 1200px) {
+    .sm {
+        width: 28px;
+        height: 28px;
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    .star {
+        font-size: 22px;
     }
 }

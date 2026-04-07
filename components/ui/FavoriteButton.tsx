@@ -49,7 +49,12 @@ export default function FavoriteButton({
       aria-label={active ? 'Прибрати зі збережених' : 'Додати до збережених'}
       title={active ? 'Прибрати зі збережених' : 'Додати до збережених'}
     >
-      <span className={styles.star}>★</span>
+      <span className={styles.icon} aria-hidden="true">
+        <svg className={styles.iconSvg}>
+          <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
+        </svg>
+      </span>
+
       {showText ? (
         <span className={styles.text}>
           {active ? 'Збережено' : 'Зберегти'}

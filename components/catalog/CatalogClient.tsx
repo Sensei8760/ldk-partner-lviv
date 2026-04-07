@@ -6,7 +6,12 @@ import styles from '@/app/catalog/CatalogPage.module.css';
 import type { Product } from '@/lib/products';
 import { getFavoriteIds } from '@/store/favorites';
 
-const typeItems = [
+const productTypeItems = [
+  { id: 'interior', label: 'Міжкімнатні' },
+  { id: 'entrance', label: 'Вхідні' },
+] as const;
+
+const installPlaceItems = [
   { id: 'street', label: 'Вулиця' },
   { id: 'apartment', label: 'Квартира' },
 ] as const;
@@ -18,11 +23,11 @@ const styleItems = [
   { id: 'elegant-new', label: 'Елегант NEW' },
   { id: 'koncept', label: 'Концепт' },
   { id: 'modern', label: 'Модерн' },
-  { id: 'lux', label: 'ЛЮКС' },
-  { id: 'trio-light', label: 'ТРІО ЛАЙТ' },
-  { id: 'trio', label: 'ТРІО' },
-  { id: 'trio-termo', label: 'ТРІО ТЕРМО' },
-  { id: 'trio-mottura', label: 'ТРІО MOTTURA' },
+  { id: 'lux', label: 'Люкс' },
+  { id: 'trio-light', label: 'Тріо ЛАЙТ' },
+  { id: 'trio', label: 'Тріо' },
+  { id: 'trio-termo', label: 'Тріо ТЕРМО' },
+  { id: 'trio-mottura', label: 'Тріо MOTTURA' },
   { id: 'kvadro', label: 'Квадро' },
   { id: 'strit', label: 'Стріт' },
   { id: 'strit-termo', label: 'Стріт ТЕРМО' },
@@ -30,13 +35,15 @@ const styleItems = [
   { id: 'fire-econom-epik', label: 'Протипожежні + Економ + Епік' },
   { id: 'sale', label: 'РОЗПРОДАЖ' },
   { id: 'sale-premium-new', label: 'РОЗПРОДАЖ Преміум NEW' },
-];
+] as const;
 
-const VISIBLE_COUNT = 5;
+const STYLE_VISIBLE_COUNT = 2;
+const PRODUCTS_STEP = 6;
 const MIN_GAP = 0;
-const PRODUCTS_STEP = 9;
 
 type SortValue = 'price-asc' | 'price-desc';
+type ProductTypeValue = (typeof productTypeItems)[number]['id'];
+type InstallPlaceValue = (typeof installPlaceItems)[number]['id'];
 
 function normalizeValue(value: string) {
   return value.trim().toLowerCase();
@@ -44,6 +51,24 @@ function normalizeValue(value: string) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
+}
+
+function getProductType(product: Product): ProductTypeValue {
+  const title = product.title.trim().toLowerCase();
+
+  if (title.includes('міжкімнат')) {
+    return 'interior';
+  }
+
+  if (title.includes('вхідн')) {
+    return 'entrance';
+  }
+
+  return product.type === 'street' ? 'entrance' : 'interior';
+}
+
+function getInstallPlace(product: Product): InstallPlaceValue {
+  return product.type === 'street' ? 'street' : 'apartment';
 }
 
 export default function CatalogClient({
@@ -73,7 +98,8 @@ export default function CatalogClient({
   }, [products]);
 
   const [showAllStyles, setShowAllStyles] = useState(false);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedProductTypes, setSelectedProductTypes] = useState<ProductTypeValue[]>([]);
+  const [selectedInstallPlaces, setSelectedInstallPlaces] = useState<InstallPlaceValue[]>([]);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [priceFrom, setPriceFrom] = useState(priceBounds.min);
   const [priceTo, setPriceTo] = useState(priceBounds.max);
@@ -101,12 +127,25 @@ export default function CatalogClient({
     };
   }, []);
 
-  const visibleStyles = showAllStyles ? styleItems : styleItems.slice(0, VISIBLE_COUNT);
+  const resetVisibleCount = () => {
+    setVisibleProductsCount(PRODUCTS_STEP);
+  };
 
-  const typeCounts = useMemo(() => {
+  const visibleStyles = showAllStyles
+    ? styleItems
+    : styleItems.slice(0, STYLE_VISIBLE_COUNT);
+
+  const productTypeCounts = useMemo(() => {
     return {
-      street: products.filter((product) => product.type === 'street').length,
-      apartment: products.filter((product) => product.type === 'apartment').length,
+      interior: products.filter((product) => getProductType(product) === 'interior').length,
+      entrance: products.filter((product) => getProductType(product) === 'entrance').length,
+    };
+  }, [products]);
+
+  const installPlaceCounts = useMemo(() => {
+    return {
+      street: products.filter((product) => getInstallPlace(product) === 'street').length,
+      apartment: products.filter((product) => getInstallPlace(product) === 'apartment').length,
     };
   }, [products]);
 
@@ -126,8 +165,16 @@ export default function CatalogClient({
     const normalizedSearch = searchQuery.trim().toLowerCase();
 
     const result = products.filter((product) => {
-      const matchesType =
-        selectedTypes.length === 0 || selectedTypes.includes(product.type);
+      const productType = getProductType(product);
+      const installPlace = getInstallPlace(product);
+
+      const matchesProductType =
+        selectedProductTypes.length === 0 ||
+        selectedProductTypes.includes(productType);
+
+      const matchesInstallPlace =
+        selectedInstallPlaces.length === 0 ||
+        selectedInstallPlaces.includes(installPlace);
 
       const matchesStyle =
         selectedStyles.length === 0 ||
@@ -152,7 +199,8 @@ export default function CatalogClient({
         !showOnlyFavorites || favoriteIds.includes(product.id);
 
       return (
-        matchesType &&
+        matchesProductType &&
+        matchesInstallPlace &&
         matchesStyle &&
         matchesPrice &&
         matchesSearch &&
@@ -160,12 +208,12 @@ export default function CatalogClient({
       );
     });
 
-    const sorted = [...result].sort((a, b) => {
-      const aOut = a.stock <= 0 ? 1 : 0;
-      const bOut = b.stock <= 0 ? 1 : 0;
+    return [...result].sort((a, b) => {
+      const aOutOfStock = a.stock <= 0 ? 1 : 0;
+      const bOutOfStock = b.stock <= 0 ? 1 : 0;
 
-      if (aOut !== bOut) {
-        return aOut - bOut;
+      if (aOutOfStock !== bOutOfStock) {
+        return aOutOfStock - bOutOfStock;
       }
 
       if (sortBy === 'price-desc') {
@@ -174,11 +222,10 @@ export default function CatalogClient({
 
       return a.price - b.price;
     });
-
-    return sorted;
   }, [
     products,
-    selectedTypes,
+    selectedProductTypes,
+    selectedInstallPlaces,
     selectedStyles,
     priceFrom,
     priceTo,
@@ -192,12 +239,15 @@ export default function CatalogClient({
   const hasMoreProducts = visibleProductsCount < filteredProducts.length;
   const hasProducts = products.length > 0;
 
-  const resetVisibleCount = () => {
-    setVisibleProductsCount(PRODUCTS_STEP);
+  const handleToggleProductType = (id: ProductTypeValue) => {
+    setSelectedProductTypes((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+    resetVisibleCount();
   };
 
-  const handleToggleType = (id: string) => {
-    setSelectedTypes((prev) =>
+  const handleToggleInstallPlace = (id: InstallPlaceValue) => {
+    setSelectedInstallPlaces((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
     resetVisibleCount();
@@ -268,14 +318,14 @@ export default function CatalogClient({
     setVisibleProductsCount((prev) => prev + PRODUCTS_STEP);
   };
 
-  const sliderRangePercent =
-    priceBounds.max > priceBounds.min
-      ? ((priceTo - priceFrom) / (priceBounds.max - priceBounds.min)) * 100
-      : 0;
-
   const sliderLeftPercent =
     priceBounds.max > priceBounds.min
       ? ((priceFrom - priceBounds.min) / (priceBounds.max - priceBounds.min)) * 100
+      : 0;
+
+  const sliderRangePercent =
+    priceBounds.max > priceBounds.min
+      ? ((priceTo - priceFrom) / (priceBounds.max - priceBounds.min)) * 100
       : 0;
 
   return (
@@ -287,16 +337,56 @@ export default function CatalogClient({
           <h3 className={styles.groupTitle}>Тип</h3>
 
           <div className={styles.filtersList}>
-            {typeItems.map((item) => {
-              const isChecked = selectedTypes.includes(item.id);
-              const count = item.id === 'street' ? typeCounts.street : typeCounts.apartment;
+            {productTypeItems.map((item) => {
+              const isChecked = selectedProductTypes.includes(item.id);
+              const count =
+                item.id === 'interior'
+                  ? productTypeCounts.interior
+                  : productTypeCounts.entrance;
 
               return (
                 <label key={item.id} className={styles.filterLabel}>
                   <input
                     type="checkbox"
                     checked={isChecked}
-                    onChange={() => handleToggleType(item.id)}
+                    onChange={() => handleToggleProductType(item.id)}
+                    className={styles.checkbox}
+                  />
+                  <span className={styles.customCheckbox}></span>
+
+                  <span className={styles.filterText}>
+                    <span
+                      className={`${styles.filterName} ${
+                        isChecked ? styles.filterNameActive : ''
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                    <span className={styles.count}>({count})</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <h3 className={styles.groupTitle}>Місце встановлення</h3>
+
+          <div className={styles.filtersList}>
+            {installPlaceItems.map((item) => {
+              const isChecked = selectedInstallPlaces.includes(item.id);
+              const count =
+                item.id === 'street'
+                  ? installPlaceCounts.street
+                  : installPlaceCounts.apartment;
+
+              return (
+                <label key={item.id} className={styles.filterLabel}>
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => handleToggleInstallPlace(item.id)}
                     className={styles.checkbox}
                   />
                   <span className={styles.customCheckbox}></span>
@@ -338,7 +428,7 @@ export default function CatalogClient({
               disabled={!hasProducts}
             />
 
-            <span className={styles.priceDivider}>-</span>
+            <span className={styles.priceDivider}>—</span>
 
             <input
               type="text"
@@ -423,28 +513,38 @@ export default function CatalogClient({
             })}
           </div>
 
-          {styleItems.length > VISIBLE_COUNT && (
+          {styleItems.length > STYLE_VISIBLE_COUNT ? (
             <button
               type="button"
               className={styles.showMoreButton}
               onClick={() => setShowAllStyles((prev) => !prev)}
             >
               {showAllStyles ? 'Згорнути' : 'Показати ще'}
+
               <span
-                className={`${styles.showMoreArrow} ${
-                  showAllStyles ? styles.showMoreArrowUp : ''
+                className={`${styles.showMoreIcon} ${
+                  showAllStyles ? styles.showMoreIconUp : ''
                 }`}
+                aria-hidden="true"
               >
-                ⌄
+                <svg className={styles.showMoreIconSvg}>
+                  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-angle-small-up" />
+                </svg>
               </span>
             </button>
-          )}
+          ) : null}
         </div>
       </aside>
 
       <section className={styles.products}>
         <div className={styles.topBar}>
           <div className={styles.searchWrap}>
+            <span className={styles.searchIcon} aria-hidden="true">
+              <svg className={styles.searchIconSvg}>
+                <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-search" />
+              </svg>
+            </span>
+
             <input
               type="text"
               value={searchQuery}
@@ -453,24 +553,32 @@ export default function CatalogClient({
                 resetVisibleCount();
               }}
               className={styles.searchInput}
-              placeholder="Пошук по назві"
+              placeholder="Пошук"
               aria-label="Пошук дверей по назві"
             />
           </div>
 
           <div className={styles.topBarActions}>
-            <select
-              value={sortBy}
-              onChange={(e) => {
-                setSortBy(e.target.value as SortValue);
-                resetVisibleCount();
-              }}
-              className={styles.sortSelect}
-              aria-label="Сортування товарів"
-            >
-              <option value="price-asc">Від дешевих до дорогих</option>
-              <option value="price-desc">Від дорогих до дешевих</option>
-            </select>
+            <div className={styles.sortSelectWrap}>
+              <select
+                value={sortBy}
+                onChange={(e) => {
+                  setSortBy(e.target.value as SortValue);
+                  resetVisibleCount();
+                }}
+                className={styles.sortSelect}
+                aria-label="Сортування товарів"
+              >
+                <option value="price-asc">Від дешевих до дорогих</option>
+                <option value="price-desc">Від дорогих до дешевих</option>
+              </select>
+
+              <span className={styles.sortSelectIcon} aria-hidden="true">
+                <svg className={styles.sortSelectIconSvg}>
+                  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-angle-small-up" />
+                </svg>
+              </span>
+            </div>
 
             <button
               type="button"
@@ -484,8 +592,15 @@ export default function CatalogClient({
               aria-label="Показати збережені двері"
               title="Показати збережені двері"
             >
-              <span className={styles.favoriteFilterStar}>★</span>
-              <span className={styles.favoriteFilterCount}>{favoriteIds.length}</span>
+              <span className={styles.favoriteFilterIcon} aria-hidden="true">
+  <svg className={styles.favoriteFilterIconSvg}>
+    <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
+  </svg>
+</span>
+
+              <span className={styles.favoriteFilterLabel}>
+                Збережені ({favoriteIds.length})
+              </span>
             </button>
           </div>
         </div>
@@ -494,8 +609,7 @@ export default function CatalogClient({
           <div className={styles.stateBox}>
             <h2 className={styles.stateTitle}>Товарів не знайдено</h2>
             <p className={styles.stateText}>
-              За вибраними параметрами немає відповідних дверей. Спробуйте змінити
-              фільтри, пошук або вимкнути показ тільки збережених.
+              Спробуй змінити фільтри, пошук або вимкнути показ лише збережених.
             </p>
           </div>
         ) : (
@@ -517,12 +631,17 @@ export default function CatalogClient({
             {hasMoreProducts ? (
               <div className={styles.showMoreWrap}>
                 <button
-                  type="button"
-                  className={styles.showMoreProductsButton}
-                  onClick={handleShowMoreProducts}
-                >
-                  Показати ще
-                </button>
+  type="button"
+  className={styles.showMoreProductsButton}
+  onClick={handleShowMoreProducts}
+>
+  Показати ще
+  <span className={styles.showMoreProductsArrow} aria-hidden="true">
+    <svg className={styles.showMoreProductsArrowSvg}>
+      <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
+    </svg>
+  </span>
+</button>
               </div>
             ) : null}
           </>

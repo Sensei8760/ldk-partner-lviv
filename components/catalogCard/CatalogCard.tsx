@@ -34,7 +34,7 @@ export default function CatalogCard({
 
   return (
     <article className={`${styles.card} ${isOutOfStock ? styles.cardOutOfStock : ''}`}>
-      {isHit && <span className={styles.badge}>ХІТ</span>}
+      {isHit ? <span className={styles.badge}>ХІТ</span> : null}
 
       <div className={styles.favoriteButtonWrap}>
         <FavoriteButton productId={id} size="sm" />
@@ -64,25 +64,27 @@ export default function CatalogCard({
 
         <div className={styles.bottom}>
           <div className={styles.meta}>
-            {isOutOfStock ? (
-              <p className={styles.outOfStock}>Немає в наявності</p>
-            ) : (
-              <>
-                <p className={styles.price}>
-                  {price} <span>грн</span>
-                </p>
-                <p className={styles.stock}>В наявності: {stock}</p>
-              </>
-            )}
+            <p className={styles.price}>
+              <span className={styles.priceValue}>{price}</span>{' '}
+              <span className={styles.currency}>грн</span>
+            </p>
+
+            <p className={`${styles.stock} ${isOutOfStock ? styles.stockOut : ''}`}>
+              {isOutOfStock ? 'Немає в наявності' : `В наявності: ${stock}`}
+            </p>
           </div>
 
           <Link
-            href={`/catalog/${id}`}
-            className={styles.cartButton}
-            aria-label={`Перейти до товару ${title}`}
-          >
-            →
-          </Link>
+  href={`/catalog/${id}`}
+  className={`${styles.arrowButton} ${
+    isOutOfStock ? styles.arrowButtonDisabled : ''
+  }`}
+  aria-label={`Перейти до товару ${title}`}
+>
+  <svg className={styles.arrowIcon} aria-hidden="true">
+    <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
+  </svg>
+</Link>
         </div>
       </div>
     </article>
