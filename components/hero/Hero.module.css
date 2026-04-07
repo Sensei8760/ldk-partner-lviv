@@ -1,81 +1,110 @@
 .hero {
+    position: relative;
     width: 100%;
-    min-height: 700px;
-    padding-bottom: 64px;
     background-color: #181818;
-    background-image: url("/images/image-hero.jpg");
-    background-repeat: no-repeat;
-    background-position: center top;
-    background-size: 100% 700px;
+    overflow: hidden;
+    padding-bottom: 74px;
 }
 
 .inner {
+    position: relative;
+    width: 100%;
+    max-width: 1440px;
+    height: 700px;
     min-height: 700px;
-    padding-top: 236px;
-    padding-bottom: 145px;
-    padding-left: 46px;
+    margin: 0 auto;
+    overflow: visible;
+    z-index: 1;
 }
+
+.imageLayer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.backgroundImage {
+    object-fit: cover;
+    object-position: center center;
+}
+
 .content {
-    width: 646px;
+    position: absolute;
+    top: 171px;
+    left: 0;
+    z-index: 2;
+    width: 752px;
+    height: 359px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 54px 36px 40px 48px;
+    background: transparent;
+    isolation: isolate;
+}
+
+.content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: min(0px, calc((100vw - 1440px) / -2));
+    border-radius: 0 20px 20px 0;
+    background: linear-gradient(90deg,
+            rgba(0, 0, 0, 0.48) 0%,
+            rgba(0, 0, 0, 0) 100%);
+    z-index: -1;
 }
 
 .title {
-    max-width: 646px;
-    margin-bottom: 8px;
-    /* font-family: var(--second-family), serif; */
+    max-width: 668px;
+    margin: 0 0 16px;
     color: #ffffff;
     font-family: var(--second-family);
-        font-weight: 600;
+    font-weight: 600;
         font-size: 48px;
-        line-height: 117%;
+        line-height: 108%;
         letter-spacing: 0.01em;
 }
 
 .text {
-    /* max-width: 550px; */
-    margin-bottom: 31px;
-    padding-left: 48px;
-    line-height: 1.2;
+    margin: 0 0 28px 48px;
     color: #ffffff;
     font-family: var(--font-family);
-        font-weight: 400;
-        font-size: 28px;
-    
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.15;
 }
 
 .actions {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-    padding-left: 149px;
+    margin-left: 150px;
 }
 
-.primaryButton,
-.secondaryButton {
-    min-width: 348px;
-    height: 70px;
+.primaryButton {
+    width: 303px;
+    height: 64px;
+    padding: 20px 30px;
+    border: none;
     border-radius: 16px;
-        padding: 20px 30px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    font-weight: 400;
+    background-color: #0E6C33;
+    color: #ffffff;
     font-family: var(--font-family);
-        font-size: 24px;
-        line-height: 125%;
-        letter-spacing: 0.01em;
-        color: #fff;
-}
-
-.primaryButton {
-    color: #fff;
-    background-color: #107c41;
+    font-weight: 500;
     transition: background-color 0.2s ease;
+        font-size: 20px;
+        line-height: 120%;
+        letter-spacing: 0.01em;
 }
 
 .primaryButton:hover,
@@ -84,110 +113,160 @@
 }
 
 .primaryButton:active {
-    background-color: #0B5328;
+    background-color: #0b5328;
 }
 
-.secondaryButton {
-    color: #fff;
-    background-color: transparent;
-    border: 3px solid #0E6C33;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.secondaryButton:hover,
-.secondaryButton:focus-visible {
-    background-color: #13833f;
-    border-color: #13833f;
-}
-
-.secondaryButton:active {
-    background-color: #0B5328;
-    border-color: #0B5328;
-}
-
-@media (max-width: 1024px) {
-
-    .hero,
+@media (max-width: 1200px) {
     .inner {
-        min-height: 620px;
+        height: 640px;
+        min-height: 640px;
     }
 
-    .inner {
-        padding-top: 180px;
-        padding-bottom: 90px;
-        padding-left: 24px;
+    .backgroundImage {
+        object-position: 62% center;
     }
 
     .content {
-        width: 560px;
+        top: 154px;
+        width: 680px;
+        height: 325px;
+        padding: 46px 30px 34px 42px;
     }
 
     .title {
-        font-size: 44px;
+        max-width: 610px;
+        font-size: 56px;
     }
 
     .text {
-        max-width: 500px;
-        padding-left: 24px;
-        font-size: 20px;
+        margin: 0 0 30px 48px;
+        font-size: 24px;
     }
 
     .actions {
-        padding-left: 80px;
+        margin-left: 170px;
+    }
+
+    .primaryButton {
+        width: 320px;
+        height: 68px;
+        font-size: 17px;
+        border-radius: 16px;
+    }
+}
+
+@media (max-width: 992px) {
+    .inner {
+        height: 580px;
+        min-height: 580px;
+    }
+
+    .backgroundImage {
+        object-position: 68% center;
+    }
+
+    .content {
+        top: 145px;
+        width: 600px;
+        height: 290px;
+        padding: 38px 26px 30px 34px;
+    }
+
+    .title {
+        max-width: 540px;
+        font-size: 46px;
+    }
+
+    .text {
+        margin: 0 0 26px 30px;
+        font-size: 22px;
+    }
+
+    .actions {
+        margin-left: 126px;
+    }
+
+    .primaryButton {
+        width: 290px;
+        height: 60px;
+        font-size: 16px;
+        border-radius: 14px;
     }
 }
 
 @media (max-width: 768px) {
-
-    .hero,
     .inner {
+        height: 540px;
         min-height: 540px;
     }
 
-    .inner {
-        padding: 140px 16px 48px;
+    .backgroundImage {
+        object-position: 74% center;
     }
 
     .content {
-        width: 100%;
+        top: 138px;
+        width: calc(100% - 16px);
+        height: auto;
+        min-height: 250px;
+        padding: 28px 20px 28px 24px;
+        border-radius: 0 18px 18px 0;
     }
 
     .title {
         max-width: 100%;
+        margin: 0 0 16px;
         font-size: 36px;
+        line-height: 1.05;
     }
 
     .text {
-        max-width: 100%;
-        padding-left: 0;
+        margin: 0 0 24px;
         font-size: 18px;
+        line-height: 1.2;
     }
 
     .actions {
-        width: 100%;
-        padding-left: 0;
+        margin-left: 0;
     }
 
-    .primaryButton,
-    .secondaryButton {
-        min-width: 250px;
-        height: 50px;
-        font-size: 16px;
+    .primaryButton {
+        width: 240px;
+        height: 52px;
+        padding: 0 18px;
+        font-size: 15px;
+        border-radius: 14px;
     }
 }
 
 @media (max-width: 480px) {
+    .inner {
+        height: 500px;
+        min-height: 500px;
+    }
+
+    .backgroundImage {
+        object-position: 78% center;
+    }
+
+    .content {
+        top: 122px;
+        width: calc(100% - 8px);
+        min-height: 220px;
+        padding: 22px 16px 24px;
+    }
+
     .title {
         font-size: 30px;
     }
 
     .text {
+        margin-bottom: 20px;
         font-size: 16px;
     }
 
-    .primaryButton,
-    .secondaryButton {
+    .primaryButton {
         width: 100%;
-        min-width: 100%;
+        height: 50px;
     }
 }
