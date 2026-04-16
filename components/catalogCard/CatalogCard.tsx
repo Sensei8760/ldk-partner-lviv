@@ -15,6 +15,7 @@ type CatalogCardProps = {
   title: string;
   price: number;
   image: string;
+  images?: string[];
   stock: number;
   isHit?: boolean;
 };
@@ -24,13 +25,39 @@ export default function CatalogCard({
   title,
   price,
   image,
+  images = [],
   stock,
   isHit = false,
 }: CatalogCardProps) {
   const isOutOfStock = stock <= 0;
+  const [isHovered, setIsHovered] = useState(false);
+  const [secondImageFailed, setSecondImageFailed] = useState(false);
+  const [primaryImageFailed, setPrimaryImageFailed] = useState(false);
 
-  const initialImage = useMemo(() => getPrimaryProductImage(undefined, image), [image]);
-  const [currentImage, setCurrentImage] = useState(initialImage);
+  const normalizedImages = useMemo(() => {
+    return Array.isArray(images)
+      ? images.map((item) => String(item).trim()).filter(Boolean)
+      : [];
+  }, [images]);
+
+  const primaryImage = useMemo(() => {
+    return getPrimaryProductImage(normalizedImages, image);
+  }, [normalizedImages, image]);
+
+  const secondaryImage = useMemo(() => {
+    return normalizedImages.find((item) => item !== primaryImage) || '';
+  }, [normalizedImages, primaryImage]);
+
+  const displayPrimaryImage = primaryImageFailed
+    ? FALLBACK_PRODUCT_IMAGE
+    : primaryImage;
+
+  const shouldShowSecondImage =
+    isHovered && Boolean(secondaryImage) && !secondImageFailed;
+
+  const currentImage = shouldShowSecondImage
+    ? secondaryImage
+    : displayPrimaryImage;
 
   return (
     <article className={`${styles.card} ${isOutOfStock ? styles.cardOutOfStock : ''}`}>
@@ -40,7 +67,12 @@ export default function CatalogCard({
         <FavoriteButton productId={id} size="sm" />
       </div>
 
-      <Link href={`/catalog/${id}`} className={styles.imageLink}>
+      <Link
+        href={`/catalog/${id}`}
+        className={styles.imageLink}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div className={styles.imageWrapper}>
           <Image
             src={currentImage}
@@ -49,8 +81,13 @@ export default function CatalogCard({
             className={`${styles.image} ${isOutOfStock ? styles.imageOutOfStock : ''}`}
             sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 33vw"
             onError={() => {
-              if (currentImage !== FALLBACK_PRODUCT_IMAGE) {
-                setCurrentImage(FALLBACK_PRODUCT_IMAGE);
+              if (shouldShowSecondImage) {
+                setSecondImageFailed(true);
+                return;
+              }
+
+              if (displayPrimaryImage !== FALLBACK_PRODUCT_IMAGE) {
+                setPrimaryImageFailed(true);
               }
             }}
           />
@@ -75,16 +112,16 @@ export default function CatalogCard({
           </div>
 
           <Link
-  href={`/catalog/${id}`}
-  className={`${styles.arrowButton} ${
-    isOutOfStock ? styles.arrowButtonDisabled : ''
-  }`}
-  aria-label={`Перейти до товару ${title}`}
->
-  <svg className={styles.arrowIcon} aria-hidden="true">
-    <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
-  </svg>
-</Link>
+            href={`/catalog/${id}`}
+            className={`${styles.arrowButton} ${
+              isOutOfStock ? styles.arrowButtonDisabled : ''
+            }`}
+            aria-label={`Перейти до товару ${title}`}
+          >
+            <svg className={styles.arrowIcon} aria-hidden="true">
+              <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
+            </svg>
+          </Link>
         </div>
       </div>
     </article>

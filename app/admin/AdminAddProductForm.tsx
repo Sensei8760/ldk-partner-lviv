@@ -28,6 +28,22 @@ const styleOptions = [
   'РОЗПРОДАЖ Преміум NEW',
 ];
 
+const doorTypeOptions = [
+  { id: 'interior', label: 'Міжкімнатні' },
+  { id: 'entrance', label: 'Вхідні' },
+] as const;
+
+const openingOptions = [
+  { id: 'left', label: 'Ліве' },
+  { id: 'right', label: 'Праве' },
+] as const;
+
+const sizeOptions = [
+  { id: '850x2040', label: '850х2040 мм' },
+  { id: '950x2040', label: '950х2040 мм' },
+  { id: '1200x2040', label: '1200х2040 мм' },
+] as const;
+
 const characteristicLabels = [
   'Короб',
   'Полотно',
@@ -44,6 +60,13 @@ const characteristicLabels = [
   'Лиштва',
 ] as const;
 
+const INITIAL_VISIBLE_COUNT = 5;
+const LOAD_MORE_STEP = 10;
+
+type ProductDoorType = (typeof doorTypeOptions)[number]['id'];
+type ProductOpening = (typeof openingOptions)[number]['id'];
+type ProductSize = (typeof sizeOptions)[number]['id'];
+
 type Product = {
   id: string;
   title: string;
@@ -52,7 +75,10 @@ type Product = {
   images?: string[];
   description: string;
   type: 'street' | 'apartment';
+  doorType: ProductDoorType;
   styles: string[];
+  openings: ProductOpening[];
+  sizes: ProductSize[];
   stock: number;
   isHit: boolean;
   characteristics: { label: string; value: string }[];
@@ -71,7 +97,10 @@ type FormState = {
   imageBack: string;
   description: string;
   type: 'street' | 'apartment';
+  doorType: ProductDoorType;
   styles: string[];
+  openings: ProductOpening[];
+  sizes: ProductSize[];
   stock: string;
   isHit: boolean;
   characteristics: CharacteristicField[];
@@ -84,7 +113,10 @@ type FormErrors = Partial<{
   imageBack: string;
   images: string;
   type: string;
+  doorType: string;
   styles: string;
+  openings: string;
+  sizes: string;
   stock: string;
   description: string;
   characteristics: string;
@@ -104,14 +136,14 @@ const emptyForm: FormState = {
   imageBack: '',
   description: '',
   type: 'apartment',
+  doorType: 'interior',
   styles: [],
+  openings: [],
+  sizes: [],
   stock: '',
   isHit: false,
   characteristics: emptyCharacteristics,
 };
-
-const INITIAL_VISIBLE_COUNT = 5;
-const LOAD_MORE_STEP = 10;
 
 function mapCharacteristicsToFields(
   characteristics: { label: string; value: string }[]
@@ -187,9 +219,27 @@ function validateForm(form: FormState): FormErrors {
     errors.stock = 'Кількість занадто велика.';
   }
 
+  if (!doorTypeOptions.some((item) => item.id === form.doorType)) {
+    errors.doorType = 'Оберіть тип дверей.';
+  }
+
   const invalidStyles = form.styles.filter((style) => !styleOptions.includes(style));
   if (invalidStyles.length > 0) {
     errors.styles = 'Обрано некоректний стиль.';
+  }
+
+  const invalidOpenings = form.openings.filter(
+    (opening) => !openingOptions.some((item) => item.id === opening)
+  );
+  if (invalidOpenings.length > 0) {
+    errors.openings = 'Обрано некоректне відкривання.';
+  }
+
+  const invalidSizes = form.sizes.filter(
+    (size) => !sizeOptions.some((item) => item.id === size)
+  );
+  if (invalidSizes.length > 0) {
+    errors.sizes = 'Обрано некоректний розмір.';
   }
 
   if (description.length > 1000) {
@@ -337,6 +387,45 @@ export default function AdminAddProductForm() {
     clearFieldError('styles');
   }
 
+  function handleSelectDoorType(doorType: ProductDoorType) {
+    setForm((prev) => ({
+      ...prev,
+      doorType,
+    }));
+
+    clearFieldError('doorType');
+  }
+
+  function handleToggleOpening(opening: ProductOpening) {
+    setForm((prev) => {
+      const nextOpenings = prev.openings.includes(opening)
+        ? prev.openings.filter((item) => item !== opening)
+        : [...prev.openings, opening];
+
+      return {
+        ...prev,
+        openings: nextOpenings,
+      };
+    });
+
+    clearFieldError('openings');
+  }
+
+  function handleToggleSize(size: ProductSize) {
+    setForm((prev) => {
+      const nextSizes = prev.sizes.includes(size)
+        ? prev.sizes.filter((item) => item !== size)
+        : [...prev.sizes, size];
+
+      return {
+        ...prev,
+        sizes: nextSizes,
+      };
+    });
+
+    clearFieldError('sizes');
+  }
+
   function handleCharacteristicChange(label: string, value: string) {
     setForm((prev) => ({
       ...prev,
@@ -378,7 +467,10 @@ export default function AdminAddProductForm() {
       imageBack: productImages[1] || '',
       description: product.description || '',
       type: product.type === 'street' ? 'street' : 'apartment',
+      doorType: product.doorType === 'entrance' ? 'entrance' : 'interior',
       styles: Array.isArray(product.styles) ? product.styles : [],
+      openings: Array.isArray(product.openings) ? product.openings : [],
+      sizes: Array.isArray(product.sizes) ? product.sizes : [],
       stock: String(product.stock ?? ''),
       isHit: Boolean(product.isHit),
       characteristics: mapCharacteristicsToFields(
@@ -458,7 +550,10 @@ export default function AdminAddProductForm() {
       imageBack: form.imageBack.trim(),
       description: form.description.trim(),
       type: form.type,
+      doorType: form.doorType,
       styles: form.styles,
+      openings: form.openings,
+      sizes: form.sizes,
       stock: Number(form.stock),
       isHit: form.isHit,
       characteristics: form.characteristics
@@ -634,7 +729,26 @@ export default function AdminAddProductForm() {
             </div>
 
             <div className={styles.field}>
-              <label>Тип</label>
+              <label>Тип дверей</label>
+              <div className={styles.stylesGrid}>
+                {doorTypeOptions.map((item) => (
+                  <label key={item.id} className={styles.styleOption}>
+                    <input
+                      type="checkbox"
+                      checked={form.doorType === item.id}
+                      onChange={() => handleSelectDoorType(item.id)}
+                    />
+                    <span>{item.label}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.doorType ? (
+                <p className={styles.fieldError}>{errors.doorType}</p>
+              ) : null}
+            </div>
+
+            <div className={styles.field}>
+              <label>Місце встановлення</label>
               <select
                 value={form.type}
                 onChange={(e) => {
@@ -669,6 +783,40 @@ export default function AdminAddProductForm() {
           </div>
 
           {errors.images ? <p className={styles.fieldError}>{errors.images}</p> : null}
+
+          <div className={styles.field}>
+            <label>Відкривання дверей</label>
+            <div className={styles.stylesGrid}>
+              {openingOptions.map((opening) => (
+                <label key={opening.id} className={styles.styleOption}>
+                  <input
+                    type="checkbox"
+                    checked={form.openings.includes(opening.id)}
+                    onChange={() => handleToggleOpening(opening.id)}
+                  />
+                  <span>{opening.label}</span>
+                </label>
+              ))}
+            </div>
+            {errors.openings ? <p className={styles.fieldError}>{errors.openings}</p> : null}
+          </div>
+
+          <div className={styles.field}>
+            <label>Розмір</label>
+            <div className={styles.stylesGrid}>
+              {sizeOptions.map((size) => (
+                <label key={size.id} className={styles.styleOption}>
+                  <input
+                    type="checkbox"
+                    checked={form.sizes.includes(size.id)}
+                    onChange={() => handleToggleSize(size.id)}
+                  />
+                  <span>{size.label}</span>
+                </label>
+              ))}
+            </div>
+            {errors.sizes ? <p className={styles.fieldError}>{errors.sizes}</p> : null}
+          </div>
 
           <div className={styles.field}>
             <label>Стилі</label>

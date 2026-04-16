@@ -7,6 +7,10 @@ export type ProductCharacteristic = {
   value: string;
 };
 
+export type ProductDoorType = 'interior' | 'entrance';
+export type ProductOpening = 'left' | 'right';
+export type ProductSize = '850x2040' | '950x2040' | '1200x2040';
+
 export type Product = {
   id: string;
   title: string;
@@ -15,7 +19,10 @@ export type Product = {
   images: string[];
   description: string;
   type: 'street' | 'apartment';
+  doorType: ProductDoorType;
   styles: string[];
+  openings: ProductOpening[];
+  sizes: ProductSize[];
   stock: number;
   isHit: boolean;
   characteristics: ProductCharacteristic[];
@@ -29,7 +36,10 @@ type RawProduct = {
   images?: string[];
   description: string;
   type: 'street' | 'apartment';
+  doorType: ProductDoorType;
   styles: string[];
+  openings: ProductOpening[];
+  sizes: ProductSize[];
   stock: number;
   isHit: boolean;
   characteristics: ProductCharacteristic[];
@@ -37,6 +47,45 @@ type RawProduct = {
 
 const productsFilePath = path.join(process.cwd(), 'data', 'products.json');
 const FALLBACK_PRODUCT_IMAGE = '/images/doors/door-1.jpg';
+
+function normalizeDoorType(
+  value: unknown,
+  title: string,
+  type: 'street' | 'apartment'
+): ProductDoorType {
+  if (value === 'interior' || value === 'entrance') {
+    return value;
+  }
+
+  const normalizedTitle = title.trim().toLowerCase();
+
+  if (normalizedTitle.includes('міжкімнат')) {
+    return 'interior';
+  }
+
+  if (normalizedTitle.includes('вхідн')) {
+    return 'entrance';
+  }
+
+  return type === 'street' ? 'entrance' : 'interior';
+}
+
+function normalizeOpenings(value: unknown): ProductOpening[] {
+  if (!Array.isArray(value)) return [];
+
+  return value.filter(
+    (item): item is ProductOpening => item === 'left' || item === 'right'
+  );
+}
+
+function normalizeSizes(value: unknown): ProductSize[] {
+  if (!Array.isArray(value)) return [];
+
+  return value.filter(
+    (item): item is ProductSize =>
+      item === '850x2040' || item === '950x2040' || item === '1200x2040'
+  );
+}
 
 function normalizeImages(raw: RawProduct): Product {
   const images = Array.isArray(raw.images)
@@ -53,6 +102,8 @@ function normalizeImages(raw: RawProduct): Product {
     ...raw,
     image: primaryImage,
     images: normalizedImages.length > 0 ? normalizedImages : [primaryImage],
+    openings: Array.isArray(raw.openings) ? raw.openings : [],
+    sizes: Array.isArray(raw.sizes) ? raw.sizes : [],
   };
 }
 
@@ -66,9 +117,12 @@ function normalizeProduct(raw: unknown): Product | null {
   const price = Number(item.price);
   const description = String(item.description || '').trim();
   const type = item.type === 'street' ? 'street' : 'apartment';
+  const doorType = normalizeDoorType(item.doorType, title, type);
   const styles = Array.isArray(item.styles)
     ? item.styles.map((style) => String(style).trim()).filter(Boolean)
     : [];
+  const openings = normalizeOpenings(item.openings);
+  const sizes = normalizeSizes(item.sizes);
   const stock = Number.isFinite(Number(item.stock)) ? Number(item.stock) : 0;
   const isHit = Boolean(item.isHit);
   const characteristics = Array.isArray(item.characteristics)
@@ -99,7 +153,10 @@ function normalizeProduct(raw: unknown): Product | null {
       : [],
     description,
     type,
+    doorType,
     styles,
+    openings,
+    sizes,
     stock: Number.isInteger(stock) ? stock : Math.round(stock),
     isHit,
     characteristics,

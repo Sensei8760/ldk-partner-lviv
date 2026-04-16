@@ -1,5 +1,88 @@
 [
   {
+    "id": "mizhkimnatni-dveri-doors-smart-model-c067111",
+    "title": "Міжкімнатні двері \"Doors\" Smart - модель - C067111",
+    "price": 132,
+    "image": "/images/doors/door-1.jpg",
+    "images": [
+      "/images/doors/door-1.jpg",
+      "/images/doors/door-2.jpg"
+    ],
+    "description": "ббб",
+    "type": "street",
+    "doorType": "entrance",
+    "styles": [
+      "ТРІО MOTTURA",
+      "ТРІО ЛАЙТ",
+      "Комфорт NEW",
+      "Стріт ТЕРМО",
+      "PROF GUARD",
+      "Протипожежні + Економ + Епік"
+    ],
+    "openings": [
+      "right"
+    ],
+    "sizes": [
+      "1200x2040"
+    ],
+    "stock": 3,
+    "isHit": false,
+    "characteristics": [
+      {
+        "label": "Короб",
+        "value": "24"
+      },
+      {
+        "label": "Полотно",
+        "value": "42"
+      },
+      {
+        "label": "Метал короб/полотно",
+        "value": "342"
+      },
+      {
+        "label": "МДФ",
+        "value": "43"
+      },
+      {
+        "label": "Теплоізоляція",
+        "value": "234"
+      },
+      {
+        "label": "Ущільнення",
+        "value": "4234"
+      },
+      {
+        "label": "Замок верхній",
+        "value": "2342"
+      },
+      {
+        "label": "Замок нижній",
+        "value": "2432"
+      },
+      {
+        "label": "Ручка",
+        "value": "іваі"
+      },
+      {
+        "label": "Вічко",
+        "value": "223е2а"
+      },
+      {
+        "label": "Антизрізи",
+        "value": "п42п4п2"
+      },
+      {
+        "label": "Петлі",
+        "value": "2а23232а"
+      },
+      {
+        "label": "Лиштва",
+        "value": "24п2п24"
+      }
+    ]
+  },
+  {
     "id": "werwrwrwrwerwrwrw",
     "title": "werwrwrwrwerwrwrw",
     "price": 23424,
@@ -10,7 +93,10 @@
     ],
     "description": "",
     "type": "apartment",
+    "doorType": "interior",
     "styles": [],
+    "openings": [],
+    "sizes": [],
     "stock": 23,
     "isHit": false,
     "characteristics": []
@@ -25,10 +111,13 @@
     ],
     "description": "",
     "type": "apartment",
+    "doorType": "interior",
     "styles": [
       "Стріт",
       "ТРІО ЛАЙТ"
     ],
+    "openings": [],
+    "sizes": [],
     "stock": 231,
     "isHit": false,
     "characteristics": []
@@ -44,7 +133,10 @@
     ],
     "description": "",
     "type": "apartment",
+    "doorType": "interior",
     "styles": [],
+    "openings": [],
+    "sizes": [],
     "stock": 4,
     "isHit": false,
     "characteristics": []
@@ -54,106 +146,130 @@
     "title": "eqfda",
     "price": 532,
     "image": "/images/doors/door-1.jpg",
-    "description": "",
-    "type": "apartment",
-    "styles": [],
-    "stock": 6,
-    "isHit": false,
-    "characteristics": [],
     "images": [
       "/images/doors/door-1.jpg"
-    ]
+    ],
+    "description": "",
+    "type": "apartment",
+    "doorType": "interior",
+    "styles": [],
+    "openings": [],
+    "sizes": [],
+    "stock": 6,
+    "isHit": false,
+    "characteristics": []
   },
   {
     "id": "etheh",
     "title": "etheh",
     "price": 252,
     "image": "/images/doors/door-1.jpg",
-    "description": "",
-    "type": "apartment",
-    "styles": [],
-    "stock": 23,
-    "isHit": false,
-    "characteristics": [],
     "images": [
       "/images/doors/door-1.jpg"
-    ]
+    ],
+    "description": "",
+    "type": "apartment",
+    "doorType": "interior",
+    "styles": [],
+    "openings": [],
+    "sizes": [],
+    "stock": 23,
+    "isHit": false,
+    "characteristics": []
   },
   {
     "id": "gdfgs",
     "title": "gdfgs",
     "price": 25256,
     "image": "/images/doors/door-1.jpg",
-    "description": "",
-    "type": "apartment",
-    "styles": [],
-    "stock": 8,
-    "isHit": false,
-    "characteristics": [],
     "images": [
       "/images/doors/door-1.jpg"
-    ]
+    ],
+    "description": "",
+    "type": "apartment",
+    "doorType": "interior",
+    "styles": [],
+    "openings": [],
+    "sizes": [],
+    "stock": 8,
+    "isHit": false,
+    "characteristics": []
   },
   {
     "id": "jytjtyj",
     "title": "jytjtyj",
     "price": 63556,
     "image": "/images/doors/door-1.jpg",
-    "description": "",
-    "type": "apartment",
-    "styles": [],
-    "stock": 3,
-    "isHit": false,
-    "characteristics": [],
     "images": [
       "/images/doors/door-1.jpg"
-    ]
+    ],
+    "description": "",
+    "type": "apartment",
+    "doorType": "interior",
+    "styles": [],
+    "openings": [],
+    "sizes": [],
+    "stock": 3,
+    "isHit": false,
+    "characteristics": []
   },
   {
     "id": "fsxzx",
     "title": "fsxzx",
     "price": 343,
     "image": "/images/doors/door-1.jpg",
-    "description": "",
-    "type": "apartment",
-    "styles": [],
-    "stock": 5,
-    "isHit": false,
-    "characteristics": [],
     "images": [
       "/images/doors/door-1.jpg"
-    ]
+    ],
+    "description": "",
+    "type": "apartment",
+    "doorType": "interior",
+    "styles": [],
+    "openings": [],
+    "sizes": [],
+    "stock": 5,
+    "isHit": false,
+    "characteristics": []
   },
   {
     "id": "fasfas",
     "title": "fasfas",
     "price": 134141,
     "image": "/images/doors/door-1.jpg",
+    "images": [
+      "/images/doors/door-1.jpg"
+    ],
     "description": "",
     "type": "apartment",
+    "doorType": "interior",
     "styles": [
       "ЛЮКС",
       "ТРІО"
     ],
+    "openings": [],
+    "sizes": [],
     "stock": 0,
     "isHit": false,
-    "characteristics": [],
-    "images": [
-      "/images/doors/door-1.jpg"
-    ]
+    "characteristics": []
   },
   {
     "id": "mizhkimnatni-dveri-doors-smart-model-c069345",
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C069345",
     "price": 333333,
     "image": "/images/doors/door-1.jpg",
+    "images": [
+      "/images/doors/door-1.jpg"
+    ],
     "description": "бла бла бла",
     "type": "apartment",
+    "doorType": "interior",
     "styles": [
       "PROF GUARD",
       "РОЗПРОДАЖ Преміум NEW",
       "Квадро"
     ],
+    "openings": [],
+    "sizes": [],
     "stock": 2,
     "isHit": false,
     "characteristics": [
@@ -209,9 +325,6 @@
         "label": "Лиштва",
         "value": "Так,прихованого кріплення"
       }
-    ],
-    "images": [
-      "/images/doors/door-1.jpg"
     ]
   },
   {
@@ -219,8 +332,12 @@
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C06934",
     "price": 252423424,
     "image": "/images/doors/door-1.jpg",
+    "images": [
+      "/images/doors/door-1.jpg"
+    ],
     "description": "dfgdfgdfgd",
     "type": "street",
+    "doorType": "interior",
     "styles": [
       "ТРІО",
       "Концепт",
@@ -228,42 +345,50 @@
       "Стріт",
       "Стріт ТЕРМО"
     ],
+    "openings": [],
+    "sizes": [],
     "stock": 5,
     "isHit": false,
-    "characteristics": [],
-    "images": [
-      "/images/doors/door-1.jpg"
-    ]
+    "characteristics": []
   },
   {
     "id": "rtertete",
     "title": "rtertete",
     "price": 35353,
     "image": "/images/doors/door-1.jpg",
+    "images": [
+      "/images/doors/door-1.jpg"
+    ],
     "description": "dfdfg",
     "type": "apartment",
+    "doorType": "interior",
     "styles": [
       "Модерн",
       "ТРІО ЛАЙТ"
     ],
+    "openings": [],
+    "sizes": [],
     "stock": 0,
     "isHit": true,
-    "characteristics": [],
-    "images": [
-      "/images/doors/door-1.jpg"
-    ]
+    "characteristics": []
   },
   {
     "id": "mizhkimnatni-dveri-doors-smart-model-c067",
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C067",
     "price": 3064,
     "image": "/images/doors/door-1.jpg",
+    "images": [
+      "/images/doors/door-1.jpg"
+    ],
     "description": "Якісні міжкімнатні двері для сучасного інтер’єру.",
     "type": "apartment",
+    "doorType": "interior",
     "styles": [
       "Комфорт NEW",
       "Модерн"
     ],
+    "openings": [],
+    "sizes": [],
     "stock": 2,
     "isHit": true,
     "characteristics": [
@@ -283,9 +408,6 @@
         "label": "Колір",
         "value": "Сірий дуб"
       }
-    ],
-    "images": [
-      "/images/doors/door-1.jpg"
     ]
   }
 ]

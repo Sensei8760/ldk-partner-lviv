@@ -37,6 +37,17 @@ const styleItems = [
   { id: 'sale-premium-new', label: 'РОЗПРОДАЖ Преміум NEW' },
 ] as const;
 
+const openingItems = [
+  { id: 'left', label: 'Ліве' },
+  { id: 'right', label: 'Праве' },
+] as const;
+
+const sizeItems = [
+  { id: '850x2040', label: '850х2040 мм' },
+  { id: '950x2040', label: '950х2040 мм' },
+  { id: '1200x2040', label: '1200х2040 мм' },
+] as const;
+
 const STYLE_VISIBLE_COUNT = 2;
 const PRODUCTS_STEP = 6;
 const MIN_GAP = 0;
@@ -44,6 +55,8 @@ const MIN_GAP = 0;
 type SortValue = 'price-asc' | 'price-desc';
 type ProductTypeValue = (typeof productTypeItems)[number]['id'];
 type InstallPlaceValue = (typeof installPlaceItems)[number]['id'];
+type OpeningValue = (typeof openingItems)[number]['id'];
+type SizeValue = (typeof sizeItems)[number]['id'];
 
 function normalizeValue(value: string) {
   return value.trim().toLowerCase();
@@ -54,21 +67,28 @@ function clamp(value: number, min: number, max: number) {
 }
 
 function getProductType(product: Product): ProductTypeValue {
-  const title = product.title.trim().toLowerCase();
-
-  if (title.includes('міжкімнат')) {
-    return 'interior';
-  }
-
-  if (title.includes('вхідн')) {
-    return 'entrance';
-  }
-
-  return product.type === 'street' ? 'entrance' : 'interior';
+  return product.doorType === 'entrance' ? 'entrance' : 'interior';
 }
 
 function getInstallPlace(product: Product): InstallPlaceValue {
   return product.type === 'street' ? 'street' : 'apartment';
+}
+
+function getOpenings(product: Product): OpeningValue[] {
+  if (!Array.isArray(product.openings)) return [];
+
+  return product.openings.filter(
+    (item): item is OpeningValue => item === 'left' || item === 'right'
+  );
+}
+
+function getSizes(product: Product): SizeValue[] {
+  if (!Array.isArray(product.sizes)) return [];
+
+  return product.sizes.filter(
+    (item): item is SizeValue =>
+      item === '850x2040' || item === '950x2040' || item === '1200x2040'
+  );
 }
 
 export default function CatalogClient({
@@ -101,6 +121,8 @@ export default function CatalogClient({
   const [selectedProductTypes, setSelectedProductTypes] = useState<ProductTypeValue[]>([]);
   const [selectedInstallPlaces, setSelectedInstallPlaces] = useState<InstallPlaceValue[]>([]);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [selectedOpenings, setSelectedOpenings] = useState<OpeningValue[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<SizeValue[]>([]);
   const [priceFrom, setPriceFrom] = useState(priceBounds.min);
   const [priceTo, setPriceTo] = useState(priceBounds.max);
   const [priceFromInput, setPriceFromInput] = useState(String(priceBounds.min));
@@ -161,12 +183,35 @@ export default function CatalogClient({
     }, {});
   }, [products]);
 
+  const openingCounts = useMemo(() => {
+    return {
+      left: products.filter((product) => getOpenings(product).includes('left')).length,
+      right: products.filter((product) => getOpenings(product).includes('right')).length,
+    };
+  }, [products]);
+
+  const sizeCounts = useMemo(() => {
+    return {
+      '850x2040': products.filter((product) =>
+        getSizes(product).includes('850x2040')
+      ).length,
+      '950x2040': products.filter((product) =>
+        getSizes(product).includes('950x2040')
+      ).length,
+      '1200x2040': products.filter((product) =>
+        getSizes(product).includes('1200x2040')
+      ).length,
+    };
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase();
 
     const result = products.filter((product) => {
       const productType = getProductType(product);
       const installPlace = getInstallPlace(product);
+      const openings = getOpenings(product);
+      const sizes = getSizes(product);
 
       const matchesProductType =
         selectedProductTypes.length === 0 ||
@@ -189,6 +234,14 @@ export default function CatalogClient({
             : false;
         });
 
+      const matchesOpening =
+        selectedOpenings.length === 0 ||
+        selectedOpenings.some((opening) => openings.includes(opening));
+
+      const matchesSize =
+        selectedSizes.length === 0 ||
+        selectedSizes.some((size) => sizes.includes(size));
+
       const matchesPrice = product.price >= priceFrom && product.price <= priceTo;
 
       const matchesSearch =
@@ -202,6 +255,8 @@ export default function CatalogClient({
         matchesProductType &&
         matchesInstallPlace &&
         matchesStyle &&
+        matchesOpening &&
+        matchesSize &&
         matchesPrice &&
         matchesSearch &&
         matchesFavorites
@@ -227,6 +282,8 @@ export default function CatalogClient({
     selectedProductTypes,
     selectedInstallPlaces,
     selectedStyles,
+    selectedOpenings,
+    selectedSizes,
     priceFrom,
     priceTo,
     searchQuery,
@@ -255,6 +312,20 @@ export default function CatalogClient({
 
   const handleToggleStyle = (id: string) => {
     setSelectedStyles((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+    resetVisibleCount();
+  };
+
+  const handleToggleOpening = (id: OpeningValue) => {
+    setSelectedOpenings((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+    resetVisibleCount();
+  };
+
+  const handleToggleSize = (id: SizeValue) => {
+    setSelectedSizes((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
     resetVisibleCount();
@@ -534,6 +605,75 @@ export default function CatalogClient({
             </button>
           ) : null}
         </div>
+
+        <div className={styles.filterGroup}>
+          <h3 className={styles.groupTitle}>Відкривання дверей</h3>
+
+          <div className={styles.filtersList}>
+            {openingItems.map((item) => {
+              const isChecked = selectedOpenings.includes(item.id);
+              const count =
+                item.id === 'left' ? openingCounts.left : openingCounts.right;
+
+              return (
+                <label key={item.id} className={styles.filterLabel}>
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => handleToggleOpening(item.id)}
+                    className={styles.checkbox}
+                  />
+                  <span className={styles.customCheckbox}></span>
+
+                  <span className={styles.filterText}>
+                    <span
+                      className={`${styles.filterName} ${
+                        isChecked ? styles.filterNameActive : ''
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                    <span className={styles.count}>({count})</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <h3 className={styles.groupTitle}>Розмір</h3>
+
+          <div className={styles.filtersList}>
+            {sizeItems.map((item) => {
+              const isChecked = selectedSizes.includes(item.id);
+              const count = sizeCounts[item.id] || 0;
+
+              return (
+                <label key={item.id} className={styles.filterLabel}>
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => handleToggleSize(item.id)}
+                    className={styles.checkbox}
+                  />
+                  <span className={styles.customCheckbox}></span>
+
+                  <span className={styles.filterText}>
+                    <span
+                      className={`${styles.filterName} ${
+                        isChecked ? styles.filterNameActive : ''
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                    <span className={styles.count}>({count})</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
       </aside>
 
       <section className={styles.products}>
@@ -593,10 +733,10 @@ export default function CatalogClient({
               title="Показати збережені двері"
             >
               <span className={styles.favoriteFilterIcon} aria-hidden="true">
-  <svg className={styles.favoriteFilterIconSvg}>
-    <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
-  </svg>
-</span>
+                <svg className={styles.favoriteFilterIconSvg}>
+                  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
+                </svg>
+              </span>
 
               <span className={styles.favoriteFilterLabel}>
                 Збережені ({favoriteIds.length})
@@ -617,31 +757,32 @@ export default function CatalogClient({
             <div className={styles.grid}>
               {visibleProducts.map((product) => (
                 <CatalogCard
-                  key={product.id}
-                  id={product.id}
-                  title={product.title}
-                  price={product.price}
-                  image={product.image}
-                  stock={product.stock}
-                  isHit={product.isHit}
-                />
+  key={product.id}
+  id={product.id}
+  title={product.title}
+  price={product.price}
+  image={product.image}
+  images={product.images}
+  stock={product.stock}
+  isHit={product.isHit}
+/>
               ))}
             </div>
 
             {hasMoreProducts ? (
               <div className={styles.showMoreWrap}>
                 <button
-  type="button"
-  className={styles.showMoreProductsButton}
-  onClick={handleShowMoreProducts}
->
-  Показати ще
-  <span className={styles.showMoreProductsArrow} aria-hidden="true">
-    <svg className={styles.showMoreProductsArrowSvg}>
-      <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
-    </svg>
-  </span>
-</button>
+                  type="button"
+                  className={styles.showMoreProductsButton}
+                  onClick={handleShowMoreProducts}
+                >
+                  Показати ще
+                  <span className={styles.showMoreProductsArrow} aria-hidden="true">
+                    <svg className={styles.showMoreProductsArrowSvg}>
+                      <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
+                    </svg>
+                  </span>
+                </button>
               </div>
             ) : null}
           </>

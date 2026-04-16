@@ -3,6 +3,9 @@ import {
   getProducts,
   saveProducts,
   type Product,
+  type ProductDoorType,
+  type ProductOpening,
+  type ProductSize,
 } from '@/lib/products';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
@@ -27,6 +30,10 @@ const STYLE_OPTIONS = [
   'РОЗПРОДАЖ',
   'РОЗПРОДАЖ Преміум NEW',
 ] as const;
+
+// const DOOR_TYPE_OPTIONS = ['interior', 'entrance'] as const;
+const OPENING_OPTIONS = ['left', 'right'] as const;
+const SIZE_OPTIONS = ['850x2040', '950x2040', '1200x2040'] as const;
 
 const CHARACTERISTIC_LABELS = [
   'Короб',
@@ -53,7 +60,10 @@ type ValidationErrors = Partial<{
   imageBack: string;
   images: string;
   type: string;
+  doorType: string;
   styles: string;
+  openings: string;
+  sizes: string;
   stock: string;
   description: string;
   characteristics: string;
@@ -69,7 +79,10 @@ type NormalizedPayload = {
   imageBack: string;
   description: string;
   type: ProductType;
+  doorType: ProductDoorType;
   styles: string[];
+  openings: ProductOpening[];
+  sizes: ProductSize[];
   stock: number;
   isHit: boolean;
   characteristics: { label: string; value: string }[];
@@ -172,6 +185,52 @@ function normalizeStyles(styles: unknown) {
   );
 }
 
+function normalizeDoorType(
+  value: unknown,
+  title: string,
+  type: ProductType
+): ProductDoorType {
+  if (value === 'interior' || value === 'entrance') {
+    return value;
+  }
+
+  const normalizedTitle = title.trim().toLowerCase();
+
+  if (normalizedTitle.includes('міжкімнат')) {
+    return 'interior';
+  }
+
+  if (normalizedTitle.includes('вхідн')) {
+    return 'entrance';
+  }
+
+  return type === 'street' ? 'entrance' : 'interior';
+}
+
+function normalizeOpenings(value: unknown): ProductOpening[] {
+  if (!Array.isArray(value)) return [];
+
+  return uniqueStrings(
+    value
+      .map((item) => String(item).trim())
+      .filter((item): item is ProductOpening =>
+        OPENING_OPTIONS.includes(item as ProductOpening)
+      )
+  ) as ProductOpening[];
+}
+
+function normalizeSizes(value: unknown): ProductSize[] {
+  if (!Array.isArray(value)) return [];
+
+  return uniqueStrings(
+    value
+      .map((item) => String(item).trim())
+      .filter((item): item is ProductSize =>
+        SIZE_OPTIONS.includes(item as ProductSize)
+      )
+  ) as ProductSize[];
+}
+
 function normalizeCharacteristics(characteristics: unknown) {
   if (!Array.isArray(characteristics)) return [];
 
@@ -235,7 +294,11 @@ function validateAndNormalizeProduct(body: unknown):
   const priceRaw = raw.price;
   const description = String(raw.description || '').trim();
   const type: ProductType = raw.type === 'street' ? 'street' : 'apartment';
+  const rawDoorType = raw.doorType;
+  const doorType = normalizeDoorType(rawDoorType, title, type);
   const styles = normalizeStyles(raw.styles);
+  const openings = normalizeOpenings(raw.openings);
+  const sizes = normalizeSizes(raw.sizes);
   const stockRaw = raw.stock;
   const isHit = Boolean(raw.isHit);
   const characteristicsRaw = normalizeCharacteristics(raw.characteristics);
@@ -278,12 +341,42 @@ function validateAndNormalizeProduct(body: unknown):
     errors.type = 'Некоректний тип товару.';
   }
 
+  if (
+    rawDoorType !== undefined &&
+    rawDoorType !== 'interior' &&
+    rawDoorType !== 'entrance'
+  ) {
+    errors.doorType = 'Некоректний тип дверей.';
+  }
+
   const invalidStyles = styles.filter(
     (style) => !STYLE_OPTIONS.includes(style as (typeof STYLE_OPTIONS)[number])
   );
 
   if (invalidStyles.length > 0) {
     errors.styles = 'Містить некоректні стилі.';
+  }
+
+  const rawOpenings = Array.isArray(raw.openings)
+    ? raw.openings.map((item) => String(item).trim()).filter(Boolean)
+    : [];
+  const invalidOpenings = rawOpenings.filter(
+    (item) => !OPENING_OPTIONS.includes(item as ProductOpening)
+  );
+
+  if (invalidOpenings.length > 0) {
+    errors.openings = 'Містить некоректне відкривання.';
+  }
+
+  const rawSizes = Array.isArray(raw.sizes)
+    ? raw.sizes.map((item) => String(item).trim()).filter(Boolean)
+    : [];
+  const invalidSizes = rawSizes.filter(
+    (item) => !SIZE_OPTIONS.includes(item as ProductSize)
+  );
+
+  if (invalidSizes.length > 0) {
+    errors.sizes = 'Містить некоректний розмір.';
   }
 
   const stock = Number(stockRaw);
@@ -335,7 +428,10 @@ function validateAndNormalizeProduct(body: unknown):
       imageBack,
       description,
       type,
+      doorType,
       styles,
+      openings,
+      sizes,
       stock,
       isHit,
       characteristics,
@@ -396,7 +492,10 @@ export async function POST(request: Request) {
     images: validated.data.images,
     description: validated.data.description,
     type: validated.data.type,
+    doorType: validated.data.doorType,
     styles: validated.data.styles,
+    openings: validated.data.openings,
+    sizes: validated.data.sizes,
     stock: validated.data.stock,
     isHit: validated.data.isHit,
     characteristics: validated.data.characteristics,
@@ -462,7 +561,10 @@ export async function PATCH(request: Request) {
     images: validated.data.images,
     description: validated.data.description,
     type: validated.data.type,
+    doorType: validated.data.doorType,
     styles: validated.data.styles,
+    openings: validated.data.openings,
+    sizes: validated.data.sizes,
     stock: validated.data.stock,
     isHit: validated.data.isHit,
     characteristics: validated.data.characteristics,
