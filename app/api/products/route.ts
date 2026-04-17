@@ -6,6 +6,7 @@ import {
   type ProductDoorType,
   type ProductOpening,
   type ProductSize,
+  type ProductSizeStock,
 } from '@/lib/products';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
@@ -31,7 +32,7 @@ const STYLE_OPTIONS = [
   'РОЗПРОДАЖ Преміум NEW',
 ] as const;
 
-// const DOOR_TYPE_OPTIONS = ['interior', 'entrance'] as const;
+const DOOR_TYPE_OPTIONS = ['interior', 'entrance'] as const;
 const OPENING_OPTIONS = ['left', 'right'] as const;
 const SIZE_OPTIONS = ['850x2040', '950x2040', '1200x2040'] as const;
 
@@ -56,6 +57,7 @@ type ProductType = 'street' | 'apartment';
 type ValidationErrors = Partial<{
   title: string;
   price: string;
+  discountPrice: string;
   imageFront: string;
   imageBack: string;
   images: string;
@@ -64,6 +66,7 @@ type ValidationErrors = Partial<{
   styles: string;
   openings: string;
   sizes: string;
+  sizeStocks: string;
   stock: string;
   description: string;
   characteristics: string;
@@ -74,6 +77,7 @@ type NormalizedPayload = {
   id?: string;
   title: string;
   price: number;
+  discountPrice: number | null;
   images: string[];
   imageFront: string;
   imageBack: string;
@@ -83,6 +87,7 @@ type NormalizedPayload = {
   styles: string[];
   openings: ProductOpening[];
   sizes: ProductSize[];
+  sizeStocks: ProductSizeStock[];
   stock: number;
   isHit: boolean;
   characteristics: { label: string; value: string }[];
@@ -173,7 +178,7 @@ function isValidImagePath(value: string) {
   return isLocalPath || isRemoteUrl;
 }
 
-function uniqueStrings(values: string[]) {
+function uniqueStrings<T extends string>(values: T[]) {
   return [...new Set(values)];
 }
 
@@ -216,7 +221,7 @@ function normalizeOpenings(value: unknown): ProductOpening[] {
       .filter((item): item is ProductOpening =>
         OPENING_OPTIONS.includes(item as ProductOpening)
       )
-  ) as ProductOpening[];
+  );
 }
 
 function normalizeSizes(value: unknown): ProductSize[] {
@@ -228,7 +233,47 @@ function normalizeSizes(value: unknown): ProductSize[] {
       .filter((item): item is ProductSize =>
         SIZE_OPTIONS.includes(item as ProductSize)
       )
-  ) as ProductSize[];
+  );
+}
+
+function normalizeSizeStocks(value: unknown): ProductSizeStock[] {
+  if (!Array.isArray(value)) return [];
+
+  const normalized = value
+    .map((item) => {
+      if (!item || typeof item !== 'object') return null;
+
+      const typed = item as Partial<ProductSizeStock>;
+      const size = typed.size;
+      const stock = Number(typed.stock);
+
+      const isValidSize =
+        size === '850x2040' || size === '950x2040' || size === '1200x2040';
+
+      if (!isValidSize) return null;
+      if (!Number.isFinite(stock)) return null;
+
+      return {
+        size,
+        stock: stock < 0 ? 0 : Math.round(stock),
+      };
+    })
+    .filter(Boolean) as ProductSizeStock[];
+
+  const merged = new Map<ProductSize, number>();
+
+  normalized.forEach((item) => {
+    merged.set(item.size, (merged.get(item.size) || 0) + item.stock);
+  });
+
+  return Array.from(merged.entries()).map(([size, stock]) => ({
+    size,
+    stock,
+  }));
+}
+
+function getTotalStockFromSizeStocks(sizeStocks: ProductSizeStock[]) {
+  return sizeStocks.reduce((sum, item) => sum + item.stock, 0);
 }
 
 function normalizeCharacteristics(characteristics: unknown) {
@@ -292,14 +337,42 @@ function validateAndNormalizeProduct(body: unknown):
 
   const title = String(raw.title || '').trim();
   const priceRaw = raw.price;
+  const price = Number(priceRaw);
+
+  const discountPriceRaw = raw.discountPrice;
+  const parsedDiscountPrice = Number(discountPriceRaw);
+  const discountPrice =
+    discountPriceRaw === null ||
+    discountPriceRaw === undefined ||
+    discountPriceRaw === ''
+      ? null
+      : parsedDiscountPrice;
+
   const description = String(raw.description || '').trim();
   const type: ProductType = raw.type === 'street' ? 'street' : 'apartment';
   const rawDoorType = raw.doorType;
   const doorType = normalizeDoorType(rawDoorType, title, type);
   const styles = normalizeStyles(raw.styles);
   const openings = normalizeOpenings(raw.openings);
-  const sizes = normalizeSizes(raw.sizes);
+
+  const legacySizes = normalizeSizes(raw.sizes);
+  const normalizedSizeStocks = normalizeSizeStocks(raw.sizeStocks);
+
   const stockRaw = raw.stock;
+  const legacyStock = Number(stockRaw);
+
+  const sizes =
+    normalizedSizeStocks.length > 0
+      ? uniqueStrings(normalizedSizeStocks.map((item) => item.size))
+      : legacySizes;
+
+  const stock =
+    normalizedSizeStocks.length > 0
+      ? getTotalStockFromSizeStocks(normalizedSizeStocks)
+      : Number.isFinite(legacyStock)
+        ? Math.max(0, Math.round(legacyStock))
+        : 0;
+
   const isHit = Boolean(raw.isHit);
   const characteristicsRaw = normalizeCharacteristics(raw.characteristics);
   const { images, imageFront, imageBack } = normalizeImages(raw);
@@ -312,7 +385,6 @@ function validateAndNormalizeProduct(body: unknown):
     errors.title = 'Назва не повинна перевищувати 120 символів.';
   }
 
-  const price = Number(priceRaw);
   if (priceRaw === '' || priceRaw === null || priceRaw === undefined) {
     errors.price = 'Вкажіть ціну.';
   } else if (!Number.isFinite(price)) {
@@ -321,6 +393,21 @@ function validateAndNormalizeProduct(body: unknown):
     errors.price = 'Ціна повинна бути більшою за 0.';
   } else if (price > 9999999) {
     errors.price = 'Ціна занадто велика.';
+  }
+
+  if (
+    discountPriceRaw !== null &&
+    discountPriceRaw !== undefined &&
+    discountPriceRaw !== ''
+  ) {
+    if (!Number.isFinite(discountPrice)) {
+      errors.discountPrice = 'Ціна зі знижкою повинна бути числом.';
+    } else if ((discountPrice ?? 0) <= 0) {
+      errors.discountPrice = 'Ціна зі знижкою повинна бути більшою за 0.';
+    } else if (Number.isFinite(price) && (discountPrice ?? 0) >= price) {
+      errors.discountPrice =
+        'Ціна зі знижкою повинна бути меншою за основну ціну.';
+    }
   }
 
   if (!imageFront) {
@@ -343,8 +430,7 @@ function validateAndNormalizeProduct(body: unknown):
 
   if (
     rawDoorType !== undefined &&
-    rawDoorType !== 'interior' &&
-    rawDoorType !== 'entrance'
+    !DOOR_TYPE_OPTIONS.includes(rawDoorType as ProductDoorType)
   ) {
     errors.doorType = 'Некоректний тип дверей.';
   }
@@ -368,27 +454,65 @@ function validateAndNormalizeProduct(body: unknown):
     errors.openings = 'Містить некоректне відкривання.';
   }
 
-  const rawSizes = Array.isArray(raw.sizes)
+  const rawLegacySizes = Array.isArray(raw.sizes)
     ? raw.sizes.map((item) => String(item).trim()).filter(Boolean)
     : [];
-  const invalidSizes = rawSizes.filter(
+  const invalidLegacySizes = rawLegacySizes.filter(
     (item) => !SIZE_OPTIONS.includes(item as ProductSize)
   );
 
-  if (invalidSizes.length > 0) {
+  if (invalidLegacySizes.length > 0) {
     errors.sizes = 'Містить некоректний розмір.';
   }
 
-  const stock = Number(stockRaw);
-  if (stockRaw === '' || stockRaw === null || stockRaw === undefined) {
+  if (raw.sizeStocks !== undefined && !Array.isArray(raw.sizeStocks)) {
+    errors.sizeStocks = 'Некоректні залишки по розмірах.';
+  }
+
+  const invalidSizeStocks =
+    Array.isArray(raw.sizeStocks)
+      ? raw.sizeStocks.some((item) => {
+          if (!item || typeof item !== 'object') return true;
+
+          const typed = item as Partial<ProductSizeStock>;
+          const size = typed.size;
+          const itemStock = Number(typed.stock);
+
+          const isValidSize =
+            size === '850x2040' || size === '950x2040' || size === '1200x2040';
+
+          return !isValidSize || !Number.isFinite(itemStock) || itemStock < 0;
+        })
+      : false;
+
+  if (invalidSizeStocks) {
+    errors.sizeStocks = 'Містить некоректні розміри або кількість.';
+  }
+
+  if (
+    normalizedSizeStocks.length === 0 &&
+    (stockRaw === '' || stockRaw === null || stockRaw === undefined)
+  ) {
     errors.stock = 'Вкажіть кількість в наявності.';
-  } else if (!Number.isFinite(stock)) {
+  } else if (
+    normalizedSizeStocks.length === 0 &&
+    !Number.isFinite(legacyStock)
+  ) {
     errors.stock = 'Кількість повинна бути числом.';
-  } else if (!Number.isInteger(stock)) {
+  } else if (
+    normalizedSizeStocks.length === 0 &&
+    !Number.isInteger(legacyStock)
+  ) {
     errors.stock = 'Кількість повинна бути цілим числом.';
-  } else if (stock < 0) {
+  } else if (
+    normalizedSizeStocks.length === 0 &&
+    legacyStock < 0
+  ) {
     errors.stock = 'Кількість не може бути меншою за 0.';
-  } else if (stock > 9999) {
+  } else if (
+    normalizedSizeStocks.length === 0 &&
+    legacyStock > 9999
+  ) {
     errors.stock = 'Кількість занадто велика.';
   }
 
@@ -423,6 +547,8 @@ function validateAndNormalizeProduct(body: unknown):
       id: String(raw.id || '').trim() || undefined,
       title,
       price,
+      discountPrice:
+        discountPrice !== null && discountPrice < price ? discountPrice : null,
       images,
       imageFront,
       imageBack,
@@ -432,6 +558,7 @@ function validateAndNormalizeProduct(body: unknown):
       styles,
       openings,
       sizes,
+      sizeStocks: normalizedSizeStocks,
       stock,
       isHit,
       characteristics,
@@ -488,6 +615,7 @@ export async function POST(request: Request) {
     id,
     title: validated.data.title,
     price: validated.data.price,
+    discountPrice: validated.data.discountPrice,
     image: validated.data.images[0],
     images: validated.data.images,
     description: validated.data.description,
@@ -496,6 +624,7 @@ export async function POST(request: Request) {
     styles: validated.data.styles,
     openings: validated.data.openings,
     sizes: validated.data.sizes,
+    sizeStocks: validated.data.sizeStocks,
     stock: validated.data.stock,
     isHit: validated.data.isHit,
     characteristics: validated.data.characteristics,
@@ -557,6 +686,7 @@ export async function PATCH(request: Request) {
     ...products[productIndex],
     title: validated.data.title,
     price: validated.data.price,
+    discountPrice: validated.data.discountPrice,
     image: validated.data.images[0],
     images: validated.data.images,
     description: validated.data.description,
@@ -565,6 +695,7 @@ export async function PATCH(request: Request) {
     styles: validated.data.styles,
     openings: validated.data.openings,
     sizes: validated.data.sizes,
+    sizeStocks: validated.data.sizeStocks,
     stock: validated.data.stock,
     isHit: validated.data.isHit,
     characteristics: validated.data.characteristics,

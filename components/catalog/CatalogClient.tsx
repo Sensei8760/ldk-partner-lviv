@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import CatalogCard from '@/components/catalogCard/CatalogCard';
 import styles from '@/app/catalog/CatalogPage.module.css';
-import type { Product } from '@/lib/products';
+import type { Product, ProductSize } from '@/lib/products';
 import { getFavoriteIds } from '@/store/favorites';
 
 const productTypeItems = [
@@ -83,12 +83,46 @@ function getOpenings(product: Product): OpeningValue[] {
 }
 
 function getSizes(product: Product): SizeValue[] {
+  if (Array.isArray(product.sizeStocks) && product.sizeStocks.length > 0) {
+    return product.sizeStocks
+      .map((item) => item.size)
+      .filter(
+        (item): item is SizeValue =>
+          item === '850x2040' || item === '950x2040' || item === '1200x2040'
+      );
+  }
+
   if (!Array.isArray(product.sizes)) return [];
 
   return product.sizes.filter(
     (item): item is SizeValue =>
       item === '850x2040' || item === '950x2040' || item === '1200x2040'
   );
+}
+
+function getTotalStock(product: Product) {
+  if (Array.isArray(product.sizeStocks) && product.sizeStocks.length > 0) {
+    return product.sizeStocks.reduce((sum, item) => sum + Math.max(0, Number(item.stock) || 0), 0);
+  }
+
+  return Number.isFinite(product.stock) ? Math.max(0, product.stock) : 0;
+}
+
+function hasSize(product: Product, size: ProductSize) {
+  if (Array.isArray(product.sizeStocks) && product.sizeStocks.length > 0) {
+    return product.sizeStocks.some((item) => item.size === size);
+  }
+
+  return Array.isArray(product.sizes) ? product.sizes.includes(size) : false;
+}
+
+function getDisplayPrice(product: Product) {
+  return product.discountPrice !== null &&
+    product.discountPrice !== undefined &&
+    product.discountPrice > 0 &&
+    product.discountPrice < product.price
+    ? product.discountPrice
+    : product.price;
 }
 
 export default function CatalogClient({
@@ -104,7 +138,7 @@ export default function CatalogClient({
     }
 
     const prices = products
-      .map((product) => Number(product.price))
+      .map((product) => Number(getDisplayPrice(product)))
       .filter((price) => Number.isFinite(price));
 
     if (prices.length === 0) {
@@ -192,15 +226,9 @@ export default function CatalogClient({
 
   const sizeCounts = useMemo(() => {
     return {
-      '850x2040': products.filter((product) =>
-        getSizes(product).includes('850x2040')
-      ).length,
-      '950x2040': products.filter((product) =>
-        getSizes(product).includes('950x2040')
-      ).length,
-      '1200x2040': products.filter((product) =>
-        getSizes(product).includes('1200x2040')
-      ).length,
+      '850x2040': products.filter((product) => hasSize(product, '850x2040')).length,
+      '950x2040': products.filter((product) => hasSize(product, '950x2040')).length,
+      '1200x2040': products.filter((product) => hasSize(product, '1200x2040')).length,
     };
   }, [products]);
 
@@ -212,6 +240,7 @@ export default function CatalogClient({
       const installPlace = getInstallPlace(product);
       const openings = getOpenings(product);
       const sizes = getSizes(product);
+      const currentPrice = getDisplayPrice(product);
 
       const matchesProductType =
         selectedProductTypes.length === 0 ||
@@ -242,7 +271,7 @@ export default function CatalogClient({
         selectedSizes.length === 0 ||
         selectedSizes.some((size) => sizes.includes(size));
 
-      const matchesPrice = product.price >= priceFrom && product.price <= priceTo;
+      const matchesPrice = currentPrice >= priceFrom && currentPrice <= priceTo;
 
       const matchesSearch =
         normalizedSearch.length === 0 ||
@@ -264,18 +293,18 @@ export default function CatalogClient({
     });
 
     return [...result].sort((a, b) => {
-      const aOutOfStock = a.stock <= 0 ? 1 : 0;
-      const bOutOfStock = b.stock <= 0 ? 1 : 0;
+      const aOutOfStock = getTotalStock(a) <= 0 ? 1 : 0;
+      const bOutOfStock = getTotalStock(b) <= 0 ? 1 : 0;
 
       if (aOutOfStock !== bOutOfStock) {
         return aOutOfStock - bOutOfStock;
       }
 
       if (sortBy === 'price-desc') {
-        return b.price - a.price;
+        return getDisplayPrice(b) - getDisplayPrice(a);
       }
 
-      return a.price - b.price;
+      return getDisplayPrice(a) - getDisplayPrice(b);
     });
   }, [
     products,
@@ -757,15 +786,16 @@ export default function CatalogClient({
             <div className={styles.grid}>
               {visibleProducts.map((product) => (
                 <CatalogCard
-  key={product.id}
-  id={product.id}
-  title={product.title}
-  price={product.price}
-  image={product.image}
-  images={product.images}
-  stock={product.stock}
-  isHit={product.isHit}
-/>
+                  key={product.id}
+                  id={product.id}
+                  title={product.title}
+                  price={product.price}
+                  discountPrice={product.discountPrice}
+                  image={product.image}
+                  images={product.images}
+                  stock={getTotalStock(product)}
+                  isHit={product.isHit}
+                />
               ))}
             </div>
 

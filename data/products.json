@@ -3,6 +3,7 @@
     "id": "mizhkimnatni-dveri-doors-smart-model-c067111",
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C067111",
     "price": 132,
+    "discountPrice": 120,
     "image": "/images/doors/door-1.jpg",
     "images": [
       "/images/doors/door-1.jpg",
@@ -23,9 +24,25 @@
       "right"
     ],
     "sizes": [
+      "850x2040",
+      "950x2040",
       "1200x2040"
     ],
-    "stock": 3,
+    "sizeStocks": [
+      {
+        "size": "850x2040",
+        "stock": 5
+      },
+      {
+        "size": "950x2040",
+        "stock": 1
+      },
+      {
+        "size": "1200x2040",
+        "stock": 3
+      }
+    ],
+    "stock": 9,
     "isHit": false,
     "characteristics": [
       {
@@ -86,6 +103,7 @@
     "id": "werwrwrwrwerwrwrw",
     "title": "werwrwrwrwerwrwrw",
     "price": 23424,
+    "discountPrice": null,
     "image": "/images/doors/door-1.jpg",
     "images": [
       "/images/doors/door-1.jpg",
@@ -97,6 +115,7 @@
     "styles": [],
     "openings": [],
     "sizes": [],
+    "sizeStocks": [],
     "stock": 23,
     "isHit": false,
     "characteristics": []
@@ -105,6 +124,7 @@
     "id": "mizhkimnatni-dveri-doors-smart-model-c06934534",
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C06934534",
     "price": 42515,
+    "discountPrice": null,
     "image": "/image/doors/door-1.jpg",
     "images": [
       "/image/doors/door-1.jpg"
@@ -118,26 +138,8 @@
     ],
     "openings": [],
     "sizes": [],
+    "sizeStocks": [],
     "stock": 231,
-    "isHit": false,
-    "characteristics": []
-  },
-  {
-    "id": "dsfsfsf",
-    "title": "dsfsfsf",
-    "price": 234242,
-    "image": "/images/doors/door-1.jpg",
-    "images": [
-      "/images/doors/door-1.jpg",
-      "/images/doors/door-1.jpg"
-    ],
-    "description": "",
-    "type": "apartment",
-    "doorType": "interior",
-    "styles": [],
-    "openings": [],
-    "sizes": [],
-    "stock": 4,
     "isHit": false,
     "characteristics": []
   },
@@ -145,6 +147,7 @@
     "id": "eqfda",
     "title": "eqfda",
     "price": 532,
+    "discountPrice": null,
     "image": "/images/doors/door-1.jpg",
     "images": [
       "/images/doors/door-1.jpg"
@@ -152,46 +155,20 @@
     "description": "",
     "type": "apartment",
     "doorType": "interior",
-    "styles": [],
-    "openings": [],
-    "sizes": [],
-    "stock": 6,
-    "isHit": false,
-    "characteristics": []
-  },
-  {
-    "id": "etheh",
-    "title": "etheh",
-    "price": 252,
-    "image": "/images/doors/door-1.jpg",
-    "images": [
-      "/images/doors/door-1.jpg"
+    "styles": [
+      "PROF GUARD"
     ],
-    "description": "",
-    "type": "apartment",
-    "doorType": "interior",
-    "styles": [],
     "openings": [],
-    "sizes": [],
-    "stock": 23,
-    "isHit": false,
-    "characteristics": []
-  },
-  {
-    "id": "gdfgs",
-    "title": "gdfgs",
-    "price": 25256,
-    "image": "/images/doors/door-1.jpg",
-    "images": [
-      "/images/doors/door-1.jpg"
+    "sizes": [
+      "850x2040"
     ],
-    "description": "",
-    "type": "apartment",
-    "doorType": "interior",
-    "styles": [],
-    "openings": [],
-    "sizes": [],
-    "stock": 8,
+    "sizeStocks": [
+      {
+        "size": "850x2040",
+        "stock": 5
+      }
+    ],
+    "stock": 5,
     "isHit": false,
     "characteristics": []
   },
@@ -199,6 +176,7 @@
     "id": "jytjtyj",
     "title": "jytjtyj",
     "price": 63556,
+    "discountPrice": null,
     "image": "/images/doors/door-1.jpg",
     "images": [
       "/images/doors/door-1.jpg"
@@ -209,6 +187,7 @@
     "styles": [],
     "openings": [],
     "sizes": [],
+    "sizeStocks": [],
     "stock": 3,
     "isHit": false,
     "characteristics": []
@@ -217,6 +196,7 @@
     "id": "fsxzx",
     "title": "fsxzx",
     "price": 343,
+    "discountPrice": null,
     "image": "/images/doors/door-1.jpg",
     "images": [
       "/images/doors/door-1.jpg"
@@ -227,6 +207,7 @@
     "styles": [],
     "openings": [],
     "sizes": [],
+    "sizeStocks": [],
     "stock": 5,
     "isHit": false,
     "characteristics": []
@@ -235,6 +216,7 @@
     "id": "fasfas",
     "title": "fasfas",
     "price": 134141,
+    "discountPrice": null,
     "image": "/images/doors/door-1.jpg",
     "images": [
       "/images/doors/door-1.jpg"
@@ -248,6 +230,7 @@
     ],
     "openings": [],
     "sizes": [],
+    "sizeStocks": [],
     "stock": 0,
     "isHit": false,
     "characteristics": []
@@ -256,6 +239,7 @@
     "id": "mizhkimnatni-dveri-doors-smart-model-c069345",
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C069345",
     "price": 333333,
+    "discountPrice": null,
     "image": "/images/doors/door-1.jpg",
     "images": [
       "/images/doors/door-1.jpg"
@@ -270,6 +254,7 @@
     ],
     "openings": [],
     "sizes": [],
+    "sizeStocks": [],
     "stock": 2,
     "isHit": false,
     "characteristics": [
@@ -331,6 +316,7 @@
     "id": "mizhkimnatni-dveri-doors-smart-model-c06934",
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C06934",
     "price": 252423424,
+    "discountPrice": null,
     "image": "/images/doors/door-1.jpg",
     "images": [
       "/images/doors/door-1.jpg"
@@ -347,6 +333,7 @@
     ],
     "openings": [],
     "sizes": [],
+    "sizeStocks": [],
     "stock": 5,
     "isHit": false,
     "characteristics": []
@@ -355,6 +342,7 @@
     "id": "rtertete",
     "title": "rtertete",
     "price": 35353,
+    "discountPrice": null,
     "image": "/images/doors/door-1.jpg",
     "images": [
       "/images/doors/door-1.jpg"
@@ -368,6 +356,7 @@
     ],
     "openings": [],
     "sizes": [],
+    "sizeStocks": [],
     "stock": 0,
     "isHit": true,
     "characteristics": []
@@ -376,6 +365,7 @@
     "id": "mizhkimnatni-dveri-doors-smart-model-c067",
     "title": "Міжкімнатні двері \"Doors\" Smart - модель - C067",
     "price": 3064,
+    "discountPrice": null,
     "image": "/images/doors/door-1.jpg",
     "images": [
       "/images/doors/door-1.jpg"
@@ -389,6 +379,7 @@
     ],
     "openings": [],
     "sizes": [],
+    "sizeStocks": [],
     "stock": 2,
     "isHit": true,
     "characteristics": [

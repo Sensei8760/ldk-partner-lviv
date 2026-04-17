@@ -79,11 +79,11 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 40px;
-        font-weight: 500;
-        font-size: 20px;
-        line-height: 120%;
-        letter-spacing: 0.01em;
-        color: #000;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 120%;
+    letter-spacing: 0.01em;
+    color: #000;
 }
 
 .bottom {
@@ -100,7 +100,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .price {
@@ -113,27 +113,71 @@
 .priceValue {
     font-weight: 700;
     font-family: var(--font-family);
-        font-size: 24px;
-        letter-spacing: 0.01em;
-        color: #000;
+    font-size: 24px;
+    letter-spacing: 0.01em;
+    color: #000;
 }
 
 .currency {
     font-family: var(--font-family);
-        letter-spacing: 0.01em;
-        color: #000;
-        font-weight: 600;
-            font-size: 16px;
-            line-height: 175%;
+    letter-spacing: 0.01em;
+    color: #000;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 175%;
+}
+
+.priceDiscountRow {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.priceOld {
+    margin: 0;
+    color: #6f6f6f;
+    line-height: 1;
+    text-decoration: line-through;
+}
+
+.priceOldValue {
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: 0.01em;
+}
+
+.priceOldCurrency {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.priceSale {
+    margin: 0;
+    color: #d94a4a;
+    line-height: 1;
+    text-align: right;
+}
+
+.priceSaleValue {
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: 0.01em;
+}
+
+.priceSaleCurrency {
+    font-weight: 700;
+    font-size: 16px;
 }
 
 .stock {
     margin: 0;
     font-family: var(--font-family);
     font-weight: 400;
-        font-size: 14px;
-        line-height: 143%;
-        color: #484848;
+    font-size: 14px;
+    line-height: 143%;
+    color: #484848;
 }
 
 .stockOut {
@@ -218,5 +262,13 @@
     .imageWrapper {
         width: 150px;
         height: 280px;
+    }
+
+    .priceOldValue {
+        font-size: 16px;
+    }
+
+    .priceSaleValue {
+        font-size: 22px;
     }
 }

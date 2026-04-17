@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Toast from '@/components/ui/Toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { FALLBACK_PRODUCT_IMAGE } from '@/utils/productImages';
@@ -60,17 +60,20 @@ const characteristicLabels = [
   'Лиштва',
 ] as const;
 
-const INITIAL_VISIBLE_COUNT = 5;
-const LOAD_MORE_STEP = 10;
-
 type ProductDoorType = (typeof doorTypeOptions)[number]['id'];
 type ProductOpening = (typeof openingOptions)[number]['id'];
 type ProductSize = (typeof sizeOptions)[number]['id'];
+
+type ProductSizeStock = {
+  size: ProductSize;
+  stock: number;
+};
 
 type Product = {
   id: string;
   title: string;
   price: number;
+  discountPrice: number | null;
   image: string;
   images?: string[];
   description: string;
@@ -79,6 +82,7 @@ type Product = {
   styles: string[];
   openings: ProductOpening[];
   sizes: ProductSize[];
+  sizeStocks: ProductSizeStock[];
   stock: number;
   isHit: boolean;
   characteristics: { label: string; value: string }[];
@@ -89,10 +93,17 @@ type CharacteristicField = {
   value: string;
 };
 
+type SizeStockField = {
+  size: ProductSize;
+  enabled: boolean;
+  stock: string;
+};
+
 type FormState = {
   id: string;
   title: string;
   price: string;
+  discountPrice: string;
   imageFront: string;
   imageBack: string;
   description: string;
@@ -100,8 +111,7 @@ type FormState = {
   doorType: ProductDoorType;
   styles: string[];
   openings: ProductOpening[];
-  sizes: ProductSize[];
-  stock: string;
+  sizeStocks: SizeStockField[];
   isHit: boolean;
   characteristics: CharacteristicField[];
 };
@@ -109,6 +119,7 @@ type FormState = {
 type FormErrors = Partial<{
   title: string;
   price: string;
+  discountPrice: string;
   imageFront: string;
   imageBack: string;
   images: string;
@@ -116,8 +127,7 @@ type FormErrors = Partial<{
   doorType: string;
   styles: string;
   openings: string;
-  sizes: string;
-  stock: string;
+  sizeStocks: string;
   description: string;
   characteristics: string;
   general: string;
@@ -128,10 +138,17 @@ const emptyCharacteristics: CharacteristicField[] = characteristicLabels.map((la
   value: '',
 }));
 
+const emptySizeStocks: SizeStockField[] = sizeOptions.map((item) => ({
+  size: item.id,
+  enabled: false,
+  stock: '',
+}));
+
 const emptyForm: FormState = {
   id: '',
   title: '',
   price: '',
+  discountPrice: '',
   imageFront: '',
   imageBack: '',
   description: '',
@@ -139,11 +156,13 @@ const emptyForm: FormState = {
   doorType: 'interior',
   styles: [],
   openings: [],
-  sizes: [],
-  stock: '',
+  sizeStocks: emptySizeStocks,
   isHit: false,
   characteristics: emptyCharacteristics,
 };
+
+const INITIAL_VISIBLE_COUNT = 5;
+const LOAD_MORE_STEP = 10;
 
 function mapCharacteristicsToFields(
   characteristics: { label: string; value: string }[]
@@ -154,6 +173,20 @@ function mapCharacteristicsToFields(
     return {
       label,
       value: found?.value || '',
+    };
+  });
+}
+
+function mapSizeStocksToFields(
+  sizeStocks: { size: ProductSize; stock: number }[]
+): SizeStockField[] {
+  return sizeOptions.map((item) => {
+    const found = sizeStocks.find((sizeStock) => sizeStock.size === item.id);
+
+    return {
+      size: item.id,
+      enabled: Boolean(found),
+      stock: found ? String(found.stock) : '',
     };
   });
 }
@@ -169,12 +202,32 @@ function isValidImagePath(value: string) {
   return isLocalPath || isRemoteUrl;
 }
 
+function getNormalizedSizeStocks(sizeStocks: SizeStockField[]): ProductSizeStock[] {
+  return sizeStocks
+    .filter((item) => item.enabled)
+    .map((item) => ({
+      size: item.size,
+      stock: Number(item.stock),
+    }))
+    .filter(
+      (item) =>
+        Number.isFinite(item.stock) &&
+        Number.isInteger(item.stock) &&
+        item.stock >= 0
+    );
+}
+
+function getTotalStock(sizeStocks: SizeStockField[]) {
+  return getNormalizedSizeStocks(sizeStocks).reduce((sum, item) => sum + item.stock, 0);
+}
+
 function validateForm(form: FormState): FormErrors {
   const errors: FormErrors = {};
 
   const title = form.title.trim();
   const price = Number(form.price);
-  const stock = Number(form.stock);
+  const discountPrice =
+    form.discountPrice.trim() === '' ? null : Number(form.discountPrice);
   const imageFront = form.imageFront.trim();
   const imageBack = form.imageBack.trim();
   const description = form.description.trim();
@@ -188,13 +241,23 @@ function validateForm(form: FormState): FormErrors {
   }
 
   if (form.price === '') {
-    errors.price = 'Вкажіть ціну.';
+    errors.price = 'Вкажіть основну ціну.';
   } else if (!Number.isFinite(price)) {
-    errors.price = 'Ціна повинна бути числом.';
+    errors.price = 'Основна ціна повинна бути числом.';
   } else if (price <= 0) {
-    errors.price = 'Ціна повинна бути більшою за 0.';
+    errors.price = 'Основна ціна повинна бути більшою за 0.';
   } else if (price > 9999999) {
-    errors.price = 'Ціна занадто велика.';
+    errors.price = 'Основна ціна занадто велика.';
+  }
+
+  if (form.discountPrice.trim() !== '') {
+    if (!Number.isFinite(discountPrice)) {
+      errors.discountPrice = 'Ціна зі знижкою повинна бути числом.';
+    } else if ((discountPrice ?? 0) <= 0) {
+      errors.discountPrice = 'Ціна зі знижкою повинна бути більшою за 0.';
+    } else if (Number.isFinite(price) && (discountPrice ?? 0) >= price) {
+      errors.discountPrice = 'Ціна зі знижкою повинна бути меншою за основну ціну.';
+    }
   }
 
   if (!imageFront) {
@@ -205,18 +268,6 @@ function validateForm(form: FormState): FormErrors {
 
   if (imageBack && !isValidImagePath(imageBack)) {
     errors.imageBack = 'Некоректний шлях або URL другого фото.';
-  }
-
-  if (form.stock === '') {
-    errors.stock = 'Вкажіть кількість в наявності.';
-  } else if (!Number.isFinite(stock)) {
-    errors.stock = 'Кількість повинна бути числом.';
-  } else if (!Number.isInteger(stock)) {
-    errors.stock = 'Кількість повинна бути цілим числом.';
-  } else if (stock < 0) {
-    errors.stock = 'Кількість не може бути меншою за 0.';
-  } else if (stock > 9999) {
-    errors.stock = 'Кількість занадто велика.';
   }
 
   if (!doorTypeOptions.some((item) => item.id === form.doorType)) {
@@ -235,11 +286,28 @@ function validateForm(form: FormState): FormErrors {
     errors.openings = 'Обрано некоректне відкривання.';
   }
 
-  const invalidSizes = form.sizes.filter(
-    (size) => !sizeOptions.some((item) => item.id === size)
-  );
-  if (invalidSizes.length > 0) {
-    errors.sizes = 'Обрано некоректний розмір.';
+  const enabledSizeStocks = form.sizeStocks.filter((item) => item.enabled);
+
+  if (enabledSizeStocks.length === 0) {
+    errors.sizeStocks = 'Оберіть хоча б один розмір.';
+  } else {
+    const hasInvalidStock = enabledSizeStocks.some((item) => {
+      if (item.stock.trim() === '') return true;
+
+      const value = Number(item.stock);
+
+      return (
+        !Number.isFinite(value) ||
+        !Number.isInteger(value) ||
+        value < 0 ||
+        value > 9999
+      );
+    });
+
+    if (hasInvalidStock) {
+      errors.sizeStocks =
+        'Для кожного вибраного розміру вкажіть коректну цілу кількість від 0 до 9999.';
+    }
   }
 
   if (description.length > 1000) {
@@ -314,14 +382,30 @@ export default function AdminAddProductForm() {
   const [searchQuery, setSearchQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
 
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const totalStock = useMemo(() => getTotalStock(form.sizeStocks), [form.sizeStocks]);
+
   const triggerToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
 
-    setTimeout(() => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+
+    toastTimeoutRef.current = setTimeout(() => {
       setShowToast(false);
     }, 3000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
+    };
   }, []);
 
   const loadProducts = useCallback(
@@ -372,6 +456,14 @@ export default function AdminAddProductForm() {
     });
   }
 
+  function handleSelectDoorType(doorType: ProductDoorType) {
+    setForm((prev) => ({
+      ...prev,
+      doorType,
+    }));
+    clearFieldError('doorType');
+  }
+
   function handleToggleStyle(style: string) {
     setForm((prev) => {
       const nextStyles = prev.styles.includes(style)
@@ -385,15 +477,6 @@ export default function AdminAddProductForm() {
     });
 
     clearFieldError('styles');
-  }
-
-  function handleSelectDoorType(doorType: ProductDoorType) {
-    setForm((prev) => ({
-      ...prev,
-      doorType,
-    }));
-
-    clearFieldError('doorType');
   }
 
   function handleToggleOpening(opening: ProductOpening) {
@@ -412,18 +495,36 @@ export default function AdminAddProductForm() {
   }
 
   function handleToggleSize(size: ProductSize) {
-    setForm((prev) => {
-      const nextSizes = prev.sizes.includes(size)
-        ? prev.sizes.filter((item) => item !== size)
-        : [...prev.sizes, size];
+    setForm((prev) => ({
+      ...prev,
+      sizeStocks: prev.sizeStocks.map((item) =>
+        item.size === size
+          ? {
+              ...item,
+              enabled: !item.enabled,
+              stock: item.enabled ? '' : item.stock,
+            }
+          : item
+      ),
+    }));
 
-      return {
-        ...prev,
-        sizes: nextSizes,
-      };
-    });
+    clearFieldError('sizeStocks');
+  }
 
-    clearFieldError('sizes');
+  function handleSizeStockChange(size: ProductSize, value: string) {
+    setForm((prev) => ({
+      ...prev,
+      sizeStocks: prev.sizeStocks.map((item) =>
+        item.size === size
+          ? {
+              ...item,
+              stock: value.replace(/[^\d]/g, ''),
+            }
+          : item
+      ),
+    }));
+
+    clearFieldError('sizeStocks');
   }
 
   function handleCharacteristicChange(label: string, value: string) {
@@ -440,6 +541,11 @@ export default function AdminAddProductForm() {
   function resetForm() {
     setForm({
       ...emptyForm,
+      sizeStocks: sizeOptions.map((item) => ({
+        size: item.id,
+        enabled: false,
+        stock: '',
+      })),
       characteristics: characteristicLabels.map((label) => ({
         label,
         value: '',
@@ -457,12 +563,26 @@ export default function AdminAddProductForm() {
           ? [product.image]
           : [];
 
+    const normalizedSizeStocks =
+      Array.isArray(product.sizeStocks) && product.sizeStocks.length > 0
+        ? product.sizeStocks
+        : Array.isArray(product.sizes)
+          ? product.sizes.map((size) => ({
+              size,
+              stock: product.stock ?? 0,
+            }))
+          : [];
+
     setEditingId(product.id);
 
     setForm({
       id: product.id || '',
       title: product.title || '',
       price: String(product.price ?? ''),
+      discountPrice:
+        product.discountPrice !== null && product.discountPrice !== undefined
+          ? String(product.discountPrice)
+          : '',
       imageFront: productImages[0] || '',
       imageBack: productImages[1] || '',
       description: product.description || '',
@@ -470,8 +590,7 @@ export default function AdminAddProductForm() {
       doorType: product.doorType === 'entrance' ? 'entrance' : 'interior',
       styles: Array.isArray(product.styles) ? product.styles : [],
       openings: Array.isArray(product.openings) ? product.openings : [],
-      sizes: Array.isArray(product.sizes) ? product.sizes : [],
-      stock: String(product.stock ?? ''),
+      sizeStocks: mapSizeStocksToFields(normalizedSizeStocks),
       isHit: Boolean(product.isHit),
       characteristics: mapCharacteristicsToFields(
         Array.isArray(product.characteristics) ? product.characteristics : []
@@ -480,6 +599,7 @@ export default function AdminAddProductForm() {
 
     setErrors({});
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    triggerToast('Режим редагування увімкнено.', 'success');
   }
 
   function openDeleteModal(product: Product) {
@@ -535,16 +655,20 @@ export default function AdminAddProductForm() {
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
-      triggerToast('Перевірте правильність заповнення форми.', 'error');
+      triggerToast('Не всі обов’язкові поля заповнені або містять помилки.', 'error');
       return;
     }
 
     setIsLoading(true);
 
+    const normalizedSizeStocks = getNormalizedSizeStocks(form.sizeStocks);
+
     const payload = {
       id: form.id.trim(),
       title: form.title.trim(),
       price: Number(form.price),
+      discountPrice:
+        form.discountPrice.trim() === '' ? null : Number(form.discountPrice),
       images: [form.imageFront.trim(), form.imageBack.trim()].filter(Boolean),
       imageFront: form.imageFront.trim(),
       imageBack: form.imageBack.trim(),
@@ -553,8 +677,9 @@ export default function AdminAddProductForm() {
       doorType: form.doorType,
       styles: form.styles,
       openings: form.openings,
-      sizes: form.sizes,
-      stock: Number(form.stock),
+      sizes: normalizedSizeStocks.map((item) => item.size),
+      sizeStocks: normalizedSizeStocks,
+      stock: normalizedSizeStocks.reduce((sum, item) => sum + item.stock, 0),
       isHit: form.isHit,
       characteristics: form.characteristics
         .map((item) => ({
@@ -671,7 +796,7 @@ export default function AdminAddProductForm() {
             </div>
 
             <div className={styles.field}>
-              <label>Ціна</label>
+              <label>Основна ціна</label>
               <input
                 type="number"
                 min="1"
@@ -683,6 +808,23 @@ export default function AdminAddProductForm() {
                 placeholder="3064"
               />
               {errors.price ? <p className={styles.fieldError}>{errors.price}</p> : null}
+            </div>
+
+            <div className={styles.field}>
+              <label>Ціна зі знижкою</label>
+              <input
+                type="number"
+                min="1"
+                value={form.discountPrice}
+                onChange={(e) => {
+                  setForm({ ...form, discountPrice: e.target.value });
+                  clearFieldError('discountPrice');
+                }}
+                placeholder="Необов'язково"
+              />
+              {errors.discountPrice ? (
+                <p className={styles.fieldError}>{errors.discountPrice}</p>
+              ) : null}
             </div>
 
             <div className={styles.field}>
@@ -742,9 +884,7 @@ export default function AdminAddProductForm() {
                   </label>
                 ))}
               </div>
-              {errors.doorType ? (
-                <p className={styles.fieldError}>{errors.doorType}</p>
-              ) : null}
+              {errors.doorType ? <p className={styles.fieldError}>{errors.doorType}</p> : null}
             </div>
 
             <div className={styles.field}>
@@ -763,22 +903,6 @@ export default function AdminAddProductForm() {
                 <option value="street">Вулиця</option>
               </select>
               {errors.type ? <p className={styles.fieldError}>{errors.type}</p> : null}
-            </div>
-
-            <div className={styles.field}>
-              <label>Кількість в наявності</label>
-              <input
-                type="number"
-                min="0"
-                step="1"
-                value={form.stock}
-                onChange={(e) => {
-                  setForm({ ...form, stock: e.target.value });
-                  clearFieldError('stock');
-                }}
-                placeholder="1"
-              />
-              {errors.stock ? <p className={styles.fieldError}>{errors.stock}</p> : null}
             </div>
           </div>
 
@@ -802,20 +926,42 @@ export default function AdminAddProductForm() {
           </div>
 
           <div className={styles.field}>
-            <label>Розмір</label>
-            <div className={styles.stylesGrid}>
-              {sizeOptions.map((size) => (
-                <label key={size.id} className={styles.styleOption}>
-                  <input
-                    type="checkbox"
-                    checked={form.sizes.includes(size.id)}
-                    onChange={() => handleToggleSize(size.id)}
-                  />
-                  <span>{size.label}</span>
-                </label>
-              ))}
+            <label>Розміри та кількість</label>
+            <div className={styles.characteristicsGrid}>
+              {form.sizeStocks.map((item) => {
+                const sizeLabel =
+                  sizeOptions.find((option) => option.id === item.size)?.label || item.size;
+
+                return (
+                  <div key={item.size} className={styles.characteristicField}>
+                    <label className={styles.styleOption}>
+                      <input
+                        type="checkbox"
+                        checked={item.enabled}
+                        onChange={() => handleToggleSize(item.size)}
+                      />
+                      <span>{sizeLabel}</span>
+                    </label>
+
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={item.stock}
+                      onChange={(e) => handleSizeStockChange(item.size, e.target.value)}
+                      placeholder="Кількість"
+                      disabled={!item.enabled}
+                    />
+                  </div>
+                );
+              })}
             </div>
-            {errors.sizes ? <p className={styles.fieldError}>{errors.sizes}</p> : null}
+
+            <p className={styles.stateText}>Загальна кількість в наявності: {totalStock}</p>
+
+            {errors.sizeStocks ? (
+              <p className={styles.fieldError}>{errors.sizeStocks}</p>
+            ) : null}
           </div>
 
           <div className={styles.field}>
@@ -938,7 +1084,12 @@ export default function AdminAddProductForm() {
                     <div className={styles.productInfo}>
                       <p className={styles.productTitle}>{product.title}</p>
                       <p className={styles.productMeta}>
-                        ID: {product.id} · {product.price} грн · В наявності: {product.stock}
+                        ID: {product.id} ·{' '}
+                        {product.discountPrice !== null &&
+                        product.discountPrice < product.price
+                          ? `${product.discountPrice} грн (замість ${product.price} грн)`
+                          : `${product.price} грн`}{' '}
+                        · В наявності: {product.stock}
                       </p>
                     </div>
 

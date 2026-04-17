@@ -14,6 +14,7 @@ type CatalogCardProps = {
   id: string;
   title: string;
   price: number;
+  discountPrice?: number | null;
   image: string;
   images?: string[];
   stock: number;
@@ -24,6 +25,7 @@ export default function CatalogCard({
   id,
   title,
   price,
+  discountPrice = null,
   image,
   images = [],
   stock,
@@ -33,6 +35,14 @@ export default function CatalogCard({
   const [isHovered, setIsHovered] = useState(false);
   const [secondImageFailed, setSecondImageFailed] = useState(false);
   const [primaryImageFailed, setPrimaryImageFailed] = useState(false);
+
+  const hasDiscount =
+    discountPrice !== null &&
+    discountPrice !== undefined &&
+    discountPrice > 0 &&
+    discountPrice < price;
+
+  const displayPrice = hasDiscount ? discountPrice : price;
 
   const normalizedImages = useMemo(() => {
     return Array.isArray(images)
@@ -101,10 +111,24 @@ export default function CatalogCard({
 
         <div className={styles.bottom}>
           <div className={styles.meta}>
-            <p className={styles.price}>
-              <span className={styles.priceValue}>{price}</span>{' '}
-              <span className={styles.currency}>грн</span>
-            </p>
+            {hasDiscount ? (
+              <div className={styles.priceDiscountRow}>
+                <p className={styles.priceOld}>
+                  <span className={styles.priceOldValue}>{price}</span>{' '}
+                  <span className={styles.priceOldCurrency}>грн</span>
+                </p>
+
+                <p className={styles.priceSale}>
+                  <span className={styles.priceSaleValue}>{displayPrice}</span>{' '}
+                  <span className={styles.priceSaleCurrency}>грн</span>
+                </p>
+              </div>
+            ) : (
+              <p className={styles.price}>
+                <span className={styles.priceValue}>{price}</span>{' '}
+                <span className={styles.currency}>грн</span>
+              </p>
+            )}
 
             <p className={`${styles.stock} ${isOutOfStock ? styles.stockOut : ''}`}>
               {isOutOfStock ? 'Немає в наявності' : `В наявності: ${stock}`}
