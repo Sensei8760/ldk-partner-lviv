@@ -101,12 +101,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
 
       if (isProductsApiRoute) {
-        if (request.method === 'POST') {
-          return !!auth?.user;
-        }
+  if (
+    request.method === 'POST' ||
+    request.method === 'PATCH' ||
+    request.method === 'DELETE'
+  ) {
+    return !!auth?.user;
+  }
 
-        return true;
-      }
+  return true;
+}
 
       return true;
     },

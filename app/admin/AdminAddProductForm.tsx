@@ -60,6 +60,8 @@ const characteristicLabels = [
   'Лиштва',
 ] as const;
 
+const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+
 type ProductDoorType = (typeof doorTypeOptions)[number]['id'];
 type ProductOpening = (typeof openingOptions)[number]['id'];
 type ProductSize = (typeof sizeOptions)[number]['id'];
@@ -104,8 +106,10 @@ type FormState = {
   title: string;
   price: string;
   discountPrice: string;
-  imageFront: string;
-  imageBack: string;
+  imageFrontFile: File | null;
+  imageBackFile: File | null;
+  imageFrontUrl: string;
+  imageBackUrl: string;
   description: string;
   type: 'street' | 'apartment';
   doorType: ProductDoorType;
@@ -133,36 +137,42 @@ type FormErrors = Partial<{
   general: string;
 }>;
 
-const emptyCharacteristics: CharacteristicField[] = characteristicLabels.map((label) => ({
-  label,
-  value: '',
-}));
+const INITIAL_VISIBLE_COUNT = 5;
+const LOAD_MORE_STEP = 10;
 
-const emptySizeStocks: SizeStockField[] = sizeOptions.map((item) => ({
-  size: item.id,
-  enabled: false,
-  stock: '',
-}));
+function createEmptyCharacteristics(): CharacteristicField[] {
+  return characteristicLabels.map((label) => ({
+    label,
+    value: '',
+  }));
+}
+
+function createEmptySizeStocks(): SizeStockField[] {
+  return sizeOptions.map((item) => ({
+    size: item.id,
+    enabled: false,
+    stock: '',
+  }));
+}
 
 const emptyForm: FormState = {
   id: '',
   title: '',
   price: '',
   discountPrice: '',
-  imageFront: '',
-  imageBack: '',
+  imageFrontFile: null,
+  imageBackFile: null,
+  imageFrontUrl: '',
+  imageBackUrl: '',
   description: '',
   type: 'apartment',
   doorType: 'interior',
   styles: [],
   openings: [],
-  sizeStocks: emptySizeStocks,
+  sizeStocks: createEmptySizeStocks(),
   isHit: false,
-  characteristics: emptyCharacteristics,
+  characteristics: createEmptyCharacteristics(),
 };
-
-const INITIAL_VISIBLE_COUNT = 5;
-const LOAD_MORE_STEP = 10;
 
 function mapCharacteristicsToFields(
   characteristics: { label: string; value: string }[]
@@ -191,17 +201,6 @@ function mapSizeStocksToFields(
   });
 }
 
-function isValidImagePath(value: string) {
-  if (!value) return false;
-
-  const normalized = value.trim();
-
-  const isLocalPath = /^\/[\w\-./%]+$/i.test(normalized);
-  const isRemoteUrl = /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(normalized);
-
-  return isLocalPath || isRemoteUrl;
-}
-
 function getNormalizedSizeStocks(sizeStocks: SizeStockField[]): ProductSizeStock[] {
   return sizeStocks
     .filter((item) => item.enabled)
@@ -221,6 +220,24 @@ function getTotalStock(sizeStocks: SizeStockField[]) {
   return getNormalizedSizeStocks(sizeStocks).reduce((sum, item) => sum + item.stock, 0);
 }
 
+function isValidImageFile(file: File) {
+  return file.type.startsWith('image/') && file.size <= MAX_IMAGE_SIZE_BYTES;
+}
+
+function validateImageFile(file: File | null) {
+  if (!file) return null;
+
+  if (!file.type.startsWith('image/')) {
+    return 'Оберіть файл зображення.';
+  }
+
+  if (file.size > MAX_IMAGE_SIZE_BYTES) {
+    return 'Фото повинно бути менше 5 МБ.';
+  }
+
+  return null;
+}
+
 function validateForm(form: FormState): FormErrors {
   const errors: FormErrors = {};
 
@@ -228,9 +245,11 @@ function validateForm(form: FormState): FormErrors {
   const price = Number(form.price);
   const discountPrice =
     form.discountPrice.trim() === '' ? null : Number(form.discountPrice);
-  const imageFront = form.imageFront.trim();
-  const imageBack = form.imageBack.trim();
   const description = form.description.trim();
+
+  const hasFrontImage = Boolean(form.imageFrontFile || form.imageFrontUrl);
+  const frontFileError = validateImageFile(form.imageFrontFile);
+  const backFileError = validateImageFile(form.imageBackFile);
 
   if (!title) {
     errors.title = 'Вкажіть назву товару.';
@@ -260,14 +279,14 @@ function validateForm(form: FormState): FormErrors {
     }
   }
 
-  if (!imageFront) {
+  if (!hasFrontImage) {
     errors.imageFront = 'Перше фото є обов’язковим.';
-  } else if (!isValidImagePath(imageFront)) {
-    errors.imageFront = 'Некоректний шлях або URL першого фото.';
+  } else if (frontFileError) {
+    errors.imageFront = frontFileError;
   }
 
-  if (imageBack && !isValidImagePath(imageBack)) {
-    errors.imageBack = 'Некоректний шлях або URL другого фото.';
+  if (backFileError) {
+    errors.imageBack = backFileError;
   }
 
   if (!doorTypeOptions.some((item) => item.id === form.doorType)) {
@@ -328,6 +347,23 @@ function validateForm(form: FormState): FormErrors {
   return errors;
 }
 
+function useImagePreview(file: File | null, fallbackUrl: string) {
+  const objectUrl = useMemo(() => {
+    if (!file) return '';
+    return URL.createObjectURL(file);
+  }, [file]);
+
+  useEffect(() => {
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, [objectUrl]);
+
+  return objectUrl || fallbackUrl || '';
+}
+
 function ProductImagePreview({
   src,
   alt,
@@ -345,10 +381,10 @@ function ProductImagePreview({
     <div className={styles.imagePreviewBox}>
       <div className={styles.imagePreviewFrame}>
         <Image
-          key={fallbackSrc}
           src={displaySrc}
           alt={alt}
           fill
+          unoptimized
           className={styles.imagePreview}
           sizes="160px"
           onError={() => {
@@ -383,8 +419,13 @@ export default function AdminAddProductForm() {
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
 
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const frontInputRef = useRef<HTMLInputElement | null>(null);
+  const backInputRef = useRef<HTMLInputElement | null>(null);
 
   const totalStock = useMemo(() => getTotalStock(form.sizeStocks), [form.sizeStocks]);
+
+  const frontPreview = useImagePreview(form.imageFrontFile, form.imageFrontUrl);
+  const backPreview = useImagePreview(form.imageBackFile, form.imageBackUrl);
 
   const triggerToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
     setToastMessage(message);
@@ -454,6 +495,16 @@ export default function AdminAddProductForm() {
       if (!prev[field]) return prev;
       return { ...prev, [field]: undefined };
     });
+  }
+
+  function clearNativeFileInputs() {
+    if (frontInputRef.current) {
+      frontInputRef.current.value = '';
+    }
+
+    if (backInputRef.current) {
+      backInputRef.current.value = '';
+    }
   }
 
   function handleSelectDoorType(doorType: ProductDoorType) {
@@ -538,21 +589,87 @@ export default function AdminAddProductForm() {
     clearFieldError('characteristics');
   }
 
+  function handleFrontImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] ?? null;
+
+    if (!file) return;
+
+    if (!isValidImageFile(file)) {
+      setErrors((prev) => ({
+        ...prev,
+        imageFront: 'Оберіть коректне фото до 5 МБ.',
+      }));
+      return;
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      imageFrontFile: file,
+    }));
+
+    clearFieldError('imageFront');
+    clearFieldError('images');
+  }
+
+  function handleBackImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] ?? null;
+
+    if (!file) return;
+
+    if (!isValidImageFile(file)) {
+      setErrors((prev) => ({
+        ...prev,
+        imageBack: 'Оберіть коректне фото до 5 МБ.',
+      }));
+      return;
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      imageBackFile: file,
+    }));
+
+    clearFieldError('imageBack');
+  }
+
+  function handleRemoveFrontImage() {
+    setForm((prev) => ({
+      ...prev,
+      imageFrontFile: null,
+      imageFrontUrl: prev.imageFrontFile ? prev.imageFrontUrl : '',
+    }));
+
+    if (frontInputRef.current) {
+      frontInputRef.current.value = '';
+    }
+
+    clearFieldError('imageFront');
+    clearFieldError('images');
+  }
+
+  function handleRemoveBackImage() {
+    setForm((prev) => ({
+      ...prev,
+      imageBackFile: null,
+      imageBackUrl: prev.imageBackFile ? prev.imageBackUrl : '',
+    }));
+
+    if (backInputRef.current) {
+      backInputRef.current.value = '';
+    }
+
+    clearFieldError('imageBack');
+  }
+
   function resetForm() {
     setForm({
       ...emptyForm,
-      sizeStocks: sizeOptions.map((item) => ({
-        size: item.id,
-        enabled: false,
-        stock: '',
-      })),
-      characteristics: characteristicLabels.map((label) => ({
-        label,
-        value: '',
-      })),
+      sizeStocks: createEmptySizeStocks(),
+      characteristics: createEmptyCharacteristics(),
     });
     setErrors({});
     setEditingId(null);
+    clearNativeFileInputs();
   }
 
   function handleEdit(product: Product) {
@@ -583,8 +700,10 @@ export default function AdminAddProductForm() {
         product.discountPrice !== null && product.discountPrice !== undefined
           ? String(product.discountPrice)
           : '',
-      imageFront: productImages[0] || '',
-      imageBack: productImages[1] || '',
+      imageFrontFile: null,
+      imageBackFile: null,
+      imageFrontUrl: productImages[0] || '',
+      imageBackUrl: productImages[1] || '',
       description: product.description || '',
       type: product.type === 'street' ? 'street' : 'apartment',
       doorType: product.doorType === 'entrance' ? 'entrance' : 'interior',
@@ -597,6 +716,7 @@ export default function AdminAddProductForm() {
       ),
     });
 
+    clearNativeFileInputs();
     setErrors({});
     window.scrollTo({ top: 0, behavior: 'smooth' });
     triggerToast('Режим редагування увімкнено.', 'success');
@@ -663,37 +783,55 @@ export default function AdminAddProductForm() {
 
     const normalizedSizeStocks = getNormalizedSizeStocks(form.sizeStocks);
 
-    const payload = {
-      id: form.id.trim(),
-      title: form.title.trim(),
-      price: Number(form.price),
-      discountPrice:
-        form.discountPrice.trim() === '' ? null : Number(form.discountPrice),
-      images: [form.imageFront.trim(), form.imageBack.trim()].filter(Boolean),
-      imageFront: form.imageFront.trim(),
-      imageBack: form.imageBack.trim(),
-      description: form.description.trim(),
-      type: form.type,
-      doorType: form.doorType,
-      styles: form.styles,
-      openings: form.openings,
-      sizes: normalizedSizeStocks.map((item) => item.size),
-      sizeStocks: normalizedSizeStocks,
-      stock: normalizedSizeStocks.reduce((sum, item) => sum + item.stock, 0),
-      isHit: form.isHit,
-      characteristics: form.characteristics
-        .map((item) => ({
-          label: item.label,
-          value: item.value.trim(),
-        }))
-        .filter((item) => item.value),
-    };
+    const formData = new FormData();
+
+    formData.append('id', form.id.trim());
+    formData.append('title', form.title.trim());
+    formData.append('price', String(Number(form.price)));
+    formData.append(
+      'discountPrice',
+      form.discountPrice.trim() === '' ? '' : String(Number(form.discountPrice))
+    );
+    formData.append('description', form.description.trim());
+    formData.append('type', form.type);
+    formData.append('doorType', form.doorType);
+    formData.append('isHit', String(form.isHit));
+
+    formData.append('styles', JSON.stringify(form.styles));
+    formData.append('openings', JSON.stringify(form.openings));
+    formData.append('sizes', JSON.stringify(normalizedSizeStocks.map((item) => item.size)));
+    formData.append('sizeStocks', JSON.stringify(normalizedSizeStocks));
+    formData.append(
+      'stock',
+      String(normalizedSizeStocks.reduce((sum, item) => sum + item.stock, 0))
+    );
+    formData.append(
+      'characteristics',
+      JSON.stringify(
+        form.characteristics
+          .map((item) => ({
+            label: item.label,
+            value: item.value.trim(),
+          }))
+          .filter((item) => item.value)
+      )
+    );
+
+    formData.append('existingImageFront', form.imageFrontUrl);
+    formData.append('existingImageBack', form.imageBackUrl);
+
+    if (form.imageFrontFile) {
+      formData.append('imageFrontFile', form.imageFrontFile);
+    }
+
+    if (form.imageBackFile) {
+      formData.append('imageBackFile', form.imageBackFile);
+    }
 
     try {
       const response = await fetch('/api/products', {
         method: editingId ? 'PATCH' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       const data = await response.json();
@@ -787,7 +925,7 @@ export default function AdminAddProductForm() {
               <input
                 value={form.title}
                 onChange={(e) => {
-                  setForm({ ...form, title: e.target.value });
+                  setForm((prev) => ({ ...prev, title: e.target.value }));
                   clearFieldError('title');
                 }}
                 placeholder='Міжкімнатні двері "Doors" Smart - модель - C067'
@@ -802,7 +940,7 @@ export default function AdminAddProductForm() {
                 min="1"
                 value={form.price}
                 onChange={(e) => {
-                  setForm({ ...form, price: e.target.value });
+                  setForm((prev) => ({ ...prev, price: e.target.value }));
                   clearFieldError('price');
                 }}
                 placeholder="3064"
@@ -817,7 +955,7 @@ export default function AdminAddProductForm() {
                 min="1"
                 value={form.discountPrice}
                 onChange={(e) => {
-                  setForm({ ...form, discountPrice: e.target.value });
+                  setForm((prev) => ({ ...prev, discountPrice: e.target.value }));
                   clearFieldError('discountPrice');
                 }}
                 placeholder="Необов'язково"
@@ -829,43 +967,114 @@ export default function AdminAddProductForm() {
 
             <div className={styles.field}>
               <label>Фото 1 (одна сторона)</label>
+
               <input
-                value={form.imageFront}
-                onChange={(e) => {
-                  setForm({ ...form, imageFront: e.target.value });
-                  clearFieldError('imageFront');
-                  clearFieldError('images');
-                }}
-                placeholder="/images/doors/door-front.jpg"
+                ref={frontInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFrontImageChange}
+                style={{ display: 'none' }}
               />
+
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  flexWrap: 'wrap',
+                  marginBottom: '12px',
+                }}
+              >
+                <button
+                  type="button"
+                  className={styles.secondaryButton}
+                  onClick={() => frontInputRef.current?.click()}
+                >
+                  {form.imageFrontFile || form.imageFrontUrl ? 'Замінити фото' : 'Обрати фото'}
+                </button>
+
+                {form.imageFrontFile || form.imageFrontUrl ? (
+                  <button
+                    type="button"
+                    className={styles.secondaryButton}
+                    onClick={handleRemoveFrontImage}
+                  >
+                    Видалити фото
+                  </button>
+                ) : null}
+              </div>
+
+              <p className={styles.stateText}>
+                {form.imageFrontFile
+                  ? `Обрано файл: ${form.imageFrontFile.name}`
+                  : form.imageFrontUrl
+                    ? 'Поточне фото збережено'
+                    : 'Фото ще не обрано'}
+              </p>
+
               {errors.imageFront ? (
                 <p className={styles.fieldError}>{errors.imageFront}</p>
               ) : null}
 
               <ProductImagePreview
-                key={`front-${form.imageFront}`}
-                src={form.imageFront}
+                key={`front-${frontPreview}`}
+                src={frontPreview}
                 alt={form.title ? `${form.title} - фото 1` : 'Фото 1'}
               />
             </div>
 
             <div className={styles.field}>
               <label>Фото 2 (друга сторона)</label>
+
               <input
-                value={form.imageBack}
-                onChange={(e) => {
-                  setForm({ ...form, imageBack: e.target.value });
-                  clearFieldError('imageBack');
-                }}
-                placeholder="/images/doors/door-back.jpg"
+                ref={backInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleBackImageChange}
+                style={{ display: 'none' }}
               />
+
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  flexWrap: 'wrap',
+                  marginBottom: '12px',
+                }}
+              >
+                <button
+                  type="button"
+                  className={styles.secondaryButton}
+                  onClick={() => backInputRef.current?.click()}
+                >
+                  {form.imageBackFile || form.imageBackUrl ? 'Замінити фото' : 'Обрати фото'}
+                </button>
+
+                {form.imageBackFile || form.imageBackUrl ? (
+                  <button
+                    type="button"
+                    className={styles.secondaryButton}
+                    onClick={handleRemoveBackImage}
+                  >
+                    Видалити фото
+                  </button>
+                ) : null}
+              </div>
+
+              <p className={styles.stateText}>
+                {form.imageBackFile
+                  ? `Обрано файл: ${form.imageBackFile.name}`
+                  : form.imageBackUrl
+                    ? 'Поточне фото збережено'
+                    : 'Фото необов’язкове'}
+              </p>
+
               {errors.imageBack ? (
                 <p className={styles.fieldError}>{errors.imageBack}</p>
               ) : null}
 
               <ProductImagePreview
-                key={`back-${form.imageBack}`}
-                src={form.imageBack}
+                key={`back-${backPreview}`}
+                src={backPreview}
                 alt={form.title ? `${form.title} - фото 2` : 'Фото 2'}
               />
             </div>
@@ -892,10 +1101,10 @@ export default function AdminAddProductForm() {
               <select
                 value={form.type}
                 onChange={(e) => {
-                  setForm({
-                    ...form,
+                  setForm((prev) => ({
+                    ...prev,
                     type: e.target.value as 'street' | 'apartment',
-                  });
+                  }));
                   clearFieldError('type');
                 }}
               >
@@ -987,7 +1196,7 @@ export default function AdminAddProductForm() {
               rows={5}
               value={form.description}
               onChange={(e) => {
-                setForm({ ...form, description: e.target.value });
+                setForm((prev) => ({ ...prev, description: e.target.value }));
                 clearFieldError('description');
               }}
               placeholder="Короткий опис товару..."
@@ -1006,9 +1215,7 @@ export default function AdminAddProductForm() {
                   <input
                     type="text"
                     value={item.value}
-                    onChange={(e) =>
-                      handleCharacteristicChange(item.label, e.target.value)
-                    }
+                    onChange={(e) => handleCharacteristicChange(item.label, e.target.value)}
                     placeholder={`Вкажіть значення для "${item.label}"`}
                   />
                 </div>
@@ -1023,7 +1230,9 @@ export default function AdminAddProductForm() {
             <input
               type="checkbox"
               checked={form.isHit}
-              onChange={(e) => setForm({ ...form, isHit: e.target.checked })}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, isHit: e.target.checked }))
+              }
             />
             <span>Позначити як ХІТ</span>
           </label>

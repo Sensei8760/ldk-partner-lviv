@@ -1,15 +1,22 @@
+import { NextResponse } from 'next/server';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { auth } from '@/auth';
+import { sql } from '@/lib/db';
+import { deleteImageKitFile, uploadProductImage } from '@/lib/imagekit';
 import {
+  createProduct,
+  deleteProduct,
+  getProductById,
   getProducts,
-  saveProducts,
-  type Product,
-  type ProductDoorType,
+  type ProductCharacteristic,
   type ProductOpening,
   type ProductSize,
   type ProductSizeStock,
+  type ProductUpsertInput,
+  updateProduct,
 } from '@/lib/products';
-import { revalidatePath, revalidateTag } from 'next/cache';
-import { NextResponse } from 'next/server';
+
+export const runtime = 'nodejs';
 
 const STYLE_OPTIONS = [
   'ПОРТАЛА',
@@ -32,7 +39,6 @@ const STYLE_OPTIONS = [
   'РОЗПРОДАЖ Преміум NEW',
 ] as const;
 
-const DOOR_TYPE_OPTIONS = ['interior', 'entrance'] as const;
 const OPENING_OPTIONS = ['left', 'right'] as const;
 const SIZE_OPTIONS = ['850x2040', '950x2040', '1200x2040'] as const;
 
@@ -52,6 +58,8 @@ const CHARACTERISTIC_LABELS = [
   'Лиштва',
 ] as const;
 
+const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+
 type ProductType = 'street' | 'apartment';
 
 type ValidationErrors = Partial<{
@@ -65,151 +73,103 @@ type ValidationErrors = Partial<{
   doorType: string;
   styles: string;
   openings: string;
-  sizes: string;
   sizeStocks: string;
-  stock: string;
   description: string;
   characteristics: string;
   general: string;
 }>;
 
-type NormalizedPayload = {
-  id?: string;
-  title: string;
-  price: number;
-  discountPrice: number | null;
-  images: string[];
-  imageFront: string;
-  imageBack: string;
-  description: string;
-  type: ProductType;
-  doorType: ProductDoorType;
-  styles: string[];
-  openings: ProductOpening[];
-  sizes: ProductSize[];
-  sizeStocks: ProductSizeStock[];
-  stock: number;
-  isHit: boolean;
-  characteristics: { label: string; value: string }[];
+type ParsedMultipartPayload = {
+  body: Record<string, unknown>;
+  imageFrontFile: File | null;
+  imageBackFile: File | null;
 };
 
-function transliterate(value: string) {
-  const map: Record<string, string> = {
-    а: 'a',
-    б: 'b',
-    в: 'v',
-    г: 'h',
-    ґ: 'g',
-    д: 'd',
-    е: 'e',
-    є: 'ye',
-    ж: 'zh',
-    з: 'z',
-    и: 'y',
-    і: 'i',
-    ї: 'yi',
-    й: 'y',
-    к: 'k',
-    л: 'l',
-    м: 'm',
-    н: 'n',
-    о: 'o',
-    п: 'p',
-    р: 'r',
-    с: 's',
-    т: 't',
-    у: 'u',
-    ф: 'f',
-    х: 'kh',
-    ц: 'ts',
-    ч: 'ch',
-    ш: 'sh',
-    щ: 'shch',
-    ь: '',
-    ю: 'yu',
-    я: 'ya',
-    "'": '',
-    '’': '',
-    '`': '',
-    '"': '',
-  };
+type StoredProductImageRecord = {
+  product_db_id: number;
+  image_url: string;
+  image_file_id: string | null;
+  sort_order: number;
+};
 
-  return value
-    .split('')
-    .map((char) => {
-      const lower = char.toLowerCase();
-      return map[lower] ?? lower;
-    })
-    .join('');
+function unauthorizedResponse() {
+  return NextResponse.json({ message: 'Потрібна авторизація.' }, { status: 401 });
 }
 
-function slugify(value: string) {
-  return transliterate(value)
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, ' and ')
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
+function revalidateProductsCache(productId?: string) {
+  revalidateTag('products', 'max');
+  revalidatePath('/catalog');
+  revalidatePath('/admin');
 
-function createUniqueId(title: string, existingIds: string[]) {
-  const base = slugify(title) || 'product';
-  let candidate = base;
-  let counter = 2;
-
-  while (existingIds.includes(candidate)) {
-    candidate = `${base}-${counter}`;
-    counter += 1;
+  if (productId) {
+    revalidatePath(`/catalog/${productId}`);
   }
-
-  return candidate;
-}
-
-function isValidImagePath(value: string) {
-  if (!value) return false;
-
-  const normalized = value.trim();
-
-  const isLocalPath = /^\/[\w\-./%]+$/i.test(normalized);
-  const isRemoteUrl = /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(normalized);
-
-  return isLocalPath || isRemoteUrl;
 }
 
 function uniqueStrings<T extends string>(values: T[]) {
   return [...new Set(values)];
 }
 
-function normalizeStyles(styles: unknown) {
-  if (!Array.isArray(styles)) return [];
+function isValidImagePath(value: string) {
+  if (!value) return false;
 
-  return uniqueStrings(
-    styles.map((item) => String(item).trim()).filter(Boolean)
-  );
+  const normalized = value.trim();
+  const isLocalPath = /^\/[\w\-./%]+$/i.test(normalized);
+  const isRemoteUrl = /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(normalized);
+
+  return isLocalPath || isRemoteUrl;
 }
 
-function normalizeDoorType(
-  value: unknown,
-  title: string,
-  type: ProductType
-): ProductDoorType {
-  if (value === 'interior' || value === 'entrance') {
-    return value;
+function getStringField(formData: FormData, name: string) {
+  const value = formData.get(name);
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function getFileField(formData: FormData, name: string) {
+  const value = formData.get(name);
+
+  if (!(value instanceof File)) {
+    return null;
   }
 
-  const normalizedTitle = title.trim().toLowerCase();
-
-  if (normalizedTitle.includes('міжкімнат')) {
-    return 'interior';
+  if (value.size <= 0) {
+    return null;
   }
 
-  if (normalizedTitle.includes('вхідн')) {
-    return 'entrance';
+  return value;
+}
+
+function parseJsonField<T>(value: FormDataEntryValue | null, fallback: T): T {
+  if (typeof value !== 'string' || !value.trim()) {
+    return fallback;
   }
 
-  return type === 'street' ? 'entrance' : 'interior';
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function validateImageFile(
+  file: File | null,
+  field: 'imageFront' | 'imageBack'
+): ValidationErrors | null {
+  if (!file) return null;
+
+  if (!file.type.startsWith('image/')) {
+    return {
+      [field]: 'Оберіть файл зображення.',
+    };
+  }
+
+  if (file.size > MAX_IMAGE_SIZE_BYTES) {
+    return {
+      [field]: 'Фото повинно бути менше 5 МБ.',
+    };
+  }
+
+  return null;
 }
 
 function normalizeOpenings(value: unknown): ProductOpening[] {
@@ -218,8 +178,9 @@ function normalizeOpenings(value: unknown): ProductOpening[] {
   return uniqueStrings(
     value
       .map((item) => String(item).trim())
-      .filter((item): item is ProductOpening =>
-        OPENING_OPTIONS.includes(item as ProductOpening)
+      .filter(
+        (item): item is ProductOpening =>
+          OPENING_OPTIONS.includes(item as ProductOpening)
       )
   );
 }
@@ -230,8 +191,9 @@ function normalizeSizes(value: unknown): ProductSize[] {
   return uniqueStrings(
     value
       .map((item) => String(item).trim())
-      .filter((item): item is ProductSize =>
-        SIZE_OPTIONS.includes(item as ProductSize)
+      .filter(
+        (item): item is ProductSize =>
+          SIZE_OPTIONS.includes(item as ProductSize)
       )
   );
 }
@@ -255,7 +217,7 @@ function normalizeSizeStocks(value: unknown): ProductSizeStock[] {
 
       return {
         size,
-        stock: stock < 0 ? 0 : Math.round(stock),
+        stock: Math.max(0, Math.round(stock)),
       };
     })
     .filter(Boolean) as ProductSizeStock[];
@@ -272,110 +234,108 @@ function normalizeSizeStocks(value: unknown): ProductSizeStock[] {
   }));
 }
 
-function getTotalStockFromSizeStocks(sizeStocks: ProductSizeStock[]) {
-  return sizeStocks.reduce((sum, item) => sum + item.stock, 0);
-}
+function normalizeCharacteristics(value: unknown): ProductCharacteristic[] {
+  if (!Array.isArray(value)) return [];
 
-function normalizeCharacteristics(characteristics: unknown) {
-  if (!Array.isArray(characteristics)) return [];
-
-  return characteristics
+  return value
     .map((item) => {
-      const typed = item as { label?: unknown; value?: unknown };
+      const typed = item as Partial<ProductCharacteristic>;
+      const label = String(typed.label || '').trim();
+      const fieldValue = String(typed.value || '').trim();
+
+      if (!label || !fieldValue) return null;
 
       return {
-        label: String(typed.label || '').trim(),
-        value: String(typed.value || '').trim(),
+        label,
+        value: fieldValue,
       };
     })
-    .filter((item) => item.label && item.value);
+    .filter(Boolean) as ProductCharacteristic[];
 }
 
-function normalizeImages(body: Record<string, unknown>) {
-  const directImages = Array.isArray(body.images)
-    ? body.images.map((item) => String(item).trim()).filter(Boolean)
-    : [];
-
-  const imageFront = String(body.imageFront || '').trim();
-  const imageBack = String(body.imageBack || '').trim();
-  const singleImage = String(body.image || '').trim();
-
-  const images = directImages.length
-    ? directImages
-    : [imageFront, imageBack].filter(Boolean);
-
-  const normalizedImages = uniqueStrings(images);
-
-  if (normalizedImages.length > 0) {
-    return {
-      images: normalizedImages,
-      imageFront: normalizedImages[0] || '',
-      imageBack: normalizedImages[1] || '',
-    };
-  }
-
-  if (singleImage) {
-    return {
-      images: [singleImage],
-      imageFront: singleImage,
-      imageBack: '',
-    };
-  }
+function buildBodyFromFormData(formData: FormData): ParsedMultipartPayload {
+  const imageFrontFile = getFileField(formData, 'imageFrontFile');
+  const imageBackFile = getFileField(formData, 'imageBackFile');
 
   return {
-    images: [],
-    imageFront: '',
-    imageBack: '',
+    imageFrontFile,
+    imageBackFile,
+    body: {
+      id: getStringField(formData, 'id'),
+      title: getStringField(formData, 'title'),
+      price: getStringField(formData, 'price'),
+      discountPrice: getStringField(formData, 'discountPrice'),
+      description: getStringField(formData, 'description'),
+      type: getStringField(formData, 'type'),
+      doorType: getStringField(formData, 'doorType'),
+      isHit: getStringField(formData, 'isHit') === 'true',
+      styles: parseJsonField<string[]>(formData.get('styles'), []),
+      openings: parseJsonField<ProductOpening[]>(formData.get('openings'), []),
+      sizes: parseJsonField<ProductSize[]>(formData.get('sizes'), []),
+      sizeStocks: parseJsonField<ProductSizeStock[]>(formData.get('sizeStocks'), []),
+      stock: getStringField(formData, 'stock'),
+      characteristics: parseJsonField<ProductCharacteristic[]>(
+        formData.get('characteristics'),
+        []
+      ),
+      imageFront: getStringField(formData, 'existingImageFront'),
+      imageBack: getStringField(formData, 'existingImageBack'),
+    },
   };
 }
 
-function validateAndNormalizeProduct(body: unknown):
-  | { success: true; data: NormalizedPayload }
+function validateAndNormalizeProduct(
+  body: Record<string, unknown>,
+  options?: {
+    requireFrontImage?: boolean;
+  }
+):
+  | { success: true; data: ProductUpsertInput }
   | { success: false; errors: ValidationErrors } {
-  const raw = (body ?? {}) as Record<string, unknown>;
   const errors: ValidationErrors = {};
 
-  const title = String(raw.title || '').trim();
-  const priceRaw = raw.price;
+  const title = String(body.title || '').trim();
+  const priceRaw = body.price;
   const price = Number(priceRaw);
 
-  const discountPriceRaw = raw.discountPrice;
+  const discountPriceRaw = body.discountPrice;
   const parsedDiscountPrice = Number(discountPriceRaw);
   const discountPrice =
+    discountPriceRaw === '' ||
     discountPriceRaw === null ||
-    discountPriceRaw === undefined ||
-    discountPriceRaw === ''
+    discountPriceRaw === undefined
       ? null
       : parsedDiscountPrice;
 
-  const description = String(raw.description || '').trim();
-  const type: ProductType = raw.type === 'street' ? 'street' : 'apartment';
-  const rawDoorType = raw.doorType;
-  const doorType = normalizeDoorType(rawDoorType, title, type);
-  const styles = normalizeStyles(raw.styles);
-  const openings = normalizeOpenings(raw.openings);
+  const description = String(body.description || '').trim();
+  const type: ProductType = body.type === 'street' ? 'street' : 'apartment';
 
-  const legacySizes = normalizeSizes(raw.sizes);
-  const normalizedSizeStocks = normalizeSizeStocks(raw.sizeStocks);
+  const doorType =
+    body.doorType === 'interior' || body.doorType === 'entrance'
+      ? body.doorType
+      : undefined;
 
-  const stockRaw = raw.stock;
-  const legacyStock = Number(stockRaw);
+  const styles = Array.isArray(body.styles)
+    ? uniqueStrings(body.styles.map((item) => String(item).trim()).filter(Boolean))
+    : [];
 
+  const openings = normalizeOpenings(body.openings);
+  const sizeStocks = normalizeSizeStocks(body.sizeStocks);
   const sizes =
-    normalizedSizeStocks.length > 0
-      ? uniqueStrings(normalizedSizeStocks.map((item) => item.size))
-      : legacySizes;
+    sizeStocks.length > 0
+      ? uniqueStrings(sizeStocks.map((item) => item.size))
+      : normalizeSizes(body.sizes);
 
   const stock =
-    normalizedSizeStocks.length > 0
-      ? getTotalStockFromSizeStocks(normalizedSizeStocks)
-      : Number.isFinite(legacyStock)
-        ? Math.max(0, Math.round(legacyStock))
-        : 0;
+    sizeStocks.length > 0
+      ? sizeStocks.reduce((sum, item) => sum + item.stock, 0)
+      : Math.max(0, Math.round(Number(body.stock) || 0));
 
-  const isHit = Boolean(raw.isHit);
-  const characteristicsRaw = normalizeCharacteristics(raw.characteristics);
-  const { images, imageFront, imageBack } = normalizeImages(raw);
+  const characteristics = normalizeCharacteristics(body.characteristics);
+
+  const imageFront = String(body.imageFront || '').trim();
+  const imageBack = String(body.imageBack || '').trim();
+  const images = [imageFront, imageBack].filter(Boolean);
 
   if (!title) {
     errors.title = 'Вкажіть назву товару.';
@@ -386,19 +346,19 @@ function validateAndNormalizeProduct(body: unknown):
   }
 
   if (priceRaw === '' || priceRaw === null || priceRaw === undefined) {
-    errors.price = 'Вкажіть ціну.';
+    errors.price = 'Вкажіть основну ціну.';
   } else if (!Number.isFinite(price)) {
-    errors.price = 'Ціна повинна бути числом.';
+    errors.price = 'Основна ціна повинна бути числом.';
   } else if (price <= 0) {
-    errors.price = 'Ціна повинна бути більшою за 0.';
+    errors.price = 'Основна ціна повинна бути більшою за 0.';
   } else if (price > 9999999) {
-    errors.price = 'Ціна занадто велика.';
+    errors.price = 'Основна ціна занадто велика.';
   }
 
   if (
+    discountPriceRaw !== '' &&
     discountPriceRaw !== null &&
-    discountPriceRaw !== undefined &&
-    discountPriceRaw !== ''
+    discountPriceRaw !== undefined
   ) {
     if (!Number.isFinite(discountPrice)) {
       errors.discountPrice = 'Ціна зі знижкою повинна бути числом.';
@@ -410,9 +370,9 @@ function validateAndNormalizeProduct(body: unknown):
     }
   }
 
-  if (!imageFront) {
+  if (options?.requireFrontImage && !imageFront) {
     errors.imageFront = 'Перше фото є обов’язковим.';
-  } else if (!isValidImagePath(imageFront)) {
+  } else if (imageFront && !isValidImagePath(imageFront)) {
     errors.imageFront = 'Некоректний шлях або URL першого фото.';
   }
 
@@ -424,15 +384,16 @@ function validateAndNormalizeProduct(body: unknown):
     errors.images = 'Додайте хоча б одне фото.';
   }
 
-  if (raw.type !== 'street' && raw.type !== 'apartment') {
-    errors.type = 'Некоректний тип товару.';
+  if (body.type !== 'street' && body.type !== 'apartment') {
+    errors.type = 'Оберіть коректне місце встановлення.';
   }
 
   if (
-    rawDoorType !== undefined &&
-    !DOOR_TYPE_OPTIONS.includes(rawDoorType as ProductDoorType)
+    body.doorType !== undefined &&
+    body.doorType !== 'interior' &&
+    body.doorType !== 'entrance'
   ) {
-    errors.doorType = 'Некоректний тип дверей.';
+    errors.doorType = 'Оберіть коректний тип дверей.';
   }
 
   const invalidStyles = styles.filter(
@@ -440,87 +401,49 @@ function validateAndNormalizeProduct(body: unknown):
   );
 
   if (invalidStyles.length > 0) {
-    errors.styles = 'Містить некоректні стилі.';
+    errors.styles = 'Обрано некоректний стиль.';
   }
 
-  const rawOpenings = Array.isArray(raw.openings)
-    ? raw.openings.map((item) => String(item).trim()).filter(Boolean)
+  const rawOpenings = Array.isArray(body.openings)
+    ? body.openings.map((item) => String(item).trim()).filter(Boolean)
     : [];
   const invalidOpenings = rawOpenings.filter(
     (item) => !OPENING_OPTIONS.includes(item as ProductOpening)
   );
 
   if (invalidOpenings.length > 0) {
-    errors.openings = 'Містить некоректне відкривання.';
+    errors.openings = 'Обрано некоректне відкривання.';
   }
 
-  const rawLegacySizes = Array.isArray(raw.sizes)
-    ? raw.sizes.map((item) => String(item).trim()).filter(Boolean)
-    : [];
-  const invalidLegacySizes = rawLegacySizes.filter(
-    (item) => !SIZE_OPTIONS.includes(item as ProductSize)
-  );
+  if (sizeStocks.length === 0) {
+    errors.sizeStocks = 'Оберіть хоча б один розмір.';
+  } else {
+    const hasInvalidSizeStocks =
+      Array.isArray(body.sizeStocks) &&
+      body.sizeStocks.some((item) => {
+        if (!item || typeof item !== 'object') return true;
 
-  if (invalidLegacySizes.length > 0) {
-    errors.sizes = 'Містить некоректний розмір.';
-  }
+        const typed = item as Partial<ProductSizeStock>;
+        const size = typed.size;
+        const itemStock = Number(typed.stock);
 
-  if (raw.sizeStocks !== undefined && !Array.isArray(raw.sizeStocks)) {
-    errors.sizeStocks = 'Некоректні залишки по розмірах.';
-  }
+        const isValidSize =
+          size === '850x2040' || size === '950x2040' || size === '1200x2040';
 
-  const invalidSizeStocks =
-    Array.isArray(raw.sizeStocks)
-      ? raw.sizeStocks.some((item) => {
-          if (!item || typeof item !== 'object') return true;
+        return !isValidSize || !Number.isFinite(itemStock) || itemStock < 0;
+      });
 
-          const typed = item as Partial<ProductSizeStock>;
-          const size = typed.size;
-          const itemStock = Number(typed.stock);
-
-          const isValidSize =
-            size === '850x2040' || size === '950x2040' || size === '1200x2040';
-
-          return !isValidSize || !Number.isFinite(itemStock) || itemStock < 0;
-        })
-      : false;
-
-  if (invalidSizeStocks) {
-    errors.sizeStocks = 'Містить некоректні розміри або кількість.';
-  }
-
-  if (
-    normalizedSizeStocks.length === 0 &&
-    (stockRaw === '' || stockRaw === null || stockRaw === undefined)
-  ) {
-    errors.stock = 'Вкажіть кількість в наявності.';
-  } else if (
-    normalizedSizeStocks.length === 0 &&
-    !Number.isFinite(legacyStock)
-  ) {
-    errors.stock = 'Кількість повинна бути числом.';
-  } else if (
-    normalizedSizeStocks.length === 0 &&
-    !Number.isInteger(legacyStock)
-  ) {
-    errors.stock = 'Кількість повинна бути цілим числом.';
-  } else if (
-    normalizedSizeStocks.length === 0 &&
-    legacyStock < 0
-  ) {
-    errors.stock = 'Кількість не може бути меншою за 0.';
-  } else if (
-    normalizedSizeStocks.length === 0 &&
-    legacyStock > 9999
-  ) {
-    errors.stock = 'Кількість занадто велика.';
+    if (hasInvalidSizeStocks) {
+      errors.sizeStocks =
+        'Для кожного вибраного розміру вкажіть коректну цілу кількість.';
+    }
   }
 
   if (description.length > 1000) {
     errors.description = 'Опис не повинен перевищувати 1000 символів.';
   }
 
-  const invalidCharacteristics = characteristicsRaw.filter(
+  const invalidCharacteristics = characteristics.filter(
     (item) =>
       !CHARACTERISTIC_LABELS.includes(
         item.label as (typeof CHARACTERISTIC_LABELS)[number]
@@ -536,46 +459,81 @@ function validateAndNormalizeProduct(body: unknown):
     return { success: false, errors };
   }
 
-  const characteristics = CHARACTERISTIC_LABELS.map((label) => {
-    const found = characteristicsRaw.find((item) => item.label === label);
-    return found ? { label, value: found.value } : null;
-  }).filter(Boolean) as { label: string; value: string }[];
-
   return {
     success: true,
     data: {
-      id: String(raw.id || '').trim() || undefined,
+      id: String(body.id || '').trim() || undefined,
       title,
-      price,
+      price: Math.round(price),
       discountPrice:
-        discountPrice !== null && discountPrice < price ? discountPrice : null,
+        discountPrice !== null && discountPrice < price
+          ? Math.round(discountPrice)
+          : null,
+      image: imageFront,
       images,
-      imageFront,
-      imageBack,
       description,
       type,
       doorType,
       styles,
       openings,
       sizes,
-      sizeStocks: normalizedSizeStocks,
+      sizeStocks,
       stock,
-      isHit,
+      isHit: Boolean(body.isHit),
       characteristics,
     },
   };
 }
 
-function unauthorizedResponse() {
-  return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+async function getStoredProductImageRecords(slug: string) {
+  const rows = (await sql`
+    SELECT
+      p.id AS product_db_id,
+      pi.image_url,
+      pi.image_path AS image_file_id,
+      pi.sort_order
+    FROM products p
+    LEFT JOIN product_images pi
+      ON pi.product_id = p.id
+    WHERE p.slug = ${slug}
+    ORDER BY pi.sort_order ASC, pi.id ASC
+  `) as StoredProductImageRecord[];
+
+  const productDbId = rows[0]?.product_db_id ?? null;
+
+  const images = rows
+    .filter((row) => Boolean(row.image_url))
+    .map((row) => ({
+      imageUrl: row.image_url,
+      fileId: row.image_file_id,
+      sortOrder: row.sort_order,
+    }));
+
+  return {
+    productDbId,
+    images,
+  };
 }
 
-function revalidateProductsCache(productId?: string) {
-  revalidateTag('products', 'max');
-  revalidatePath('/catalog');
+async function setStoredProductImageFileIds(
+  productDbId: number,
+  fileIdsBySortOrder: Array<string | null>
+) {
+  await sql`
+    UPDATE product_images
+    SET image_path = NULL
+    WHERE product_id = ${productDbId}
+  `;
 
-  if (productId) {
-    revalidatePath(`/catalog/${productId}`);
+  for (let sortOrder = 0; sortOrder < fileIdsBySortOrder.length; sortOrder += 1) {
+    const fileId = fileIdsBySortOrder[sortOrder] ?? null;
+
+    await sql`
+      UPDATE product_images
+      SET image_path = ${fileId}
+      WHERE product_id = ${productDbId}
+        AND sort_order = ${sortOrder}
+    `;
   }
 }
 
@@ -591,50 +549,116 @@ export async function POST(request: Request) {
     return unauthorizedResponse();
   }
 
-  const body = await request.json();
-  const validated = validateAndNormalizeProduct(body);
+  const formData = await request.formData();
+  const parsed = buildBodyFromFormData(formData);
 
-  if (!validated.success) {
+  const frontFileError = validateImageFile(parsed.imageFrontFile, 'imageFront');
+  const backFileError = validateImageFile(parsed.imageBackFile, 'imageBack');
+
+  if (frontFileError || backFileError) {
     return NextResponse.json(
       {
-        message: 'Перевірте правильність заповнення форми.',
-        errors: validated.errors,
+        message: 'Перевірте правильність вибраних фото.',
+        errors: {
+          ...(frontFileError || {}),
+          ...(backFileError || {}),
+        },
       },
       { status: 400 }
     );
   }
 
-  const products = await getProducts();
+  let uploadedFront:
+    | {
+        url: string;
+        fileId: string;
+      }
+    | null = null;
 
-  const id = createUniqueId(
-    validated.data.title,
-    products.map((item) => item.id)
-  );
+  let uploadedBack:
+    | {
+        url: string;
+        fileId: string;
+      }
+    | null = null;
 
-  const newProduct: Product = {
-    id,
-    title: validated.data.title,
-    price: validated.data.price,
-    discountPrice: validated.data.discountPrice,
-    image: validated.data.images[0],
-    images: validated.data.images,
-    description: validated.data.description,
-    type: validated.data.type,
-    doorType: validated.data.doorType,
-    styles: validated.data.styles,
-    openings: validated.data.openings,
-    sizes: validated.data.sizes,
-    sizeStocks: validated.data.sizeStocks,
-    stock: validated.data.stock,
-    isHit: validated.data.isHit,
-    characteristics: validated.data.characteristics,
-  };
+  try {
+    let imageFront = String(parsed.body.imageFront || '').trim();
+    let imageBack = String(parsed.body.imageBack || '').trim();
 
-  products.unshift(newProduct);
-  await saveProducts(products);
-  revalidateProductsCache(id);
+    if (parsed.imageFrontFile) {
+      uploadedFront = await uploadProductImage(
+        parsed.imageFrontFile,
+        String(parsed.body.title || 'product'),
+        'front'
+      );
+      imageFront = uploadedFront.url;
+    }
 
-  return NextResponse.json({ ok: true, product: newProduct });
+    if (parsed.imageBackFile) {
+      uploadedBack = await uploadProductImage(
+        parsed.imageBackFile,
+        String(parsed.body.title || 'product'),
+        'back'
+      );
+      imageBack = uploadedBack.url;
+    }
+
+    const validated = validateAndNormalizeProduct(
+      {
+        ...parsed.body,
+        imageFront,
+        imageBack,
+      },
+      {
+        requireFrontImage: true,
+      }
+    );
+
+    if (!validated.success) {
+      await Promise.all([
+        deleteImageKitFile(uploadedFront?.fileId),
+        deleteImageKitFile(uploadedBack?.fileId),
+      ]);
+
+      return NextResponse.json(
+        {
+          message: 'Перевірте правильність заповнення форми.',
+          errors: validated.errors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const product = await createProduct(validated.data);
+
+    const stored = await getStoredProductImageRecords(product.id);
+
+    if (stored.productDbId) {
+      await setStoredProductImageFileIds(stored.productDbId, [
+        uploadedFront?.fileId ?? null,
+        uploadedBack?.fileId ?? null,
+      ]);
+    }
+
+    revalidateProductsCache(product.id);
+
+    return NextResponse.json({ ok: true, product });
+  } catch (error) {
+    await Promise.all([
+      deleteImageKitFile(uploadedFront?.fileId),
+      deleteImageKitFile(uploadedBack?.fileId),
+    ]);
+
+    console.error('Failed to create product:', error);
+
+    return NextResponse.json(
+      {
+        message: 'Сталася помилка під час створення товару.',
+      },
+      { status: 500 }
+    );
+  }
 }
 
 export async function PATCH(request: Request) {
@@ -644,8 +668,9 @@ export async function PATCH(request: Request) {
     return unauthorizedResponse();
   }
 
-  const body = await request.json();
-  const id = String((body as Record<string, unknown>).id || '').trim();
+  const formData = await request.formData();
+  const parsed = buildBodyFromFormData(formData);
+  const id = String(parsed.body.id || '').trim();
 
   if (!id) {
     return NextResponse.json(
@@ -657,22 +682,9 @@ export async function PATCH(request: Request) {
     );
   }
 
-  const validated = validateAndNormalizeProduct(body);
+  const currentProduct = await getProductById(id);
 
-  if (!validated.success) {
-    return NextResponse.json(
-      {
-        message: 'Перевірте правильність заповнення форми.',
-        errors: validated.errors,
-      },
-      { status: 400 }
-    );
-  }
-
-  const products = await getProducts();
-  const productIndex = products.findIndex((item) => item.id === id);
-
-  if (productIndex === -1) {
+  if (!currentProduct) {
     return NextResponse.json(
       {
         message: 'Товар не знайдено.',
@@ -682,29 +694,170 @@ export async function PATCH(request: Request) {
     );
   }
 
-  products[productIndex] = {
-    ...products[productIndex],
-    title: validated.data.title,
-    price: validated.data.price,
-    discountPrice: validated.data.discountPrice,
-    image: validated.data.images[0],
-    images: validated.data.images,
-    description: validated.data.description,
-    type: validated.data.type,
-    doorType: validated.data.doorType,
-    styles: validated.data.styles,
-    openings: validated.data.openings,
-    sizes: validated.data.sizes,
-    sizeStocks: validated.data.sizeStocks,
-    stock: validated.data.stock,
-    isHit: validated.data.isHit,
-    characteristics: validated.data.characteristics,
-  };
+  const storedBeforeUpdate = await getStoredProductImageRecords(id);
+  const currentFrontStored = storedBeforeUpdate.images.find((item) => item.sortOrder === 0);
+  const currentBackStored = storedBeforeUpdate.images.find((item) => item.sortOrder === 1);
 
-  await saveProducts(products);
-  revalidateProductsCache(id);
+  const frontFileError = validateImageFile(parsed.imageFrontFile, 'imageFront');
+  const backFileError = validateImageFile(parsed.imageBackFile, 'imageBack');
 
-  return NextResponse.json({ ok: true, product: products[productIndex] });
+  if (frontFileError || backFileError) {
+    return NextResponse.json(
+      {
+        message: 'Перевірте правильність вибраних фото.',
+        errors: {
+          ...(frontFileError || {}),
+          ...(backFileError || {}),
+        },
+      },
+      { status: 400 }
+    );
+  }
+
+  let uploadedFront:
+    | {
+        url: string;
+        fileId: string;
+      }
+    | null = null;
+
+  let uploadedBack:
+    | {
+        url: string;
+        fileId: string;
+      }
+    | null = null;
+
+  try {
+    const currentImages = Array.isArray(currentProduct.images)
+      ? currentProduct.images
+      : currentProduct.image
+        ? [currentProduct.image]
+        : [];
+
+    let imageFront =
+      String(parsed.body.imageFront || '').trim() || currentImages[0] || '';
+    let imageBack =
+      String(parsed.body.imageBack || '').trim() || currentImages[1] || '';
+
+    if (parsed.imageFrontFile) {
+      uploadedFront = await uploadProductImage(
+        parsed.imageFrontFile,
+        String(parsed.body.title || currentProduct.title || 'product'),
+        'front'
+      );
+      imageFront = uploadedFront.url;
+    }
+
+    if (parsed.imageBackFile) {
+      uploadedBack = await uploadProductImage(
+        parsed.imageBackFile,
+        String(parsed.body.title || currentProduct.title || 'product'),
+        'back'
+      );
+      imageBack = uploadedBack.url;
+    }
+
+    const validated = validateAndNormalizeProduct(
+      {
+        ...parsed.body,
+        imageFront,
+        imageBack,
+      },
+      {
+        requireFrontImage: true,
+      }
+    );
+
+    if (!validated.success) {
+      await Promise.all([
+        deleteImageKitFile(uploadedFront?.fileId),
+        deleteImageKitFile(uploadedBack?.fileId),
+      ]);
+
+      return NextResponse.json(
+        {
+          message: 'Перевірте правильність заповнення форми.',
+          errors: validated.errors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const updatedProduct = await updateProduct(id, validated.data);
+
+    if (!updatedProduct) {
+      await Promise.all([
+        deleteImageKitFile(uploadedFront?.fileId),
+        deleteImageKitFile(uploadedBack?.fileId),
+      ]);
+
+      return NextResponse.json(
+        {
+          message: 'Товар не знайдено.',
+          errors: { general: 'Товар не знайдено.' },
+        },
+        { status: 404 }
+      );
+    }
+
+    const nextFrontFileId =
+      uploadedFront?.fileId ??
+      (imageFront && imageFront === currentFrontStored?.imageUrl
+        ? currentFrontStored.fileId
+        : null);
+
+    const nextBackFileId =
+      uploadedBack?.fileId ??
+      (imageBack && imageBack === currentBackStored?.imageUrl
+        ? currentBackStored.fileId
+        : null);
+
+    const storedAfterUpdate = await getStoredProductImageRecords(id);
+
+    if (storedAfterUpdate.productDbId) {
+      await setStoredProductImageFileIds(storedAfterUpdate.productDbId, [
+        nextFrontFileId ?? null,
+        nextBackFileId ?? null,
+      ]);
+    }
+
+    const oldManagedFileIds = uniqueStrings(
+      storedBeforeUpdate.images
+        .map((item) => item.fileId)
+        .filter((item): item is string => Boolean(item))
+    );
+
+    const nextManagedFileIds = uniqueStrings(
+      [nextFrontFileId, nextBackFileId].filter(
+        (item): item is string => Boolean(item)
+      )
+    );
+
+    const removedFileIds = oldManagedFileIds.filter(
+      (fileId) => !nextManagedFileIds.includes(fileId)
+    );
+
+    await Promise.all(removedFileIds.map((fileId) => deleteImageKitFile(fileId)));
+
+    revalidateProductsCache(id);
+
+    return NextResponse.json({ ok: true, product: updatedProduct });
+  } catch (error) {
+    await Promise.all([
+      deleteImageKitFile(uploadedFront?.fileId),
+      deleteImageKitFile(uploadedBack?.fileId),
+    ]);
+
+    console.error('Failed to update product:', error);
+
+    return NextResponse.json(
+      {
+        message: 'Сталася помилка під час оновлення товару.',
+      },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(request: Request) {
@@ -724,18 +877,44 @@ export async function DELETE(request: Request) {
     );
   }
 
-  const products = await getProducts();
-  const filteredProducts = products.filter((item) => item.id !== id);
+  try {
+    const currentProduct = await getProductById(id);
 
-  if (filteredProducts.length === products.length) {
+    if (!currentProduct) {
+      return NextResponse.json(
+        { message: 'Товар не знайдено.' },
+        { status: 404 }
+      );
+    }
+
+    const storedImages = await getStoredProductImageRecords(id);
+
+    const deleted = await deleteProduct(id);
+
+    if (!deleted) {
+      return NextResponse.json(
+        { message: 'Товар не знайдено.' },
+        { status: 404 }
+      );
+    }
+
+    const fileIdsToDelete = uniqueStrings(
+      storedImages.images
+        .map((item) => item.fileId)
+        .filter((item): item is string => Boolean(item))
+    );
+
+    await Promise.all(fileIdsToDelete.map((fileId) => deleteImageKitFile(fileId)));
+
+    revalidateProductsCache(id);
+
+    return NextResponse.json({ ok: true, deletedId: id });
+  } catch (error) {
+    console.error('Failed to delete product:', error);
+
     return NextResponse.json(
-      { message: 'Товар не знайдено.' },
-      { status: 404 }
+      { message: 'Сталася помилка під час видалення товару.' },
+      { status: 500 }
     );
   }
-
-  await saveProducts(filteredProducts);
-  revalidateProductsCache(id);
-
-  return NextResponse.json({ ok: true, deletedId: id });
 }
