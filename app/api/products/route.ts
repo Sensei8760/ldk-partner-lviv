@@ -198,7 +198,10 @@ function normalizeSizes(value: unknown): ProductSize[] {
   );
 }
 
-function normalizeSizeStocks(value: unknown): ProductSizeStock[] {
+function normalizeSizeStocks(
+  value: unknown,
+  openingsFallback: ProductOpening[] = []
+): ProductSizeStock[] {
   if (!Array.isArray(value)) return [];
 
   const normalized = value
@@ -207,30 +210,66 @@ function normalizeSizeStocks(value: unknown): ProductSizeStock[] {
 
       const typed = item as Partial<ProductSizeStock>;
       const size = typed.size;
-      const stock = Number(typed.stock);
 
       const isValidSize =
         size === '850x2040' || size === '950x2040' || size === '1200x2040';
 
       if (!isValidSize) return null;
-      if (!Number.isFinite(stock)) return null;
+
+      const rawLeft = Number(typed.leftStock);
+      const rawRight = Number(typed.rightStock);
+      const rawStock = Number(typed.stock);
+
+      const hasLeft = Number.isFinite(rawLeft);
+      const hasRight = Number.isFinite(rawRight);
+      const hasLegacyStock = Number.isFinite(rawStock);
+
+      let leftStock = hasLeft ? Math.max(0, Math.round(rawLeft)) : 0;
+      let rightStock = hasRight ? Math.max(0, Math.round(rawRight)) : 0;
+
+      if (!hasLeft && !hasRight && hasLegacyStock) {
+        const legacyStock = Math.max(0, Math.round(rawStock));
+
+        if (
+          openingsFallback.includes('left') &&
+          !openingsFallback.includes('right')
+        ) {
+          leftStock = legacyStock;
+          rightStock = 0;
+        } else {
+          leftStock = 0;
+          rightStock = legacyStock;
+        }
+      }
 
       return {
         size,
-        stock: Math.max(0, Math.round(stock)),
+        leftStock,
+        rightStock,
+        stock: leftStock + rightStock,
       };
     })
     .filter(Boolean) as ProductSizeStock[];
 
-  const merged = new Map<ProductSize, number>();
+  const merged = new Map<
+    ProductSize,
+    { leftStock: number; rightStock: number }
+  >();
 
   normalized.forEach((item) => {
-    merged.set(item.size, (merged.get(item.size) || 0) + item.stock);
+    const current = merged.get(item.size) || { leftStock: 0, rightStock: 0 };
+
+    merged.set(item.size, {
+      leftStock: current.leftStock + Math.max(0, item.leftStock ?? 0),
+      rightStock: current.rightStock + Math.max(0, item.rightStock ?? 0),
+    });
   });
 
-  return Array.from(merged.entries()).map(([size, stock]) => ({
+  return Array.from(merged.entries()).map(([size, stocks]) => ({
     size,
-    stock,
+    leftStock: stocks.leftStock,
+    rightStock: stocks.rightStock,
+    stock: stocks.leftStock + stocks.rightStock,
   }));
 }
 
@@ -320,7 +359,7 @@ function validateAndNormalizeProduct(
     : [];
 
   const openings = normalizeOpenings(body.openings);
-  const sizeStocks = normalizeSizeStocks(body.sizeStocks);
+  const sizeStocks = normalizeSizeStocks(body.sizeStocks, openings);
   const sizes =
     sizeStocks.length > 0
       ? uniqueStrings(sizeStocks.map((item) => item.size))
@@ -328,7 +367,11 @@ function validateAndNormalizeProduct(
 
   const stock =
     sizeStocks.length > 0
-      ? sizeStocks.reduce((sum, item) => sum + item.stock, 0)
+      ? sizeStocks.reduce(
+          (sum, item) =>
+            sum + Math.max(0, Number(item.leftStock) || 0) + Math.max(0, Number(item.rightStock) || 0),
+          0
+        )
       : Math.max(0, Math.round(Number(body.stock) || 0));
 
   const characteristics = normalizeCharacteristics(body.characteristics);
@@ -419,23 +462,33 @@ function validateAndNormalizeProduct(
     errors.sizeStocks = 'Оберіть хоча б один розмір.';
   } else {
     const hasInvalidSizeStocks =
-      Array.isArray(body.sizeStocks) &&
-      body.sizeStocks.some((item) => {
-        if (!item || typeof item !== 'object') return true;
+  Array.isArray(body.sizeStocks) &&
+  body.sizeStocks.some((item) => {
+    if (!item || typeof item !== 'object') return true;
 
-        const typed = item as Partial<ProductSizeStock>;
-        const size = typed.size;
-        const itemStock = Number(typed.stock);
+    const typed = item as Partial<ProductSizeStock>;
+    const size = typed.size;
+    const rawLeft = Number(typed.leftStock);
+    const rawRight = Number(typed.rightStock);
+    const rawStock = Number(typed.stock);
 
-        const isValidSize =
-          size === '850x2040' || size === '950x2040' || size === '1200x2040';
+    const isValidSize =
+      size === '850x2040' || size === '950x2040' || size === '1200x2040';
 
-        return !isValidSize || !Number.isFinite(itemStock) || itemStock < 0;
-      });
+    const hasLeft = typed.leftStock !== undefined && typed.leftStock !== null;
+    const hasRight = typed.rightStock !== undefined && typed.rightStock !== null;
+    const hasLegacyStock = typed.stock !== undefined && typed.stock !== null;
+
+    const invalidLeft = hasLeft && (!Number.isFinite(rawLeft) || rawLeft < 0);
+    const invalidRight = hasRight && (!Number.isFinite(rawRight) || rawRight < 0);
+    const invalidLegacy = hasLegacyStock && (!Number.isFinite(rawStock) || rawStock < 0);
+
+    return !isValidSize || invalidLeft || invalidRight || invalidLegacy;
+  });
 
     if (hasInvalidSizeStocks) {
       errors.sizeStocks =
-        'Для кожного вибраного розміру вкажіть коректну цілу кількість.';
+        'Для кожного вибраного розміру вкажіть коректну кількість лівих і правих дверей.';
     }
   }
 
@@ -568,19 +621,8 @@ export async function POST(request: Request) {
     );
   }
 
-  let uploadedFront:
-    | {
-        url: string;
-        fileId: string;
-      }
-    | null = null;
-
-  let uploadedBack:
-    | {
-        url: string;
-        fileId: string;
-      }
-    | null = null;
+  let uploadedFront: { url: string; fileId: string } | null = null;
+  let uploadedBack: { url: string; fileId: string } | null = null;
 
   try {
     let imageFront = String(parsed.body.imageFront || '').trim();
@@ -714,19 +756,8 @@ export async function PATCH(request: Request) {
     );
   }
 
-  let uploadedFront:
-    | {
-        url: string;
-        fileId: string;
-      }
-    | null = null;
-
-  let uploadedBack:
-    | {
-        url: string;
-        fileId: string;
-      }
-    | null = null;
+  let uploadedFront: { url: string; fileId: string } | null = null;
+  let uploadedBack: { url: string; fileId: string } | null = null;
 
   try {
     const currentImages = Array.isArray(currentProduct.images)

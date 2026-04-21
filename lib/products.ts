@@ -12,6 +12,8 @@ export type ProductSize = '850x2040' | '950x2040' | '1200x2040';
 
 export type ProductSizeStock = {
   size: ProductSize;
+  leftStock?: number;
+  rightStock?: number;
   stock: number;
 };
 
@@ -80,7 +82,9 @@ type ProductImageRow = {
 type ProductSizeStockRow = {
   product_id: number;
   size: ProductSize;
-  stock: number;
+  left_stock: number | null;
+  right_stock: number | null;
+  stock: number | null;
 };
 
 type ProductCharacteristicRow = {
@@ -164,7 +168,10 @@ function normalizeSizes(value: unknown): ProductSize[] {
   );
 }
 
-function normalizeSizeStocks(value: unknown): ProductSizeStock[] {
+function normalizeSizeStocks(
+  value: unknown,
+  openingsFallback: ProductOpening[] = []
+): ProductSizeStock[] {
   if (!Array.isArray(value)) return [];
 
   const normalized = value
@@ -173,35 +180,94 @@ function normalizeSizeStocks(value: unknown): ProductSizeStock[] {
 
       const typed = item as Partial<ProductSizeStock>;
       const size = typed.size;
-      const stockNumber = Number(typed.stock);
 
       const isValidSize =
         size === '850x2040' || size === '950x2040' || size === '1200x2040';
 
       if (!isValidSize) return null;
-      if (!Number.isFinite(stockNumber)) return null;
+
+      const rawLeft = Number(typed.leftStock);
+      const rawRight = Number(typed.rightStock);
+      const rawStock = Number(typed.stock);
+
+      const hasLeft = Number.isFinite(rawLeft);
+      const hasRight = Number.isFinite(rawRight);
+      const hasLegacyStock = Number.isFinite(rawStock);
+
+      let leftStock = hasLeft ? Math.max(0, Math.round(rawLeft)) : 0;
+      let rightStock = hasRight ? Math.max(0, Math.round(rawRight)) : 0;
+
+      if (!hasLeft && !hasRight && hasLegacyStock) {
+        const legacyStock = Math.max(0, Math.round(rawStock));
+
+        if (
+          openingsFallback.includes('left') &&
+          !openingsFallback.includes('right')
+        ) {
+          leftStock = legacyStock;
+          rightStock = 0;
+        } else {
+          leftStock = 0;
+          rightStock = legacyStock;
+        }
+      }
+
+      const stock = leftStock + rightStock;
 
       return {
         size,
-        stock: stockNumber < 0 ? 0 : Math.round(stockNumber),
+        leftStock,
+        rightStock,
+        stock,
       };
     })
     .filter(Boolean) as ProductSizeStock[];
 
-  const merged = new Map<ProductSize, number>();
+  const merged = new Map<
+    ProductSize,
+    { leftStock: number; rightStock: number }
+  >();
 
   normalized.forEach((item) => {
-    merged.set(item.size, (merged.get(item.size) || 0) + item.stock);
+    const current = merged.get(item.size) || { leftStock: 0, rightStock: 0 };
+
+    merged.set(item.size, {
+      leftStock: current.leftStock + Math.max(0, item.leftStock ?? 0),
+      rightStock: current.rightStock + Math.max(0, item.rightStock ?? 0),
+    });
   });
 
-  return Array.from(merged.entries()).map(([size, stock]) => ({
+  return Array.from(merged.entries()).map(([size, stocks]) => ({
     size,
-    stock,
+    leftStock: stocks.leftStock,
+    rightStock: stocks.rightStock,
+    stock: stocks.leftStock + stocks.rightStock,
   }));
 }
 
 function getTotalStockFromSizeStocks(sizeStocks: ProductSizeStock[]) {
-  return sizeStocks.reduce((sum, item) => sum + item.stock, 0);
+  return sizeStocks.reduce((sum, item) => {
+    const leftStock = Math.max(0, Number(item.leftStock) || 0);
+    const rightStock = Math.max(0, Number(item.rightStock) || 0);
+    const stock =
+      Number.isFinite(Number(item.stock)) && Number(item.stock) > 0
+        ? Math.max(0, Math.round(Number(item.stock)))
+        : leftStock + rightStock;
+
+    return sum + Math.max(stock, leftStock + rightStock);
+  }, 0);
+}
+
+function getOpeningsFromSizeStocks(sizeStocks: ProductSizeStock[]): ProductOpening[] {
+  const hasLeft = sizeStocks.some((item) => Math.max(0, item.leftStock ?? 0) > 0);
+  const hasRight = sizeStocks.some((item) => Math.max(0, item.rightStock ?? 0) > 0);
+
+  const openings: ProductOpening[] = [];
+
+  if (hasLeft) openings.push('left');
+  if (hasRight) openings.push('right');
+
+  return openings;
 }
 
 function normalizeCharacteristics(value: unknown): ProductCharacteristic[] {
@@ -343,8 +409,10 @@ function normalizeProductInput(input: ProductUpsertInput): Product {
   const price = Number(input.price);
   const type = input.type === 'street' ? 'street' : 'apartment';
   const doorType = normalizeDoorType(input.doorType, title, type);
+
+  const openingsFallback = normalizeOpenings(input.openings || []);
   const rawSizes = normalizeSizes(input.sizes || []);
-  const sizeStocks = normalizeSizeStocks(input.sizeStocks || []);
+  const sizeStocks = normalizeSizeStocks(input.sizeStocks || [], openingsFallback);
 
   const sizes =
     sizeStocks.length > 0
@@ -373,7 +441,11 @@ function normalizeProductInput(input: ProductUpsertInput): Product {
     toStringArray(input.styles || []).filter(Boolean)
   );
 
-  const openings = normalizeOpenings(input.openings || []);
+  const openings =
+    sizeStocks.length > 0
+      ? getOpeningsFromSizeStocks(sizeStocks)
+      : openingsFallback;
+
   const characteristics = normalizeCharacteristics(input.characteristics || []);
   const images = normalizeImages({
     image: input.image,
@@ -418,10 +490,20 @@ function mapRowsToProducts(
 
   sizeStockRows.forEach((row) => {
     const current = sizeStocksMap.get(row.product_id) || [];
+
+    const leftStock = Math.max(0, Number(row.left_stock) || 0);
+    const rightStock = Math.max(0, Number(row.right_stock) || 0);
+    const legacyStock = Math.max(0, Number(row.stock) || 0);
+    const totalStock =
+      leftStock > 0 || rightStock > 0 ? leftStock + rightStock : legacyStock;
+
     current.push({
       size: row.size,
-      stock: Math.max(0, Number(row.stock) || 0),
+      leftStock,
+      rightStock,
+      stock: totalStock,
     });
+
     sizeStocksMap.set(row.product_id, current);
   });
 
@@ -471,7 +553,10 @@ function mapRowsToProducts(
       type: row.type === 'street' ? 'street' : 'apartment',
       doorType: row.door_type === 'entrance' ? 'entrance' : 'interior',
       styles: uniqueStrings(toStringArray(row.styles || [])),
-      openings: normalizeOpenings(row.openings || []),
+      openings:
+        relatedSizeStocks.length > 0
+          ? getOpeningsFromSizeStocks(relatedSizeStocks)
+          : normalizeOpenings(row.openings || []),
       sizes: finalSizes,
       sizeStocks: relatedSizeStocks,
       stock,
@@ -499,7 +584,7 @@ async function getRelationsForProductIds(productIds: number[]) {
         ORDER BY product_id ASC, sort_order ASC, id ASC
       `,
       sql`
-        SELECT product_id, size, stock
+        SELECT product_id, size, left_stock, right_stock, stock
         FROM product_size_stocks
         WHERE product_id = ANY(${productIds})
         ORDER BY product_id ASC, id ASC
@@ -616,7 +701,9 @@ export function getProductTotalStock(product: Pick<Product, 'stock' | 'sizeStock
     return getTotalStockFromSizeStocks(product.sizeStocks);
   }
 
-  return Number.isFinite(product.stock) ? Math.max(0, Math.round(product.stock)) : 0;
+  return Number.isFinite(product.stock)
+    ? Math.max(0, Math.round(product.stock))
+    : 0;
 }
 
 export function getProductSizes(product: Pick<Product, 'sizes' | 'sizeStocks'>) {
@@ -669,9 +756,13 @@ async function insertChildRows(productDbId: number, product: Product) {
   }
 
   for (const item of product.sizeStocks) {
+    const leftStock = Math.max(0, Number(item.leftStock) || 0);
+    const rightStock = Math.max(0, Number(item.rightStock) || 0);
+    const stock = leftStock + rightStock;
+
     await sql`
-      INSERT INTO product_size_stocks (product_id, size, stock)
-      VALUES (${productDbId}, ${item.size}, ${item.stock})
+      INSERT INTO product_size_stocks (product_id, size, left_stock, right_stock, stock)
+      VALUES (${productDbId}, ${item.size}, ${leftStock}, ${rightStock}, ${stock})
     `;
   }
 

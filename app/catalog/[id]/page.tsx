@@ -15,6 +15,8 @@ type PageProps = {
 
 type ProductSizeDisplayItem = {
   size: '850x2040' | '950x2040' | '1200x2040';
+  leftStock: number | null;
+  rightStock: number | null;
   stock: number | null;
 };
 
@@ -30,13 +32,24 @@ export async function generateStaticParams() {
 
 function getTotalStock(product: {
   stock: number;
-  sizeStocks?: Array<{ size: ProductSizeDisplayItem['size']; stock: number }>;
+  sizeStocks?: Array<{
+    size: ProductSizeDisplayItem['size'];
+    leftStock?: number;
+    rightStock?: number;
+    stock: number;
+  }>;
 }) {
   if (Array.isArray(product.sizeStocks) && product.sizeStocks.length > 0) {
-    return product.sizeStocks.reduce(
-      (sum, item) => sum + Math.max(0, Number(item.stock) || 0),
-      0
-    );
+    return product.sizeStocks.reduce((sum, item) => {
+      const leftStock = Math.max(0, Number(item.leftStock) || 0);
+      const rightStock = Math.max(0, Number(item.rightStock) || 0);
+      const total =
+        leftStock > 0 || rightStock > 0
+          ? leftStock + rightStock
+          : Math.max(0, Number(item.stock) || 0);
+
+      return sum + total;
+    }, 0);
   }
 
   return Number.isFinite(product.stock) ? Math.max(0, product.stock) : 0;
@@ -44,7 +57,12 @@ function getTotalStock(product: {
 
 function getDisplaySizeStocks(product: {
   sizes?: ProductSizeDisplayItem['size'][];
-  sizeStocks?: Array<{ size: ProductSizeDisplayItem['size']; stock: number }>;
+  sizeStocks?: Array<{
+    size: ProductSizeDisplayItem['size'];
+    leftStock?: number;
+    rightStock?: number;
+    stock: number;
+  }>;
 }): ProductSizeDisplayItem[] {
   if (Array.isArray(product.sizeStocks) && product.sizeStocks.length > 0) {
     return product.sizeStocks
@@ -54,10 +72,22 @@ function getDisplaySizeStocks(product: {
           item.size === '950x2040' ||
           item.size === '1200x2040'
       )
-      .map((item) => ({
-        size: item.size,
-        stock: Math.max(0, Number(item.stock) || 0),
-      }));
+      .map((item) => {
+        const leftStock = Math.max(0, Number(item.leftStock) || 0);
+        const rightStock = Math.max(0, Number(item.rightStock) || 0);
+        const fallbackStock = Math.max(0, Number(item.stock) || 0);
+        const total =
+          leftStock > 0 || rightStock > 0
+            ? leftStock + rightStock
+            : fallbackStock;
+
+        return {
+          size: item.size,
+          leftStock,
+          rightStock,
+          stock: total,
+        };
+      });
   }
 
   if (Array.isArray(product.sizes) && product.sizes.length > 0) {
@@ -70,6 +100,8 @@ function getDisplaySizeStocks(product: {
       )
       .map((size) => ({
         size,
+        leftStock: null,
+        rightStock: null,
         stock: null,
       }));
   }

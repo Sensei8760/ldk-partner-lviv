@@ -5,6 +5,8 @@ import styles from './ProductPage.module.css';
 
 type ProductSizeDisplayItem = {
   size: '850x2040' | '950x2040' | '1200x2040';
+  leftStock: number | null;
+  rightStock: number | null;
   stock: number | null;
 };
 
@@ -35,7 +37,14 @@ export default function ProductActions({
 
           <div className={styles.sizeAvailabilityList}>
             {sizeStocks.map((item) => {
-              const isOut = item.stock !== null && item.stock <= 0;
+              const leftStock =
+                item.leftStock === null ? null : Math.max(0, Number(item.leftStock) || 0);
+              const rightStock =
+                item.rightStock === null ? null : Math.max(0, Number(item.rightStock) || 0);
+              const totalStock =
+                item.stock === null ? null : Math.max(0, Number(item.stock) || 0);
+
+              const isOut = totalStock !== null && totalStock <= 0;
 
               return (
                 <div
@@ -53,11 +62,15 @@ export default function ProductActions({
                       isOut ? styles.sizeAvailabilityStockOut : ''
                     }`}
                   >
-                    {item.stock === null
-                      ? 'Кількість не вказана'
-                      : item.stock <= 0
-                        ? 'Немає в наявності'
-                        : `В наявності: ${item.stock}`}
+                    {leftStock === null && rightStock === null ? (
+                      'Кількість не вказана'
+                    ) : (
+                      <>
+                        Ліве: {leftStock ?? 0}
+                        <br />
+                        Праве: {rightStock ?? 0}
+                      </>
+                    )}
                   </span>
                 </div>
               );

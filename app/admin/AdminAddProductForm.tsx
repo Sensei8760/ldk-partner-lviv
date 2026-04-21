@@ -33,11 +33,6 @@ const doorTypeOptions = [
   { id: 'entrance', label: 'Вхідні' },
 ] as const;
 
-const openingOptions = [
-  { id: 'left', label: 'Ліве' },
-  { id: 'right', label: 'Праве' },
-] as const;
-
 const sizeOptions = [
   { id: '850x2040', label: '850х2040 мм' },
   { id: '950x2040', label: '950х2040 мм' },
@@ -61,13 +56,16 @@ const characteristicLabels = [
 ] as const;
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const INITIAL_VISIBLE_COUNT = 5;
+const LOAD_MORE_STEP = 10;
 
 type ProductDoorType = (typeof doorTypeOptions)[number]['id'];
-type ProductOpening = (typeof openingOptions)[number]['id'];
 type ProductSize = (typeof sizeOptions)[number]['id'];
 
 type ProductSizeStock = {
   size: ProductSize;
+  leftStock?: number;
+  rightStock?: number;
   stock: number;
 };
 
@@ -82,7 +80,6 @@ type Product = {
   type: 'street' | 'apartment';
   doorType: ProductDoorType;
   styles: string[];
-  openings: ProductOpening[];
   sizes: ProductSize[];
   sizeStocks: ProductSizeStock[];
   stock: number;
@@ -98,7 +95,8 @@ type CharacteristicField = {
 type SizeStockField = {
   size: ProductSize;
   enabled: boolean;
-  stock: string;
+  leftStock: string;
+  rightStock: string;
 };
 
 type FormState = {
@@ -114,7 +112,6 @@ type FormState = {
   type: 'street' | 'apartment';
   doorType: ProductDoorType;
   styles: string[];
-  openings: ProductOpening[];
   sizeStocks: SizeStockField[];
   isHit: boolean;
   characteristics: CharacteristicField[];
@@ -130,15 +127,11 @@ type FormErrors = Partial<{
   type: string;
   doorType: string;
   styles: string;
-  openings: string;
   sizeStocks: string;
   description: string;
   characteristics: string;
   general: string;
 }>;
-
-const INITIAL_VISIBLE_COUNT = 5;
-const LOAD_MORE_STEP = 10;
 
 function createEmptyCharacteristics(): CharacteristicField[] {
   return characteristicLabels.map((label) => ({
@@ -151,7 +144,8 @@ function createEmptySizeStocks(): SizeStockField[] {
   return sizeOptions.map((item) => ({
     size: item.id,
     enabled: false,
-    stock: '',
+    leftStock: '',
+    rightStock: '',
   }));
 }
 
@@ -168,7 +162,6 @@ const emptyForm: FormState = {
   type: 'apartment',
   doorType: 'interior',
   styles: [],
-  openings: [],
   sizeStocks: createEmptySizeStocks(),
   isHit: false,
   characteristics: createEmptyCharacteristics(),
@@ -188,15 +181,52 @@ function mapCharacteristicsToFields(
 }
 
 function mapSizeStocksToFields(
-  sizeStocks: { size: ProductSize; stock: number }[]
+  sizeStocks: ProductSizeStock[],
+  sizes: ProductSize[],
+  totalStock: number
 ): SizeStockField[] {
+  const normalizedSizes = Array.isArray(sizes) ? sizes : [];
+
   return sizeOptions.map((item) => {
     const found = sizeStocks.find((sizeStock) => sizeStock.size === item.id);
 
+    if (found) {
+      const leftStock = Math.max(0, Number(found.leftStock) || 0);
+      const rightStock = Math.max(0, Number(found.rightStock) || 0);
+      const fallbackStock = Math.max(0, Number(found.stock) || 0);
+
+      let finalLeft = leftStock;
+      let finalRight = rightStock;
+
+      if (leftStock === 0 && rightStock === 0 && fallbackStock > 0) {
+        finalLeft = 0;
+        finalRight = fallbackStock;
+      }
+
+      return {
+        size: item.id,
+        enabled: true,
+        leftStock: String(finalLeft),
+        rightStock: String(finalRight),
+      };
+    }
+
+    const isEnabledByLegacySizes = normalizedSizes.includes(item.id);
+
+    if (isEnabledByLegacySizes) {
+      return {
+        size: item.id,
+        enabled: true,
+        leftStock: '',
+        rightStock: totalStock > 0 ? String(totalStock) : '',
+      };
+    }
+
     return {
       size: item.id,
-      enabled: Boolean(found),
-      stock: found ? String(found.stock) : '',
+      enabled: false,
+      leftStock: '',
+      rightStock: '',
     };
   });
 }
@@ -204,20 +234,49 @@ function mapSizeStocksToFields(
 function getNormalizedSizeStocks(sizeStocks: SizeStockField[]): ProductSizeStock[] {
   return sizeStocks
     .filter((item) => item.enabled)
-    .map((item) => ({
-      size: item.size,
-      stock: Number(item.stock),
-    }))
+    .map((item) => {
+      const leftStock = item.leftStock.trim() === '' ? 0 : Number(item.leftStock);
+      const rightStock = item.rightStock.trim() === '' ? 0 : Number(item.rightStock);
+
+      return {
+        size: item.size,
+        leftStock,
+        rightStock,
+        stock: leftStock + rightStock,
+      };
+    })
     .filter(
       (item) =>
-        Number.isFinite(item.stock) &&
-        Number.isInteger(item.stock) &&
-        item.stock >= 0
+        Number.isFinite(item.leftStock) &&
+        Number.isInteger(item.leftStock) &&
+        item.leftStock >= 0 &&
+        Number.isFinite(item.rightStock) &&
+        Number.isInteger(item.rightStock) &&
+        item.rightStock >= 0
     );
 }
 
 function getTotalStock(sizeStocks: SizeStockField[]) {
-  return getNormalizedSizeStocks(sizeStocks).reduce((sum, item) => sum + item.stock, 0);
+  return getNormalizedSizeStocks(sizeStocks).reduce(
+    (sum, item) => sum + item.stock,
+    0
+  );
+}
+
+function getDerivedOpenings(sizeStocks: SizeStockField[]) {
+  const normalized = getNormalizedSizeStocks(sizeStocks);
+
+  const openings: Array<'left' | 'right'> = [];
+
+  if (normalized.some((item) => (item.leftStock || 0) > 0)) {
+    openings.push('left');
+  }
+
+  if (normalized.some((item) => (item.rightStock || 0) > 0)) {
+    openings.push('right');
+  }
+
+  return openings;
 }
 
 function isValidImageFile(file: File) {
@@ -298,34 +357,38 @@ function validateForm(form: FormState): FormErrors {
     errors.styles = 'Обрано некоректний стиль.';
   }
 
-  const invalidOpenings = form.openings.filter(
-    (opening) => !openingOptions.some((item) => item.id === opening)
-  );
-  if (invalidOpenings.length > 0) {
-    errors.openings = 'Обрано некоректне відкривання.';
-  }
-
   const enabledSizeStocks = form.sizeStocks.filter((item) => item.enabled);
 
   if (enabledSizeStocks.length === 0) {
     errors.sizeStocks = 'Оберіть хоча б один розмір.';
   } else {
     const hasInvalidStock = enabledSizeStocks.some((item) => {
-      if (item.stock.trim() === '') return true;
+      const leftRaw = item.leftStock.trim();
+      const rightRaw = item.rightStock.trim();
 
-      const value = Number(item.stock);
+      const leftValue = leftRaw === '' ? 0 : Number(leftRaw);
+      const rightValue = rightRaw === '' ? 0 : Number(rightRaw);
 
-      return (
-        !Number.isFinite(value) ||
-        !Number.isInteger(value) ||
-        value < 0 ||
-        value > 9999
-      );
+      const leftInvalid =
+        !Number.isFinite(leftValue) ||
+        !Number.isInteger(leftValue) ||
+        leftValue < 0 ||
+        leftValue > 9999;
+
+      const rightInvalid =
+        !Number.isFinite(rightValue) ||
+        !Number.isInteger(rightValue) ||
+        rightValue < 0 ||
+        rightValue > 9999;
+
+      const total = leftValue + rightValue;
+
+      return leftInvalid || rightInvalid || total <= 0;
     });
 
     if (hasInvalidStock) {
       errors.sizeStocks =
-        'Для кожного вибраного розміру вкажіть коректну цілу кількість від 0 до 9999.';
+        'Для кожного вибраного розміру вкажіть коректну кількість лівих і правих дверей. Загальна кількість має бути більшою за 0.';
     }
   }
 
@@ -530,21 +593,6 @@ export default function AdminAddProductForm() {
     clearFieldError('styles');
   }
 
-  function handleToggleOpening(opening: ProductOpening) {
-    setForm((prev) => {
-      const nextOpenings = prev.openings.includes(opening)
-        ? prev.openings.filter((item) => item !== opening)
-        : [...prev.openings, opening];
-
-      return {
-        ...prev,
-        openings: nextOpenings,
-      };
-    });
-
-    clearFieldError('openings');
-  }
-
   function handleToggleSize(size: ProductSize) {
     setForm((prev) => ({
       ...prev,
@@ -553,7 +601,8 @@ export default function AdminAddProductForm() {
           ? {
               ...item,
               enabled: !item.enabled,
-              stock: item.enabled ? '' : item.stock,
+              leftStock: item.enabled ? '' : item.leftStock,
+              rightStock: item.enabled ? '' : item.rightStock,
             }
           : item
       ),
@@ -562,14 +611,20 @@ export default function AdminAddProductForm() {
     clearFieldError('sizeStocks');
   }
 
-  function handleSizeStockChange(size: ProductSize, value: string) {
+  function handleSizeSideChange(
+    size: ProductSize,
+    side: 'leftStock' | 'rightStock',
+    value: string
+  ) {
+    const sanitized = value.replace(/[^\d]/g, '');
+
     setForm((prev) => ({
       ...prev,
       sizeStocks: prev.sizeStocks.map((item) =>
         item.size === size
           ? {
               ...item,
-              stock: value.replace(/[^\d]/g, ''),
+              [side]: sanitized,
             }
           : item
       ),
@@ -680,16 +735,6 @@ export default function AdminAddProductForm() {
           ? [product.image]
           : [];
 
-    const normalizedSizeStocks =
-      Array.isArray(product.sizeStocks) && product.sizeStocks.length > 0
-        ? product.sizeStocks
-        : Array.isArray(product.sizes)
-          ? product.sizes.map((size) => ({
-              size,
-              stock: product.stock ?? 0,
-            }))
-          : [];
-
     setEditingId(product.id);
 
     setForm({
@@ -708,8 +753,11 @@ export default function AdminAddProductForm() {
       type: product.type === 'street' ? 'street' : 'apartment',
       doorType: product.doorType === 'entrance' ? 'entrance' : 'interior',
       styles: Array.isArray(product.styles) ? product.styles : [],
-      openings: Array.isArray(product.openings) ? product.openings : [],
-      sizeStocks: mapSizeStocksToFields(normalizedSizeStocks),
+      sizeStocks: mapSizeStocksToFields(
+        Array.isArray(product.sizeStocks) ? product.sizeStocks : [],
+        Array.isArray(product.sizes) ? product.sizes : [],
+        product.stock ?? 0
+      ),
       isHit: Boolean(product.isHit),
       characteristics: mapCharacteristicsToFields(
         Array.isArray(product.characteristics) ? product.characteristics : []
@@ -782,6 +830,11 @@ export default function AdminAddProductForm() {
     setIsLoading(true);
 
     const normalizedSizeStocks = getNormalizedSizeStocks(form.sizeStocks);
+    const derivedOpenings = getDerivedOpenings(form.sizeStocks);
+    const totalCalculatedStock = normalizedSizeStocks.reduce(
+      (sum, item) => sum + item.stock,
+      0
+    );
 
     const formData = new FormData();
 
@@ -798,13 +851,10 @@ export default function AdminAddProductForm() {
     formData.append('isHit', String(form.isHit));
 
     formData.append('styles', JSON.stringify(form.styles));
-    formData.append('openings', JSON.stringify(form.openings));
+    formData.append('openings', JSON.stringify(derivedOpenings));
     formData.append('sizes', JSON.stringify(normalizedSizeStocks.map((item) => item.size)));
     formData.append('sizeStocks', JSON.stringify(normalizedSizeStocks));
-    formData.append(
-      'stock',
-      String(normalizedSizeStocks.reduce((sum, item) => sum + item.stock, 0))
-    );
+    formData.append('stock', String(totalCalculatedStock));
     formData.append(
       'characteristics',
       JSON.stringify(
@@ -1118,24 +1168,7 @@ export default function AdminAddProductForm() {
           {errors.images ? <p className={styles.fieldError}>{errors.images}</p> : null}
 
           <div className={styles.field}>
-            <label>Відкривання дверей</label>
-            <div className={styles.stylesGrid}>
-              {openingOptions.map((opening) => (
-                <label key={opening.id} className={styles.styleOption}>
-                  <input
-                    type="checkbox"
-                    checked={form.openings.includes(opening.id)}
-                    onChange={() => handleToggleOpening(opening.id)}
-                  />
-                  <span>{opening.label}</span>
-                </label>
-              ))}
-            </div>
-            {errors.openings ? <p className={styles.fieldError}>{errors.openings}</p> : null}
-          </div>
-
-          <div className={styles.field}>
-            <label>Розміри та кількість</label>
+            <label>Розміри та кількість по відкриванню</label>
             <div className={styles.characteristicsGrid}>
               {form.sizeStocks.map((item) => {
                 const sizeLabel =
@@ -1152,15 +1185,60 @@ export default function AdminAddProductForm() {
                       <span>{sizeLabel}</span>
                     </label>
 
-                    <input
-                      type="number"
-                      min="0"
-                      step="1"
-                      value={item.stock}
-                      onChange={(e) => handleSizeStockChange(item.size, e.target.value)}
-                      placeholder="Кількість"
-                      disabled={!item.enabled}
-                    />
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '10px',
+                        marginTop: '10px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '6px',
+                            fontSize: '14px',
+                          }}
+                        >
+                          Ліве
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={item.leftStock}
+                          onChange={(e) =>
+                            handleSizeSideChange(item.size, 'leftStock', e.target.value)
+                          }
+                          placeholder="0"
+                          disabled={!item.enabled}
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '6px',
+                            fontSize: '14px',
+                          }}
+                        >
+                          Праве
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={item.rightStock}
+                          onChange={(e) =>
+                            handleSizeSideChange(item.size, 'rightStock', e.target.value)
+                          }
+                          placeholder="0"
+                          disabled={!item.enabled}
+                        />
+                      </div>
+                    </div>
                   </div>
                 );
               })}

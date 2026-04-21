@@ -74,7 +74,45 @@ function getInstallPlace(product: Product): InstallPlaceValue {
   return product.type === 'street' ? 'street' : 'apartment';
 }
 
+function getSizeSideStocks(item: Product['sizeStocks'][number]) {
+  const leftStock = Math.max(0, Number(item.leftStock) || 0);
+  const rightStock = Math.max(0, Number(item.rightStock) || 0);
+  const fallbackStock = Math.max(0, Number(item.stock) || 0);
+
+  if (leftStock > 0 || rightStock > 0) {
+    return {
+      leftStock,
+      rightStock,
+      totalStock: leftStock + rightStock,
+    };
+  }
+
+  return {
+    leftStock: 0,
+    rightStock: fallbackStock,
+    totalStock: fallbackStock,
+  };
+}
+
 function getOpenings(product: Product): OpeningValue[] {
+  if (Array.isArray(product.sizeStocks) && product.sizeStocks.length > 0) {
+    const hasLeft = product.sizeStocks.some(
+      (item) => getSizeSideStocks(item).leftStock > 0
+    );
+    const hasRight = product.sizeStocks.some(
+      (item) => getSizeSideStocks(item).rightStock > 0
+    );
+
+    const openings: OpeningValue[] = [];
+
+    if (hasLeft) openings.push('left');
+    if (hasRight) openings.push('right');
+
+    if (openings.length > 0) {
+      return openings;
+    }
+  }
+
   if (!Array.isArray(product.openings)) return [];
 
   return product.openings.filter(
@@ -102,7 +140,10 @@ function getSizes(product: Product): SizeValue[] {
 
 function getTotalStock(product: Product) {
   if (Array.isArray(product.sizeStocks) && product.sizeStocks.length > 0) {
-    return product.sizeStocks.reduce((sum, item) => sum + Math.max(0, Number(item.stock) || 0), 0);
+    return product.sizeStocks.reduce(
+      (sum, item) => sum + getSizeSideStocks(item).totalStock,
+      0
+    );
   }
 
   return Number.isFinite(product.stock) ? Math.max(0, product.stock) : 0;
