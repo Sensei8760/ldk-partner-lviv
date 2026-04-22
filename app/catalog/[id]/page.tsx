@@ -15,10 +15,16 @@ type PageProps = {
 
 type ProductSizeDisplayItem = {
   size: '850x2040' | '950x2040' | '1200x2040';
-  leftStock: number | null;
-  rightStock: number | null;
-  stock: number | null;
+  leftStock: number;
+  rightStock: number;
+  stock: number;
 };
+
+const ALL_SIZES: ProductSizeDisplayItem['size'][] = [
+  '850x2040',
+  '950x2040',
+  '1200x2040',
+];
 
 export const revalidate = 300;
 
@@ -28,6 +34,10 @@ export async function generateStaticParams() {
   return ids.map((id) => ({
     id,
   }));
+}
+
+function formatPrice(value: number) {
+  return new Intl.NumberFormat('uk-UA').format(value);
 }
 
 function getTotalStock(product: {
@@ -56,7 +66,6 @@ function getTotalStock(product: {
 }
 
 function getDisplaySizeStocks(product: {
-  sizes?: ProductSizeDisplayItem['size'][];
   sizeStocks?: Array<{
     size: ProductSizeDisplayItem['size'];
     leftStock?: number;
@@ -64,49 +73,24 @@ function getDisplaySizeStocks(product: {
     stock: number;
   }>;
 }): ProductSizeDisplayItem[] {
-  if (Array.isArray(product.sizeStocks) && product.sizeStocks.length > 0) {
-    return product.sizeStocks
-      .filter(
-        (item) =>
-          item.size === '850x2040' ||
-          item.size === '950x2040' ||
-          item.size === '1200x2040'
-      )
-      .map((item) => {
-        const leftStock = Math.max(0, Number(item.leftStock) || 0);
-        const rightStock = Math.max(0, Number(item.rightStock) || 0);
-        const fallbackStock = Math.max(0, Number(item.stock) || 0);
-        const total =
-          leftStock > 0 || rightStock > 0
-            ? leftStock + rightStock
-            : fallbackStock;
+  return ALL_SIZES.map((size) => {
+    const found = Array.isArray(product.sizeStocks)
+      ? product.sizeStocks.find((item) => item.size === size)
+      : null;
 
-        return {
-          size: item.size,
-          leftStock,
-          rightStock,
-          stock: total,
-        };
-      });
-  }
+    const leftStock = Math.max(0, Number(found?.leftStock) || 0);
+    const rightStock = Math.max(0, Number(found?.rightStock) || 0);
+    const fallbackStock = Math.max(0, Number(found?.stock) || 0);
+    const stock =
+      leftStock > 0 || rightStock > 0 ? leftStock + rightStock : fallbackStock;
 
-  if (Array.isArray(product.sizes) && product.sizes.length > 0) {
-    return product.sizes
-      .filter(
-        (size) =>
-          size === '850x2040' ||
-          size === '950x2040' ||
-          size === '1200x2040'
-      )
-      .map((size) => ({
-        size,
-        leftStock: null,
-        rightStock: null,
-        stock: null,
-      }));
-  }
-
-  return [];
+    return {
+      size,
+      leftStock,
+      rightStock,
+      stock,
+    };
+  });
 }
 
 export default async function ProductPage({ params }: PageProps) {
@@ -121,13 +105,15 @@ export default async function ProductPage({ params }: PageProps) {
   const isOutOfStock = totalStock <= 0;
   const displaySizeStocks = getDisplaySizeStocks(product);
 
-  const hasDiscount =
-    product.discountPrice !== null &&
-    product.discountPrice !== undefined &&
-    product.discountPrice > 0 &&
-    product.discountPrice < product.price;
+  const displayPrice =
+  product.discountPrice !== null &&
+  product.discountPrice !== undefined &&
+  product.discountPrice > 0 &&
+  product.discountPrice < product.price
+    ? product.discountPrice
+    : product.price;
 
-  const displayPrice = hasDiscount ? product.discountPrice : product.price;
+const hasDiscount = displayPrice !== product.price;
 
   return (
     <main className={styles.productPage}>
@@ -144,16 +130,16 @@ export default async function ProductPage({ params }: PageProps) {
               {hasDiscount ? (
                 <>
                   <p className={styles.oldPrice}>
-                    {product.price} <span>грн</span>
+                    {formatPrice(product.price)} <span>грн</span>
                   </p>
 
                   <p className={styles.salePrice}>
-                    {displayPrice} <span>грн</span>
+                    {formatPrice(displayPrice)} <span>грн</span>
                   </p>
                 </>
               ) : (
                 <p className={styles.price}>
-                  {product.price} <span>грн</span>
+                  {formatPrice(product.price)} <span>грн</span>
                 </p>
               )}
             </div>

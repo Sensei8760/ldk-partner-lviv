@@ -5,9 +5,9 @@ import styles from './ProductPage.module.css';
 
 type ProductSizeDisplayItem = {
   size: '850x2040' | '950x2040' | '1200x2040';
-  leftStock: number | null;
-  rightStock: number | null;
-  stock: number | null;
+  leftStock: number;
+  rightStock: number;
+  stock: number;
 };
 
 type ProductActionsProps = {
@@ -31,53 +31,30 @@ export default function ProductActions({
         <FavoriteButton productId={productId} size="md" showText />
       </div>
 
-      {sizeStocks.length > 0 ? (
-        <div className={styles.sizeAvailability}>
-          <p className={styles.sizeAvailabilityTitle}>Доступні розміри</p>
+      <div className={styles.sizeAvailability}>
+        <p className={styles.sizeAvailabilityTitle}>Доступні розміри</p>
 
-          <div className={styles.sizeAvailabilityList}>
-            {sizeStocks.map((item) => {
-              const leftStock =
-                item.leftStock === null ? null : Math.max(0, Number(item.leftStock) || 0);
-              const rightStock =
-                item.rightStock === null ? null : Math.max(0, Number(item.rightStock) || 0);
-              const totalStock =
-                item.stock === null ? null : Math.max(0, Number(item.stock) || 0);
+        <div className={styles.sizeAvailabilityList}>
+          {sizeStocks.map((item) => {
+            const leftStock = Math.max(0, Number(item.leftStock) || 0);
+            const rightStock = Math.max(0, Number(item.rightStock) || 0);
 
-              const isOut = totalStock !== null && totalStock <= 0;
+            return (
+              <div key={item.size} className={styles.sizeAvailabilityItem}>
+                <span className={styles.sizeAvailabilityName}>
+                  {sizeLabels[item.size]}
+                </span>
 
-              return (
-                <div
-                  key={item.size}
-                  className={`${styles.sizeAvailabilityItem} ${
-                    isOut ? styles.sizeAvailabilityItemOut : ''
-                  }`}
-                >
-                  <span className={styles.sizeAvailabilityName}>
-                    {sizeLabels[item.size]}
-                  </span>
-
-                  <span
-                    className={`${styles.sizeAvailabilityStock} ${
-                      isOut ? styles.sizeAvailabilityStockOut : ''
-                    }`}
-                  >
-                    {leftStock === null && rightStock === null ? (
-                      'Кількість не вказана'
-                    ) : (
-                      <>
-                        Ліве: {leftStock ?? 0}
-                        <br />
-                        Праве: {rightStock ?? 0}
-                      </>
-                    )}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                <span className={styles.sizeAvailabilityStock}>
+                  Ліве: {leftStock > 0 ? leftStock : 'під замовлення'}
+                  <br />
+                  Праве: {rightStock > 0 ? rightStock : 'під замовлення'}
+                </span>
+              </div>
+            );
+          })}
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }

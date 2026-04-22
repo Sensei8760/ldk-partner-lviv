@@ -56,6 +56,8 @@ const CHARACTERISTIC_LABELS = [
   'Антизрізи',
   'Петлі',
   'Лиштва',
+  'Колір ззовні',
+'Колір зсередини',
 ] as const;
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
