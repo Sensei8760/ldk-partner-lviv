@@ -4,7 +4,7 @@
 }
 
 .container {
-    max-width: 980px;
+    max-width: 1440px;
     margin: 0 auto;
 }
 
@@ -371,4 +371,142 @@
     color: #ffffff;
     font-weight: 700;
     cursor: pointer;
+}
+.adminLayout {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.mainColumn {
+    min-width: 0;
+}
+
+.logPanel {
+    position: sticky;
+    top: 24px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 24px;
+}
+
+.logPanelHeader {
+    margin-bottom: 18px;
+}
+
+.logSubtitle {
+    margin: 8px 0 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.logList {
+    display: grid;
+    gap: 14px;
+    max-height: calc(100vh - 180px);
+    overflow: auto;
+    padding-right: 4px;
+}
+
+.logItem {
+    border: 1px solid #ececec;
+    border-radius: 14px;
+    padding: 14px;
+    background: #fafafa;
+}
+
+.logTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.logAction {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.logActionCreate {
+    background: rgba(17, 133, 61, 0.12);
+    color: #11853d;
+}
+
+.logActionUpdate {
+    background: rgba(47, 111, 96, 0.12);
+    color: #2f6f60;
+}
+
+.logActionDelete {
+    background: rgba(212, 59, 59, 0.12);
+    color: #d43b3b;
+}
+
+.logTime {
+    color: #666;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.logProductTitle {
+    margin: 0 0 6px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.45;
+}
+
+.logProductSlug {
+    margin: 0 0 8px;
+    color: #777;
+    font-size: 13px;
+    word-break: break-word;
+}
+
+.logActor {
+    margin: 0 0 4px;
+    color: #222;
+    font-size: 14px;
+}
+
+.logActorEmail {
+    margin: 0;
+    color: #666;
+    font-size: 13px;
+    word-break: break-word;
+}
+
+@media (max-width: 1100px) {
+    .adminLayout {
+        grid-template-columns: 1fr;
+    }
+
+    .logPanel {
+        position: static;
+    }
+
+    .logList {
+        max-height: none;
+    }
+}
+.logDetailsList {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+}
+
+.logDetailsItem {
+    color: #444;
+    font-size: 13px;
+    line-height: 1.45;
 }

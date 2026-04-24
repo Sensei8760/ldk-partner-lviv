@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Toast from '@/components/ui/Toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
@@ -55,7 +56,7 @@ const characteristicLabels = [
   'Лиштва',
   'Колір ззовні',
   'Колір зсередини',
-'Торець',
+  'Торець',
   'Броненакладка',
 ] as const;
 
@@ -363,32 +364,32 @@ function validateForm(form: FormState): FormErrors {
 
   const enabledSizeStocks = form.sizeStocks.filter((item) => item.enabled);
 
-const hasInvalidStock = enabledSizeStocks.some((item) => {
-  const leftRaw = item.leftStock.trim();
-  const rightRaw = item.rightStock.trim();
+  const hasInvalidStock = enabledSizeStocks.some((item) => {
+    const leftRaw = item.leftStock.trim();
+    const rightRaw = item.rightStock.trim();
 
-  const leftValue = leftRaw === '' ? 0 : Number(leftRaw);
-  const rightValue = rightRaw === '' ? 0 : Number(rightRaw);
+    const leftValue = leftRaw === '' ? 0 : Number(leftRaw);
+    const rightValue = rightRaw === '' ? 0 : Number(rightRaw);
 
-  const leftInvalid =
-    !Number.isFinite(leftValue) ||
-    !Number.isInteger(leftValue) ||
-    leftValue < 0 ||
-    leftValue > 9999;
+    const leftInvalid =
+      !Number.isFinite(leftValue) ||
+      !Number.isInteger(leftValue) ||
+      leftValue < 0 ||
+      leftValue > 9999;
 
-  const rightInvalid =
-    !Number.isFinite(rightValue) ||
-    !Number.isInteger(rightValue) ||
-    rightValue < 0 ||
-    rightValue > 9999;
+    const rightInvalid =
+      !Number.isFinite(rightValue) ||
+      !Number.isInteger(rightValue) ||
+      rightValue < 0 ||
+      rightValue > 9999;
 
-  return leftInvalid || rightInvalid;
-});
+    return leftInvalid || rightInvalid;
+  });
 
-if (hasInvalidStock) {
-  errors.sizeStocks =
-    'Для кожного вибраного розміру вкажіть коректну кількість лівих і правих дверей.';
-}
+  if (hasInvalidStock) {
+    errors.sizeStocks =
+      'Для кожного вибраного розміру вкажіть коректну кількість лівих і правих дверей.';
+  }
 
   if (description.length > 1000) {
     errors.description = 'Опис не повинен перевищувати 1000 символів.';
@@ -460,6 +461,8 @@ function ProductImagePreview({
 }
 
 export default function AdminAddProductForm() {
+  const router = useRouter();
+
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -806,6 +809,7 @@ export default function AdminAddProductForm() {
       setProductToDelete(null);
 
       await loadProducts();
+      router.refresh();
       triggerToast('Товар успішно видалено.', 'success');
     } catch {
       triggerToast('Сталася помилка під час видалення товару.', 'error');
@@ -897,6 +901,7 @@ export default function AdminAddProductForm() {
 
       resetForm();
       await loadProducts();
+      router.refresh();
 
       triggerToast(
         wasEditing ? 'Товар успішно оновлено.' : 'Товар успішно додано.',

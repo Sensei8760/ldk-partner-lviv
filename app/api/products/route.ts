@@ -12,7 +12,6 @@ import {
   type ProductOpening,
   type ProductSize,
   type ProductSizeStock,
-  type ProductUpsertInput,
   updateProduct,
 } from '@/lib/products';
 
@@ -58,7 +57,7 @@ const CHARACTERISTIC_LABELS = [
   'Лиштва',
   'Колір ззовні',
   'Колір зсередини',
-'Торець',
+  'Торець',
   'Броненакладка',
 ] as const;
 
@@ -96,6 +95,126 @@ type StoredProductImageRecord = {
   sort_order: number;
 };
 
+type AuditAction = 'created' | 'updated' | 'deleted';
+
+function formatValue(value: string | number | boolean | null | undefined) {
+  if (value === null || value === undefined || value === '') {
+    return 'не вказано';
+  }
+
+  if (typeof value === 'boolean') {
+    return value ? 'так' : 'ні';
+  }
+
+  return String(value);
+}
+
+function normalizeStringArray(values: string[]) {
+  return [...values].map((item) => item.trim()).filter(Boolean).sort();
+}
+
+function normalizeSizeStocksForDiff(sizeStocks: ProductSizeStock[]) {
+  return [...sizeStocks]
+    .map((item) => ({
+      size: item.size,
+      leftStock: Math.max(0, Number(item.leftStock) || 0),
+      rightStock: Math.max(0, Number(item.rightStock) || 0),
+    }))
+    .sort((a, b) => a.size.localeCompare(b.size));
+}
+
+function normalizeCharacteristicsForDiff(
+  characteristics: ProductCharacteristic[]
+) {
+  return [...characteristics]
+    .map((item) => ({
+      label: item.label.trim(),
+      value: item.value.trim(),
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+}
+
+function buildUpdateDetails(
+  before: Awaited<ReturnType<typeof getProductById>>,
+  after: Awaited<ReturnType<typeof getProductById>>
+) {
+  if (!before || !after) return ['Дані оновлено'];
+
+  const details: string[] = [];
+
+  if (before.title !== after.title) {
+    details.push(`Назва: "${before.title}" → "${after.title}"`);
+  }
+
+  if (before.price !== after.price) {
+    details.push(`Основна ціна: ${before.price} → ${after.price}`);
+  }
+
+  if ((before.discountPrice ?? null) !== (after.discountPrice ?? null)) {
+    details.push(
+      `Ціна зі знижкою: ${formatValue(before.discountPrice)} → ${formatValue(after.discountPrice)}`
+    );
+  }
+
+  if ((before.description || '') !== (after.description || '')) {
+    details.push('Опис оновлено');
+  }
+
+  if (before.type !== after.type) {
+    details.push(
+      `Місце встановлення: ${before.type === 'street' ? 'вулиця' : 'квартира'} → ${
+        after.type === 'street' ? 'вулиця' : 'квартира'
+      }`
+    );
+  }
+
+  if (before.doorType !== after.doorType) {
+    details.push(
+      `Тип дверей: ${before.doorType === 'entrance' ? 'вхідні' : 'міжкімнатні'} → ${
+        after.doorType === 'entrance' ? 'вхідні' : 'міжкімнатні'
+      }`
+    );
+  }
+
+  const beforeStyles = normalizeStringArray(before.styles || []);
+  const afterStyles = normalizeStringArray(after.styles || []);
+
+  if (JSON.stringify(beforeStyles) !== JSON.stringify(afterStyles)) {
+    details.push(
+      `Стилі: ${beforeStyles.length ? beforeStyles.join(', ') : 'не вказано'} → ${
+        afterStyles.length ? afterStyles.join(', ') : 'не вказано'
+      }`
+    );
+  }
+
+  const beforeImages = (before.images || []).filter(Boolean);
+  const afterImages = (after.images || []).filter(Boolean);
+
+  if (JSON.stringify(beforeImages) !== JSON.stringify(afterImages)) {
+    details.push('Фото оновлено');
+  }
+
+  const beforeSizeStocks = normalizeSizeStocksForDiff(before.sizeStocks || []);
+  const afterSizeStocks = normalizeSizeStocksForDiff(after.sizeStocks || []);
+
+  if (JSON.stringify(beforeSizeStocks) !== JSON.stringify(afterSizeStocks)) {
+    details.push('Розміри та кількість відкривань оновлено');
+  }
+
+  if (before.isHit !== after.isHit) {
+    details.push(`Позначка ХІТ: ${before.isHit ? 'так' : 'ні'} → ${after.isHit ? 'так' : 'ні'}`);
+  }
+
+  const beforeCharacteristics = normalizeCharacteristicsForDiff(before.characteristics || []);
+  const afterCharacteristics = normalizeCharacteristicsForDiff(after.characteristics || []);
+
+  if (JSON.stringify(beforeCharacteristics) !== JSON.stringify(afterCharacteristics)) {
+    details.push('Характеристики оновлено');
+  }
+
+  return details.length > 0 ? details : ['Без помітних змін'];
+}
+
 function unauthorizedResponse() {
   return NextResponse.json({ message: 'Потрібна авторизація.' }, { status: 401 });
 }
@@ -108,6 +227,37 @@ function revalidateProductsCache(productId?: string) {
   if (productId) {
     revalidatePath(`/catalog/${productId}`);
   }
+}
+
+async function createAuditLog(params: {
+  action: AuditAction;
+  productSlug: string | null;
+  productTitle: string;
+  actorName?: string | null;
+  actorEmail?: string | null;
+  actorRole?: string | null;
+  details?: string[];
+}) {
+  await sql`
+    INSERT INTO product_audit_logs (
+      action,
+      product_slug,
+      product_title,
+      actor_name,
+      actor_email,
+      actor_role,
+      details
+    )
+    VALUES (
+      ${params.action},
+      ${params.productSlug},
+      ${params.productTitle},
+      ${params.actorName ?? null},
+      ${params.actorEmail ?? null},
+      ${params.actorRole ?? null},
+      ${params.details ?? []}
+    )
+  `;
 }
 
 function uniqueStrings<T extends string>(values: T[]) {
@@ -333,7 +483,7 @@ function validateAndNormalizeProduct(
     requireFrontImage?: boolean;
   }
 ):
-  | { success: true; data: ProductUpsertInput }
+  | { success: true; data: Omit<Parameters<typeof createProduct>[0], never> }
   | { success: false; errors: ValidationErrors } {
   const errors: ValidationErrors = {};
 
@@ -373,7 +523,9 @@ function validateAndNormalizeProduct(
     sizeStocks.length > 0
       ? sizeStocks.reduce(
           (sum, item) =>
-            sum + Math.max(0, Number(item.leftStock) || 0) + Math.max(0, Number(item.rightStock) || 0),
+            sum +
+            Math.max(0, Number(item.leftStock) || 0) +
+            Math.max(0, Number(item.rightStock) || 0),
           0
         )
       : Math.max(0, Math.round(Number(body.stock) || 0));
@@ -463,34 +615,34 @@ function validateAndNormalizeProduct(
   }
 
   const hasInvalidSizeStocks =
-  Array.isArray(body.sizeStocks) &&
-  body.sizeStocks.some((item) => {
-    if (!item || typeof item !== 'object') return true;
+    Array.isArray(body.sizeStocks) &&
+    body.sizeStocks.some((item) => {
+      if (!item || typeof item !== 'object') return true;
 
-    const typed = item as Partial<ProductSizeStock>;
-    const size = typed.size;
-    const rawLeft = Number(typed.leftStock);
-    const rawRight = Number(typed.rightStock);
-    const rawStock = Number(typed.stock);
+      const typed = item as Partial<ProductSizeStock>;
+      const size = typed.size;
+      const rawLeft = Number(typed.leftStock);
+      const rawRight = Number(typed.rightStock);
+      const rawStock = Number(typed.stock);
 
-    const isValidSize =
-      size === '850x2040' || size === '950x2040' || size === '1200x2040';
+      const isValidSize =
+        size === '850x2040' || size === '950x2040' || size === '1200x2040';
 
-    const hasLeft = typed.leftStock !== undefined && typed.leftStock !== null;
-    const hasRight = typed.rightStock !== undefined && typed.rightStock !== null;
-    const hasLegacyStock = typed.stock !== undefined && typed.stock !== null;
+      const hasLeft = typed.leftStock !== undefined && typed.leftStock !== null;
+      const hasRight = typed.rightStock !== undefined && typed.rightStock !== null;
+      const hasLegacyStock = typed.stock !== undefined && typed.stock !== null;
 
-    const invalidLeft = hasLeft && (!Number.isFinite(rawLeft) || rawLeft < 0);
-    const invalidRight = hasRight && (!Number.isFinite(rawRight) || rawRight < 0);
-    const invalidLegacy = hasLegacyStock && (!Number.isFinite(rawStock) || rawStock < 0);
+      const invalidLeft = hasLeft && (!Number.isFinite(rawLeft) || rawLeft < 0);
+      const invalidRight = hasRight && (!Number.isFinite(rawRight) || rawRight < 0);
+      const invalidLegacy = hasLegacyStock && (!Number.isFinite(rawStock) || rawStock < 0);
 
-    return !isValidSize || invalidLeft || invalidRight || invalidLegacy;
-  });
+      return !isValidSize || invalidLeft || invalidRight || invalidLegacy;
+    });
 
-if (hasInvalidSizeStocks) {
-  errors.sizeStocks =
-    'Для кожного вибраного розміру вкажіть коректну кількість лівих і правих дверей.';
-}
+  if (hasInvalidSizeStocks) {
+    errors.sizeStocks =
+      'Для кожного вибраного розміру вкажіть коректну кількість лівих і правих дверей.';
+  }
 
   if (description.length > 1000) {
     errors.description = 'Опис не повинен перевищувати 1000 символів.';
@@ -683,6 +835,17 @@ export async function POST(request: Request) {
       ]);
     }
 
+    await createAuditLog({
+  action: 'created',
+  productSlug: product.id,
+  productTitle: product.title,
+  actorName: session.user.name ?? null,
+  actorEmail: session.user.email ?? null,
+  actorRole:
+    typeof session.user.role === 'string' ? session.user.role : null,
+  details: ['Створено новий товар'],
+});
+
     revalidateProductsCache(product.id);
 
     return NextResponse.json({ ok: true, product });
@@ -835,21 +998,21 @@ export async function PATCH(request: Request) {
     const nextFrontFileId =
       uploadedFront?.fileId ??
       (imageFront && imageFront === currentFrontStored?.imageUrl
-        ? currentFrontStored.fileId
+        ? currentFrontStored?.fileId ?? null
         : null);
 
     const nextBackFileId =
       uploadedBack?.fileId ??
       (imageBack && imageBack === currentBackStored?.imageUrl
-        ? currentBackStored.fileId
+        ? currentBackStored?.fileId ?? null
         : null);
 
     const storedAfterUpdate = await getStoredProductImageRecords(id);
 
     if (storedAfterUpdate.productDbId) {
       await setStoredProductImageFileIds(storedAfterUpdate.productDbId, [
-        nextFrontFileId ?? null,
-        nextBackFileId ?? null,
+        nextFrontFileId,
+        nextBackFileId,
       ]);
     }
 
@@ -870,6 +1033,17 @@ export async function PATCH(request: Request) {
     );
 
     await Promise.all(removedFileIds.map((fileId) => deleteImageKitFile(fileId)));
+
+    await createAuditLog({
+  action: 'updated',
+  productSlug: updatedProduct.id,
+  productTitle: updatedProduct.title,
+  actorName: session.user.name ?? null,
+  actorEmail: session.user.email ?? null,
+  actorRole:
+    typeof session.user.role === 'string' ? session.user.role : null,
+  details: buildUpdateDetails(currentProduct, updatedProduct),
+});
 
     revalidateProductsCache(id);
 
@@ -936,6 +1110,17 @@ export async function DELETE(request: Request) {
     );
 
     await Promise.all(fileIdsToDelete.map((fileId) => deleteImageKitFile(fileId)));
+
+    await createAuditLog({
+  action: 'deleted',
+  productSlug: currentProduct.id,
+  productTitle: currentProduct.title,
+  actorName: session.user.name ?? null,
+  actorEmail: session.user.email ?? null,
+  actorRole:
+    typeof session.user.role === 'string' ? session.user.role : null,
+  details: ['Товар видалено'],
+});
 
     revalidateProductsCache(id);
 
