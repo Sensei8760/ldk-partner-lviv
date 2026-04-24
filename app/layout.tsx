@@ -19,7 +19,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'SITE-DOORS | Двері преміум якості',
+  title: 'LDK Partner Lviv',
   description: 'Виробництво та продаж сучасних міжкімнатних та вхідних дверей.',
 };
 
