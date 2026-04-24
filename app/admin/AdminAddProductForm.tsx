@@ -54,7 +54,9 @@ const characteristicLabels = [
   'Петлі',
   'Лиштва',
   'Колір ззовні',
-'Колір зсередини',
+  'Колір зсередини',
+'Торець',
+  'Броненакладка',
 ] as const;
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
@@ -361,38 +363,32 @@ function validateForm(form: FormState): FormErrors {
 
   const enabledSizeStocks = form.sizeStocks.filter((item) => item.enabled);
 
-  if (enabledSizeStocks.length === 0) {
-    errors.sizeStocks = 'Оберіть хоча б один розмір.';
-  } else {
-    const hasInvalidStock = enabledSizeStocks.some((item) => {
-      const leftRaw = item.leftStock.trim();
-      const rightRaw = item.rightStock.trim();
+const hasInvalidStock = enabledSizeStocks.some((item) => {
+  const leftRaw = item.leftStock.trim();
+  const rightRaw = item.rightStock.trim();
 
-      const leftValue = leftRaw === '' ? 0 : Number(leftRaw);
-      const rightValue = rightRaw === '' ? 0 : Number(rightRaw);
+  const leftValue = leftRaw === '' ? 0 : Number(leftRaw);
+  const rightValue = rightRaw === '' ? 0 : Number(rightRaw);
 
-      const leftInvalid =
-        !Number.isFinite(leftValue) ||
-        !Number.isInteger(leftValue) ||
-        leftValue < 0 ||
-        leftValue > 9999;
+  const leftInvalid =
+    !Number.isFinite(leftValue) ||
+    !Number.isInteger(leftValue) ||
+    leftValue < 0 ||
+    leftValue > 9999;
 
-      const rightInvalid =
-        !Number.isFinite(rightValue) ||
-        !Number.isInteger(rightValue) ||
-        rightValue < 0 ||
-        rightValue > 9999;
+  const rightInvalid =
+    !Number.isFinite(rightValue) ||
+    !Number.isInteger(rightValue) ||
+    rightValue < 0 ||
+    rightValue > 9999;
 
-      const total = leftValue + rightValue;
+  return leftInvalid || rightInvalid;
+});
 
-      return leftInvalid || rightInvalid || total <= 0;
-    });
-
-    if (hasInvalidStock) {
-      errors.sizeStocks =
-        'Для кожного вибраного розміру вкажіть коректну кількість лівих і правих дверей. Загальна кількість має бути більшою за 0.';
-    }
-  }
+if (hasInvalidStock) {
+  errors.sizeStocks =
+    'Для кожного вибраного розміру вкажіть коректну кількість лівих і правих дверей.';
+}
 
   if (description.length > 1000) {
     errors.description = 'Опис не повинен перевищувати 1000 символів.';

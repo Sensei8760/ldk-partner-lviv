@@ -96,20 +96,18 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
           aria-label="Збільшити фото товару"
         >
           <Image
-            src={currentImage}
-            alt={title}
-            fill
-            className={styles.image}
-            priority
-            sizes="(max-width: 992px) 100vw, 560px"
-            onError={() => {
-              const originalSrc = safeImages[normalizedIndex];
-              if (originalSrc && originalSrc !== FALLBACK_PRODUCT_IMAGE) {
-                setBrokenImages((prev) => ({ ...prev, [originalSrc]: true }));
-              }
-            }}
-          />
-
+  src={currentImage}
+  alt={title}
+  fill
+  className={styles.zoomImage}
+  sizes="(max-width: 768px) 100vw, 90vw"
+  onError={() => {
+    const originalSrc = safeImages[normalizedIndex];
+    if (originalSrc && originalSrc !== FALLBACK_PRODUCT_IMAGE) {
+      setBrokenImages((prev) => ({ ...prev, [originalSrc]: true }));
+    }
+  }}
+/>
           {hasMultipleImages && (
             <>
               <button

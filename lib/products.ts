@@ -111,7 +111,9 @@ const CHARACTERISTIC_LABELS = [
   'Петлі',
   'Лиштва',
   'Колір ззовні',
-'Колір зсередини',
+  'Колір зсередини',
+'Торець',
+'Броненакладка',
 ] as const;
 
 function uniqueStrings<T extends string>(values: T[]) {

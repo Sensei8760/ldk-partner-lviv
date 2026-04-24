@@ -57,7 +57,9 @@ const CHARACTERISTIC_LABELS = [
   'Петлі',
   'Лиштва',
   'Колір ззовні',
-'Колір зсередини',
+  'Колір зсередини',
+'Торець',
+  'Броненакладка',
 ] as const;
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
@@ -460,10 +462,7 @@ function validateAndNormalizeProduct(
     errors.openings = 'Обрано некоректне відкривання.';
   }
 
-  if (sizeStocks.length === 0) {
-    errors.sizeStocks = 'Оберіть хоча б один розмір.';
-  } else {
-    const hasInvalidSizeStocks =
+  const hasInvalidSizeStocks =
   Array.isArray(body.sizeStocks) &&
   body.sizeStocks.some((item) => {
     if (!item || typeof item !== 'object') return true;
@@ -488,11 +487,10 @@ function validateAndNormalizeProduct(
     return !isValidSize || invalidLeft || invalidRight || invalidLegacy;
   });
 
-    if (hasInvalidSizeStocks) {
-      errors.sizeStocks =
-        'Для кожного вибраного розміру вкажіть коректну кількість лівих і правих дверей.';
-    }
-  }
+if (hasInvalidSizeStocks) {
+  errors.sizeStocks =
+    'Для кожного вибраного розміру вкажіть коректну кількість лівих і правих дверей.';
+}
 
   if (description.length > 1000) {
     errors.description = 'Опис не повинен перевищувати 1000 символів.';
