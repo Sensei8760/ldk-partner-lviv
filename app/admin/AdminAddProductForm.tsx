@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Toast from '@/components/ui/Toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
-import { FALLBACK_PRODUCT_IMAGE } from '@/utils/productImages';
 import styles from './AdminPage.module.css';
 
 const styleOptions = [
@@ -434,25 +433,41 @@ function ProductImagePreview({
   alt: string;
 }) {
   const normalizedSrc = src.trim();
-  const fallbackSrc = normalizedSrc || FALLBACK_PRODUCT_IMAGE;
   const [hasError, setHasError] = useState(false);
 
-  const displaySrc = hasError ? FALLBACK_PRODUCT_IMAGE : fallbackSrc;
+  if (!normalizedSrc || hasError) {
+    return (
+      <div className={styles.imagePreviewBox}>
+        <div
+          className={styles.imagePreviewFrame}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#888',
+            fontSize: '14px',
+            textAlign: 'center',
+            padding: '12px',
+          }}
+        >
+          Фото не додано
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.imagePreviewBox}>
       <div className={styles.imagePreviewFrame}>
         <Image
-          src={displaySrc}
+          src={normalizedSrc}
           alt={alt}
           fill
           unoptimized
           className={styles.imagePreview}
           sizes="160px"
           onError={() => {
-            if (displaySrc !== FALLBACK_PRODUCT_IMAGE) {
-              setHasError(true);
-            }
+            setHasError(true);
           }}
         />
       </div>

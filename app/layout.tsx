@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
+import ScrollToTopBtn from '@/components/ScrollToTopBtn/ScrollToTopBtn';
 
 import Header from '@/components/header/Header';
 import Footer from '@/components/footer/Footer';
@@ -30,11 +31,14 @@ export default function RootLayout({
   return (
     <html
       lang="uk"
+      data-scroll-behavior="smooth"
       className={`${inter.variable} ${playfairDisplay.variable}`}
     >
       <body>
         <Header />
-        <main>{children}</main>
+        <main>{children}
+          <ScrollToTopBtn />
+        </main>
         <Footer />
       </body>
     </html>
