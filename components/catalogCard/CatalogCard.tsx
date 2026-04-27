@@ -117,18 +117,18 @@ export default function CatalogCard({
           <div className={styles.meta}>
             {hasDiscount ? (
               <div className={styles.priceDiscountRow}>
-                <p className={styles.priceOld}>
-                  <span className={styles.priceOldValue}>{formatPrice(price)}</span>{' '}
-                  <span className={styles.priceOldCurrency}>грн</span>
-                </p>
+  <p className={styles.priceSale}>
+    <span className={styles.priceSaleValue}>
+      {formatPrice(displayPrice)}
+    </span>{' '}
+    <span className={styles.priceSaleCurrency}>грн</span>
+  </p>
 
-                <p className={styles.priceSale}>
-                  <span className={styles.priceSaleValue}>
-                    {formatPrice(displayPrice)}
-                  </span>{' '}
-                  <span className={styles.priceSaleCurrency}>грн</span>
-                </p>
-              </div>
+  <p className={styles.priceOld}>
+    <span className={styles.priceOldValue}>{formatPrice(price)}</span>{' '}
+    <span className={styles.priceOldCurrency}>грн</span>
+  </p>
+</div>
             ) : (
               <p className={styles.price}>
                 <span className={styles.priceValue}>{formatPrice(price)}</span>{' '}

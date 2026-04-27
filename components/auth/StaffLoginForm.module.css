@@ -9,11 +9,17 @@
 
 .input {
     width: 100%;
-    border: 1px solid #d9d9d9;
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 14px;
+    border: 0.50px solid #303035;
+        border-radius: 16px;
+        padding: 10px 10px 10px 16px;
     outline: none;
+    background: #fff;
+    font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 150%;
+        color: #757575;
+        height: 56px;
 }
 
 .input:focus {
@@ -22,14 +28,31 @@
 
 .button {
     border: none;
-    border-radius: 10px;
-    padding: 12px 14px;
-    background: #2f6f60;
+    background: #0e6c33;
     color: #fff;
     font-weight: 700;
     cursor: pointer;
+    border-radius: 16px;
+    width: 461px;
+    height: 56px;
+    padding: 0 30px;
+    font-family: var(--font-family);
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+.button:hover,
+.button:focus-visible {
+    background-color: #13833f;
 }
 
+.button:active {
+    background-color: #0b5328;
+}
 .button:disabled {
     opacity: 0.7;
     cursor: default;

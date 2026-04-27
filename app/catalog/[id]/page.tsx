@@ -6,6 +6,7 @@ import {
 import ProductGallery from './ProductGallery';
 import ProductActions from './ProductActions';
 import styles from './ProductPage.module.css';
+import FavoriteButton from '@/components/ui/FavoriteButton';
 
 type PageProps = {
   params: Promise<{
@@ -126,38 +127,43 @@ const hasDiscount = displayPrice !== product.price;
           <div className={styles.infoBlock}>
             <h1 className={styles.title}>{product.title}</h1>
 
-            <div className={styles.priceBlock}>
-              {hasDiscount ? (
-                <>
-                  <p className={styles.oldPrice}>
-                    {formatPrice(product.price)} <span>грн</span>
-                  </p>
+            <div className={styles.productTopRow}>
+  <div className={styles.priceInfo}>
+    <div className={styles.priceBlock}>
+      {hasDiscount ? (
+        <>
+          <p className={styles.salePrice}>
+            {formatPrice(displayPrice)} <span>грн</span>
+          </p>
 
-                  <p className={styles.salePrice}>
-                    {formatPrice(displayPrice)} <span>грн</span>
-                  </p>
-                </>
-              ) : (
-                <p className={styles.price}>
-                  {formatPrice(product.price)} <span>грн</span>
-                </p>
-              )}
-            </div>
+          <p className={styles.oldPrice}>
+            {formatPrice(product.price)} <span>грн</span>
+          </p>
+        </>
+      ) : (
+        <p className={styles.price}>
+          {formatPrice(product.price)} <span>грн</span>
+        </p>
+      )}
+    </div>
 
-            <p className={`${styles.stock} ${isOutOfStock ? styles.stockEmpty : ''}`}>
-              {isOutOfStock ? (
-                'Немає в наявності'
-              ) : (
-                <>
-                  В наявності: <span>{totalStock}</span>
-                </>
-              )}
-            </p>
+    <p className={`${styles.stock} ${isOutOfStock ? styles.stockEmpty : ''}`}>
+      {isOutOfStock ? (
+        'Немає в наявності'
+      ) : (
+        <>
+          В наявності: <span>{totalStock}</span>
+        </>
+      )}
+    </p>
+  </div>
 
-            <ProductActions
-              productId={product.id}
-              sizeStocks={displaySizeStocks}
-            />
+  <div className={styles.actions}>
+    <FavoriteButton productId={product.id} size="md" showText />
+  </div>
+</div>
+
+<ProductActions sizeStocks={displaySizeStocks} />
 
             {product.description ? (
               <p className={styles.description}>{product.description}</p>

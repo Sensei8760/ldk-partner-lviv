@@ -1,17 +1,18 @@
 .productPage {
-    padding: 40px 20px 80px;
-    background: #f3f3f3;
+    padding: 72px 20px 82px 20px;
+    background: #181818;
+    min-height: 100vh;
 }
 
 .container {
-    max-width: 1280px;
+    max-width: 1205px;
     margin: 0 auto;
 }
 
 .layout {
     display: grid;
-    grid-template-columns: minmax(320px, 560px) 1fr;
-    gap: 40px;
+    grid-template-columns: 423px 1fr;
+    gap: 52px;
     align-items: start;
 }
 
@@ -22,17 +23,17 @@
 .gallery {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .imageWrapper {
     position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background: #ffffff;
-    border-radius: 20px;
+    width: 423px;
+    height: 543px;
+    background: #f1f1f1;
+    border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #e5e5e5;
+    border: none;
     cursor: zoom-in;
 }
 
@@ -44,99 +45,118 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 52px;
-    height: 52px;
+    width: 24px;
+    height: 24px;
     border: none;
-    border-radius: 50%;
-    background: rgba(245, 245, 245, 0.95);
-    color: #7a7a7a;
+    background: transparent;
+    color: #111111;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 28px;
+    font-size: 24px;
     line-height: 1;
     z-index: 2;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .galleryArrowOverlay:hover {
-    background: #ffffff;
-    color: #222222;
+    color: #0e6c33;
 }
 
 .galleryArrowOverlayLeft {
-    left: 16px;
+    left: 6px;
 }
 
 .galleryArrowOverlayRight {
-    right: 16px;
+    right: 6px;
 }
 
 .infoBlock {
-    padding-top: 4px;
+    position: relative;
+    padding-top: 0;
 }
 
 .title {
-    margin: 0 0 20px;
-    font-size: 48px;
-    line-height: 1.1;
-    font-weight: 700;
-    color: #111111;
+    grid-column: 1 / -1;
+    margin: 0 0 24px;
+    font-family: var(--font-family);
+    color: #ffffff;
+        font-weight: 600;
+        font-size: 40px;
+        line-height: 130%;
+        letter-spacing: 0.01em;
+        color: #fff;
 }
 
 .priceBlock {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin: 0 0 28px;
+    gap: 0;
+    margin: 0 0 2px;
 }
 
 .price {
+    order: 1;
     margin: 0;
-    font-size: 40px;
-    font-weight: 700;
-    color: #111111;
+    line-height: 1;
+    font-family: var(--font-family);
+        font-weight: 700;
+        font-size: 32px;
+        letter-spacing: 0.01em;
+        color: #fff;
 }
 
 .price span {
-    font-size: 24px;
-    font-weight: 500;
+    font-weight: 600;
+        font-size: 20px;
+        line-height: 140%;
 }
 
 .oldPrice {
-    margin: 0;
-    font-size: 24px;
-    font-weight: 500;
-    color: #7a7a7a;
+    margin: 8px 0 0;
+    line-height: 1;
     text-decoration: line-through;
+    opacity: 0.85;
+    font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 15px;
+        color: #fff;
 }
 
 .oldPrice span {
-    font-size: 18px;
+    font-size: 13px;
     font-weight: 500;
 }
 
 .salePrice {
     margin: 0;
-    font-size: 40px;
+    line-height: 1;
     font-weight: 700;
-    color: #d94a4a;
+    font-family: var(--font-family);
+        font-size: 32px;
+        letter-spacing: 0.01em;
+        color: #ce0e0e;
 }
 
 .salePrice span {
-    font-size: 24px;
     font-weight: 600;
+        font-size: 20px;
+        line-height: 140%;
 }
 
 .stock {
-    margin: -10px 0 24px;
-    font-size: 20px;
-    color: #222222;
+    margin: 0 0 34px;
+    opacity: 0.9;
+    font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 143%;
+        color: #ebebeb;
 }
 
 .stock span {
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .stockEmpty {
@@ -148,45 +168,47 @@
     display: flex;
     flex-direction: column;
     gap: 18px;
-    margin: 0 0 28px;
+    margin: 18px 0 24px;
 }
 
 .actions {
     display: flex;
     align-items: center;
     gap: 12px;
+    padding-top: 0;
 }
 
 .sizeAvailability {
-    border-top: 1px solid #e5e5e5;
-    padding-top: 18px;
+    grid-column: 1 / -1;
+    border-top: none;
+    padding-top: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
 }
 
 .sizeAvailabilityTitle {
-    margin: 0;
-    font-size: 18px;
-    line-height: 1.3;
-    font-weight: 700;
-    color: #111111;
+    display: none;
 }
 
 .sizeAvailabilityList {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+    /* max-width: 560px; */
+    
 }
 
 .sizeAvailabilityItem {
-    background: #ffffff;
-    border: 1px solid #e5e5e5;
+    background: #303035;
+    border: none;
     border-radius: 14px;
-    padding: 12px 14px;
+    padding: 10px 24px;
+    min-height: 66px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .sizeAvailabilityItemOut {
@@ -194,42 +216,54 @@
 }
 
 .sizeAvailabilityName {
-    font-size: 16px;
-    line-height: 1.3;
     font-weight: 700;
-    color: #111111;
+    font-family: var(--font-family);
+        font-size: 16px;
+        line-height: 150%;
+        color: #fff;
 }
 
 .sizeAvailabilityStock {
-    font-size: 14px;
-    line-height: 1.4;
-    color: #4f4f4f;
+    opacity: 0.85;
+    font-family: var(--font-family);
+        font-weight: 300;
+        font-size: 16px;
+        line-height: 131%;
+        letter-spacing: 0.01em;
+        color: #fff;
 }
 
 .sizeAvailabilityStockOut {
-    color: #8a8a8a;
+    color: #bdbdbd;
     font-weight: 600;
 }
 
 .description {
-    margin: 0 0 34px;
-    font-size: 20px;
-    line-height: 1.7;
-    color: #222222;
+    grid-column: 1 / -1;
+    margin: 0 0 24px;
+    font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 140%;
+        color: #fff;
 }
 
 .characteristics {
-    background: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 18px;
+    grid-column: 1 / -1;
+    background: #303035;
+    border: none;
+    border-radius: 14px;
     padding: 24px;
+    width: 458px;
 }
 
 .characteristicsTitle {
-    margin: 0 0 18px;
-    font-size: 28px;
-    font-weight: 700;
-    color: #111111;
+    margin: 0 0 28px;
+    font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 140%;
+        color: #fff;
 }
 
 .characteristicsList {
@@ -238,21 +272,28 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
 }
 
 .characteristicItem {
-    font-size: 18px;
-    line-height: 1.5;
-    color: #222222;
+    font-size: 12px;
+    line-height: 1.35;
+    color: #ffffff;
 }
 
 .characteristicLabel {
-    font-weight: 700;
+    font-family: var(--font-family);
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 150%;
+        color: #fff;
 }
 
 .characteristicValue {
-    font-weight: 400;
+    font-family: var(--font-family);
+        font-size: 16px;
+        line-height: 150%;
+        color: #fff;
 }
 
 .zoomOverlay {
@@ -333,7 +374,7 @@
     justify-content: center;
     gap: 14px;
     flex-wrap: wrap;
-    margin-top: 14px;
+    margin-top: 0;
 }
 
 .galleryDots {
@@ -344,11 +385,11 @@
 }
 
 .galleryDot {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border: none;
     border-radius: 50%;
-    background: #cfcfcf;
+    background: #d9d9d9;
     cursor: pointer;
     padding: 0;
     transition: transform 0.2s ease, background 0.2s ease;
@@ -356,49 +397,51 @@
 
 .galleryDot:hover {
     transform: scale(1.08);
-    background: #9e9e9e;
+    background: #13833f;
 }
 
 .galleryDotActive {
-    background: #2f6f60;
-    transform: scale(1.12);
+    background: #0b5328;
+    transform: scale(1.08);
 }
 
 .galleryCounter {
-    font-size: 14px;
-    color: #6f6f6f;
-    line-height: 1;
+    display: none;
 }
 
 @media (max-width: 992px) {
+    .container {
+        max-width: 100%;
+    }
+
     .layout {
         grid-template-columns: 1fr;
+        gap: 28px;
     }
+
+    .imageBlock {
+        max-width: 340px;
+        margin: 0 auto;
+    }
+
+   .infoBlock {
+       padding-top: 0;
+       display: grid;
+       grid-template-columns: max-content 1fr;
+       column-gap: 90px;
+       align-items: start;
+   }
 
     .title {
-        font-size: 36px;
+        font-size: 28px;
     }
 
-    .price,
-    .salePrice {
-        font-size: 32px;
+    .sizeAvailabilityList {
+        max-width: 100%;
     }
 
-    .price span,
-    .salePrice span {
-        font-size: 20px;
-    }
-
-    .oldPrice {
-        font-size: 20px;
-    }
-
-    .oldPrice span {
-        font-size: 16px;
-    }
-
-    .description {
-        font-size: 18px;
+    .characteristics {
+        width: 100%;
     }
 }
 
@@ -411,88 +454,98 @@
         gap: 24px;
     }
 
-    .imageWrapper,
+    .imageBlock {
+        max-width: 100%;
+    }
+
+    .imageWrapper {
+        height: auto;
+        aspect-ratio: 340 / 470;
+        border-radius: 8px;
+    }
+
     .zoomImageWrapper {
         border-radius: 16px;
     }
 
     .galleryArrowOverlay {
-        width: 44px;
-        height: 44px;
-        font-size: 22px;
+        width: 28px;
+        height: 28px;
+        font-size: 24px;
     }
 
     .galleryArrowOverlayLeft {
-        left: 10px;
+        left: 6px;
     }
 
     .galleryArrowOverlayRight {
-        right: 10px;
+        right: 6px;
     }
 
     .title {
-        font-size: 28px;
-        margin-bottom: 16px;
+        font-size: 22px;
+        margin-bottom: 14px;
     }
 
     .price,
     .salePrice {
-        font-size: 28px;
+        font-size: 22px;
     }
 
     .price span,
     .salePrice span {
-        font-size: 18px;
+        font-size: 12px;
     }
 
     .oldPrice {
-        font-size: 18px;
+        font-size: 11px;
     }
 
     .oldPrice span {
-        font-size: 15px;
+        font-size: 9px;
+    }
+
+    .stock {
+        font-size: 11px;
     }
 
     .actionsSection {
-        margin-bottom: 22px;
-    }
-
-    .sizeAvailability {
-        padding-top: 16px;
+        margin-bottom: 16px;
     }
 
     .sizeAvailabilityList {
         grid-template-columns: 1fr;
+        gap: 10px;
     }
 
-    .sizeAvailabilityTitle {
-        font-size: 16px;
+    .sizeAvailabilityItem {
+        min-height: auto;
     }
 
     .sizeAvailabilityName {
-        font-size: 15px;
-    }
-
-    .sizeAvailabilityStock {
         font-size: 13px;
     }
 
+    .sizeAvailabilityStock {
+        font-size: 12px;
+    }
+
     .description {
-        font-size: 16px;
-        margin-bottom: 24px;
+        font-size: 14px;
+        margin-bottom: 20px;
     }
 
     .characteristics {
-        padding: 18px;
-        border-radius: 14px;
+        padding: 17px 15px;
+        border-radius: 7px;
     }
 
     .characteristicsTitle {
-        font-size: 22px;
+        font-size: 13px;
     }
 
     .characteristicItem {
-        font-size: 16px;
+        font-size: 10px;
     }
 
     .zoomArrow {
@@ -500,4 +553,14 @@
         height: 44px;
         font-size: 20px;
     }
+}
+.productTopRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 191px;
+}
+
+.priceInfo {
+    display: flex;
+    flex-direction: column;
 }

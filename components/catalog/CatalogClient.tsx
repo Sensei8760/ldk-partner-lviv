@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import CatalogCard from '@/components/catalogCard/CatalogCard';
 import styles from '@/app/catalog/CatalogPage.module.css';
 import type { Product, ProductSize } from '@/lib/products';
@@ -57,6 +57,11 @@ type ProductTypeValue = (typeof productTypeItems)[number]['id'];
 type InstallPlaceValue = (typeof installPlaceItems)[number]['id'];
 type OpeningValue = (typeof openingItems)[number]['id'];
 type SizeValue = (typeof sizeItems)[number]['id'];
+
+const sortOptions: { value: SortValue; label: string }[] = [
+  { value: 'price-asc', label: 'Від дешевих до дорогих' },
+  { value: 'price-desc', label: 'Від дорогих до дешевих' },
+];
 
 function normalizeValue(value: string) {
   return value.trim().toLowerCase();
@@ -207,6 +212,9 @@ export default function CatalogClient({
   const [sortBy, setSortBy] = useState<SortValue>('price-asc');
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const [isSortOpen, setIsSortOpen] = useState(false);
+
+  const sortDropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const syncFavorites = () => {
@@ -224,13 +232,67 @@ export default function CatalogClient({
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sortDropdownRef.current &&
+        !sortDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsSortOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsSortOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
+
   const resetVisibleCount = () => {
     setVisibleProductsCount(PRODUCTS_STEP);
+  };
+
+  const resetAllFilters = () => {
+  setSelectedProductTypes([]);
+  setSelectedInstallPlaces([]);
+  setSelectedStyles([]);
+  setSelectedOpenings([]);
+  setSelectedSizes([]);
+
+  setPriceFrom(priceBounds.min);
+  setPriceTo(priceBounds.max);
+  setPriceFromInput(String(priceBounds.min));
+  setPriceToInput(String(priceBounds.max));
+
+  setSearchQuery('');
+  setShowOnlyFavorites(false);
+  setShowAllStyles(false);
+  setSortBy('price-asc');
+
+  resetVisibleCount();
+};
+
+  const handleSortSelect = (value: SortValue) => {
+    setSortBy(value);
+    setIsSortOpen(false);
+    resetVisibleCount();
   };
 
   const visibleStyles = showAllStyles
     ? styleItems
     : styleItems.slice(0, STYLE_VISIBLE_COUNT);
+
+  const selectedSortOption =
+    sortOptions.find((option) => option.value === sortBy) ?? sortOptions[0];
 
   const productTypeCounts = useMemo(() => {
     return {
@@ -365,6 +427,17 @@ export default function CatalogClient({
   const visibleProducts = filteredProducts.slice(0, visibleProductsCount);
   const hasMoreProducts = visibleProductsCount < filteredProducts.length;
   const hasProducts = products.length > 0;
+
+const hasActiveFilters =
+  selectedProductTypes.length > 0 ||
+  selectedInstallPlaces.length > 0 ||
+  selectedStyles.length > 0 ||
+  selectedOpenings.length > 0 ||
+  selectedSizes.length > 0 ||
+  priceFrom !== priceBounds.min ||
+  priceTo !== priceBounds.max ||
+  searchQuery.trim().length > 0 ||
+  showOnlyFavorites;
 
   const handleToggleProductType = (id: ProductTypeValue) => {
     setSelectedProductTypes((prev) =>
@@ -769,60 +842,87 @@ export default function CatalogClient({
           </div>
 
           <div className={styles.topBarActions}>
-            <div className={styles.sortSelectWrap}>
-              <select
-                value={sortBy}
-                onChange={(e) => {
-                  setSortBy(e.target.value as SortValue);
-                  resetVisibleCount();
-                }}
-                className={styles.sortSelect}
+            <div className={styles.sortSelectWrap} ref={sortDropdownRef}>
+              <button
+                type="button"
+                className={`${styles.sortSelect} ${
+                  isSortOpen ? styles.sortSelectOpen : ''
+                }`}
+                onClick={() => setIsSortOpen((prev) => !prev)}
                 aria-label="Сортування товарів"
+                aria-expanded={isSortOpen}
               >
-                <option value="price-asc">Від дешевих до дорогих</option>
-                <option value="price-desc">Від дорогих до дешевих</option>
-              </select>
+                <span>{selectedSortOption.label}</span>
 
-              <span className={styles.sortSelectIcon} aria-hidden="true">
-                <svg className={styles.sortSelectIconSvg}>
-                  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-angle-small-up" />
-                </svg>
-              </span>
+                <span className={styles.sortSelectIcon} aria-hidden="true">
+                  <svg className={styles.sortSelectIconSvg}>
+                    <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-angle-small-up" />
+                  </svg>
+                </span>
+              </button>
+
+              {isSortOpen ? (
+                <div className={styles.sortMenu}>
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={`${styles.sortOption} ${
+                        option.value === sortBy ? styles.sortOptionActive : ''
+                      }`}
+                      onClick={() => handleSortSelect(option.value)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
             </div>
 
             <button
-              type="button"
-              className={`${styles.favoriteFilterButton} ${
-                showOnlyFavorites ? styles.favoriteFilterButtonActive : ''
-              }`}
-              onClick={() => {
-                setShowOnlyFavorites((prev) => !prev);
-                resetVisibleCount();
-              }}
-              aria-label="Показати збережені двері"
-              title="Показати збережені двері"
-            >
-              <span className={styles.favoriteFilterIcon} aria-hidden="true">
-                <svg className={styles.favoriteFilterIconSvg}>
-                  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
-                </svg>
-              </span>
+  type="button"
+  className={`${styles.favoriteFilterButton} ${
+    showOnlyFavorites ? styles.favoriteFilterButtonActive : ''
+  }`}
+  onClick={() => {
+    setShowOnlyFavorites((prev) => !prev);
+    resetVisibleCount();
+  }}
+  aria-label="Показати збережені двері"
+  title="Показати збережені двері"
+>
+  <span className={styles.favoriteFilterLabel}>
+    Збережені ({favoriteIds.length})
+  </span>
 
-              <span className={styles.favoriteFilterLabel}>
-                Збережені ({favoriteIds.length})
-              </span>
-            </button>
+  <span className={styles.favoriteFilterIcon} aria-hidden="true">
+    <svg className={styles.favoriteFilterIconSvg}>
+      <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
+    </svg>
+  </span>
+</button>
           </div>
         </div>
 
         {filteredProducts.length === 0 ? (
-          <div className={styles.stateBox}>
-            <h2 className={styles.stateTitle}>Товарів не знайдено</h2>
-            <p className={styles.stateText}>
-              Спробуй змінити фільтри, пошук або вимкнути показ лише збережених.
-            </p>
-          </div>
-        ) : (
+  <div className={styles.stateBox}>
+    <h2 className={styles.stateTitle}>Нічого не знайдено</h2>
+
+    <p className={styles.stateText}>
+      Спробуйте змінити параметри пошуку або скинути фільтри.
+    </p>
+
+    {hasActiveFilters ? (
+      <button
+        type="button"
+        className={styles.resetFiltersButton}
+        onClick={resetAllFilters}
+      >
+        Скинути фільтри
+      </button>
+    ) : null}
+  </div>
+) : (
           <>
             <div className={styles.grid}>
               {visibleProducts.map((product) => (

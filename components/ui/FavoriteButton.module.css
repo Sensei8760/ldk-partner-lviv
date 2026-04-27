@@ -25,13 +25,62 @@
 }
 
 .md {
-    min-width: 168px;
-    height: 42px;
-    border: 1px solid #107c41;
+    min-width: 142px;
+    height: 56px;
+    border: 2px solid #0E6C33;
     border-radius: 8px;
     background: transparent;
-    padding: 0 14px;
-    gap: 8px;
+    padding: 10px 16px;
+    gap: 10px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.md:hover,
+.md:focus-visible {
+    transform: none;
+    opacity: 1;
+    background: rgba(16, 124, 65, 0.12);
+}
+
+.md:active {
+    transform: none;
+    opacity: 1;
+}
+
+.active.md {
+    background: rgba(16, 124, 65, 0.16);
+}
+
+.md .icon {
+    order: 2;
+    width: 24px;
+    height: 24px;
+    color: #0E6C33;
+}
+
+.md:hover .icon {
+    color: #13833f;
+}
+
+.md:active .icon,
+.active.md .icon {
+    color: #0b5328;
+}
+
+.md .iconSvg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.md .text {
+    order: 1;
+    font-family: var(--font-family);
+    white-space: nowrap;
+    font-size: 16px;
+        font-weight: 700;
+        line-height: 150%;
+        color: #fff;
 }
 
 .icon {
@@ -46,15 +95,15 @@
 }
 
 .button:hover .icon {
-    color: #4EB376;
+    color: #13833f;
 }
 
 .button:active .icon {
-    color: #0E6C33;
+    color: #0b5328;
 }
 
 .active .icon {
-    color: #0E6C33;
+    color: #0b5328;
 }
 
 .iconSvg {
