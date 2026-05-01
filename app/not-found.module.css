@@ -1,0 +1,377 @@
+.page {
+    background: #181818;
+    min-height: 100vh;
+    padding-bottom: 88px;
+}
+
+.hero {
+    position: relative;
+    width: 100%;
+    height: 783px;
+    background-color: #181818;
+    overflow: hidden;
+}
+
+.inner {
+    position: relative;
+    width: 100%;
+    max-width: 1440px;
+    height: 783px;
+    min-height: 783px;
+    margin: 0 auto;
+    overflow: visible;
+    z-index: 1;
+}
+
+.imageLayer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.backgroundImage {
+    object-fit: cover;
+    object-position: center center;
+}
+
+.content {
+    position: absolute;
+    top: 171px;
+    left: 105px;
+    z-index: 2;
+    width: 579px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.code {
+    margin: 0 0 16px;
+    font-family: var(--font-family);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    font-size: 128px;
+    line-height: 0.9;
+    color: #fff;
+}
+
+.title {
+    margin: 0 0 16px;
+    color: #ffffff;
+    font-family: var(--font-family);
+    font-weight: 600;
+    font-size: 48px;
+    line-height: 108%;
+    letter-spacing: 0.01em;
+}
+
+.text {
+    margin: 0 0 24px;
+    color: #ffffff;
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 144%;
+}
+
+.primaryButton {
+    min-width: 248px;
+    height: 64px;
+    border: none;
+    border-radius: 16px;
+    background: #0e6c33;
+    padding: 20px 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #ffffff;
+    text-decoration: none;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 120%;
+    letter-spacing: 0.01em;
+}
+
+.primaryButton:hover,
+.primaryButton:focus-visible {
+    background: #13833f;
+    transform: translateY(-1px);
+}
+
+.primaryButton:active {
+    background: #0b5328;
+    transform: translateY(0);
+}
+
+.buttonArrow {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.buttonArrow svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    fill: currentColor;
+}
+
+.actionsSection {
+    padding: 88px 24px 0;
+}
+
+.actionsTitle {
+    margin: 0 0 48px;
+    text-align: center;
+    font-family: var(--second-family);
+    font-weight: 600;
+        font-size: 36px;
+        line-height: 131%;
+        letter-spacing: 0.01em;
+        color: #fff;
+}
+
+.actionsGrid {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    flex-wrap: wrap;
+}
+
+.actionCard {
+    position: relative;
+    width: 264px;
+    min-height: 168px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.18);
+    padding: 32px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-decoration: none;
+    overflow: hidden;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.025),
+        0 4px 16px rgba(0, 0, 0, 0.35);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+.actionCard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(180deg,
+            rgba(110, 255, 173, 0.55) 0%,
+            rgba(78, 179, 118, 0.34) 45%,
+            rgba(78, 179, 118, 0.18) 100%);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.actionCard::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow:
+        inset 0 0 18px rgba(78, 179, 118, 0.035),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    pointer-events: none;
+}
+
+.actionCard:hover,
+.actionCard:focus-visible {
+    background: rgba(14, 108, 51, 0.08);
+    transform: translateY(-2px);
+}
+
+.actionCard:active {
+    transform: translateY(0);
+}
+
+.actionIconWrap {
+    width: 35px;
+    height: 35px;
+    margin-bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0e6c33;
+    flex-shrink: 0;
+}
+
+.actionIcon {
+    width: 28px;
+    height: 28px;
+    display: block;
+    fill: currentColor;
+}
+
+.actionCardTitle {
+    margin-bottom: 4px;
+    color: #ffffff;
+    font-family: var(--font-family);
+    font-weight: 600;
+        font-size: 20px;
+        line-height: 140%;
+}
+
+.actionCardText {
+    margin-bottom: 4px;
+    color: #ffffff;
+    font-family: var(--font-family);
+    font-weight: 400;
+        font-size: 14px;
+        line-height: 143%;
+}
+
+.actionArrow {
+    margin-top: auto;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #0e6c33;
+    line-height: 1;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.actionArrow svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    fill: currentColor;
+}
+
+.actionCard:hover .actionArrow,
+.actionCard:focus-visible .actionArrow {
+    color: #13833f;
+    transform: translateX(2px);
+}
+
+.actionCard:active .actionArrow {
+    color: #0b5328;
+    transform: translateX(0);
+}
+
+@media (max-width: 1200px) {
+    .content {
+        left: 48px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        height: 640px;
+    }
+
+    .inner {
+        height: 640px;
+        min-height: 640px;
+    }
+
+    .backgroundImage {
+        object-position: 66% center;
+    }
+
+    .content {
+        top: 110px;
+        left: 24px;
+        width: calc(100% - 48px);
+        max-width: 420px;
+    }
+
+    .code {
+        font-size: 84px;
+    }
+
+    .title {
+        font-size: 30px;
+    }
+
+    .text {
+        font-size: 14px;
+    }
+
+    .primaryButton {
+        min-width: 220px;
+        height: 52px;
+        font-size: 14px;
+    }
+
+    .actionsSection {
+        padding: 48px 16px 0;
+    }
+
+    .actionsTitle {
+        margin-bottom: 28px;
+        font-size: 28px;
+    }
+
+    .actionsGrid {
+        gap: 16px;
+    }
+
+    .actionCard {
+        width: 100%;
+        max-width: 360px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        height: 560px;
+    }
+
+    .inner {
+        height: 560px;
+        min-height: 560px;
+    }
+
+    .backgroundImage {
+        object-position: 70% center;
+    }
+
+    .content {
+        top: 96px;
+        left: 16px;
+        width: calc(100% - 32px);
+    }
+
+    .code {
+        font-size: 72px;
+    }
+
+    .title {
+        font-size: 26px;
+    }
+
+    .primaryButton {
+        width: 100%;
+    }
+}
