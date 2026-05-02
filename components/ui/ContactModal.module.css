@@ -7,6 +7,11 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
+    animation: modalOverlayIn 0.22s ease forwards;
+}
+
+.overlayClosing {
+    animation: modalOverlayOut 0.22s ease forwards;
 }
 
 .modal {
@@ -17,6 +22,11 @@
     background: #ebebeb;
     padding: 32px;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    animation: modalContentIn 0.22s ease forwards;
+}
+
+.modalClosing {
+    animation: modalContentOut 0.22s ease forwards;
 }
 
 .closeButton {
@@ -144,6 +154,50 @@
     height: 1px;
     opacity: 0;
     pointer-events: none;
+}
+
+@keyframes modalOverlayIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalOverlayOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes modalContentIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes modalContentOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+    }
 }
 
 @media (max-width: 640px) {

@@ -123,7 +123,7 @@ const Footer = () => {
             </div>
 
             <div className={styles.socials}>
-              <Link href="#" className={styles.socialLink} aria-label="Telegram">
+              <Link href="https://t.me/LDK_Partner_Lviv" className={styles.socialLink} aria-label="Telegram">
                 <svg
                   className={`${styles.socialIcon} ${styles.telegramIcon}`}
                   aria-hidden="true"

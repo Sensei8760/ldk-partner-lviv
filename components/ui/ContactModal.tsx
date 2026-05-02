@@ -10,12 +10,41 @@ type ContactModalProps = {
   onError: (message: string) => void;
 };
 
+const ANIMATION_DURATION = 220;
+
 export default function ContactModal({
   open,
   onClose,
   onSuccess,
   onError,
 }: ContactModalProps) {
+  const [shouldRender, setShouldRender] = useState(open);
+  const [isClosing, setIsClosing] = useState(false);
+
+useEffect(() => {
+  if (!shouldRender) return;
+
+  const originalBodyOverflow = document.body.style.overflow;
+  const originalBodyPaddingRight = document.body.style.paddingRight;
+  const originalHtmlOverflow = document.documentElement.style.overflow;
+
+  const scrollbarWidth =
+    window.innerWidth - document.documentElement.clientWidth;
+
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+
+  if (scrollbarWidth > 0) {
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
+  }
+
+  return () => {
+    document.body.style.overflow = originalBodyOverflow;
+    document.body.style.paddingRight = originalBodyPaddingRight;
+    document.documentElement.style.overflow = originalHtmlOverflow;
+  };
+}, [shouldRender]);
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [comment, setComment] = useState('');
@@ -23,10 +52,38 @@ export default function ContactModal({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    let openTimeoutId: number | undefined;
+    let closeStartTimeoutId: number | undefined;
+    let closeEndTimeoutId: number | undefined;
+
+    if (open) {
+      openTimeoutId = window.setTimeout(() => {
+        setShouldRender(true);
+        setIsClosing(false);
+      }, 0);
+    } else if (shouldRender) {
+      closeStartTimeoutId = window.setTimeout(() => {
+        setIsClosing(true);
+      }, 0);
+
+      closeEndTimeoutId = window.setTimeout(() => {
+        setShouldRender(false);
+        setIsClosing(false);
+      }, ANIMATION_DURATION);
+    }
+
+    return () => {
+      if (openTimeoutId) window.clearTimeout(openTimeoutId);
+      if (closeStartTimeoutId) window.clearTimeout(closeStartTimeoutId);
+      if (closeEndTimeoutId) window.clearTimeout(closeEndTimeoutId);
+    };
+  }, [open, shouldRender]);
+
+  useEffect(() => {
     if (!open) return;
 
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && !isLoading) {
         onClose();
       }
     };
@@ -36,9 +93,9 @@ export default function ContactModal({
     return () => {
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [open, onClose]);
+  }, [open, isLoading, onClose]);
 
-  if (!open) return null;
+  if (!shouldRender) return null;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -85,10 +142,18 @@ export default function ContactModal({
     }
   };
 
+  const handleClose = () => {
+    if (isLoading) return;
+    onClose();
+  };
+
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div
+      className={`${styles.overlay} ${isClosing ? styles.overlayClosing : ''}`}
+      onClick={handleClose}
+    >
       <div
-        className={styles.modal}
+        className={`${styles.modal} ${isClosing ? styles.modalClosing : ''}`}
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -97,7 +162,7 @@ export default function ContactModal({
         <button
           type="button"
           className={styles.closeButton}
-          onClick={onClose}
+          onClick={handleClose}
           aria-label="Закрити форму"
           disabled={isLoading}
         >

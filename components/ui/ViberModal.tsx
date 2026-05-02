@@ -1,11 +1,14 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import styles from './ViberModal.module.css';
 
 type ViberModalProps = {
   open: boolean;
   onClose: () => void;
 };
+
+const ANIMATION_DURATION = 220;
 
 const viberNumbers = [
   {
@@ -19,12 +22,86 @@ const viberNumbers = [
 ];
 
 export default function ViberModal({ open, onClose }: ViberModalProps) {
-  if (!open) return null;
+  const [shouldRender, setShouldRender] = useState(open);
+  const [isClosing, setIsClosing] = useState(false);
+
+    useEffect(() => {
+  if (!shouldRender) return;
+
+  const originalBodyOverflow = document.body.style.overflow;
+  const originalBodyPaddingRight = document.body.style.paddingRight;
+  const originalHtmlOverflow = document.documentElement.style.overflow;
+
+  const scrollbarWidth =
+    window.innerWidth - document.documentElement.clientWidth;
+
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+
+  if (scrollbarWidth > 0) {
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
+  }
+
+  return () => {
+    document.body.style.overflow = originalBodyOverflow;
+    document.body.style.paddingRight = originalBodyPaddingRight;
+    document.documentElement.style.overflow = originalHtmlOverflow;
+  };
+}, [shouldRender]);
+    
+  useEffect(() => {
+    let openTimeoutId: number | undefined;
+    let closeStartTimeoutId: number | undefined;
+    let closeEndTimeoutId: number | undefined;
+
+    if (open) {
+      openTimeoutId = window.setTimeout(() => {
+        setShouldRender(true);
+        setIsClosing(false);
+      }, 0);
+    } else if (shouldRender) {
+      closeStartTimeoutId = window.setTimeout(() => {
+        setIsClosing(true);
+      }, 0);
+
+      closeEndTimeoutId = window.setTimeout(() => {
+        setShouldRender(false);
+        setIsClosing(false);
+      }, ANIMATION_DURATION);
+    }
+
+    return () => {
+      if (openTimeoutId) window.clearTimeout(openTimeoutId);
+      if (closeStartTimeoutId) window.clearTimeout(closeStartTimeoutId);
+      if (closeEndTimeoutId) window.clearTimeout(closeEndTimeoutId);
+    };
+  }, [open, shouldRender]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [open, onClose]);
+
+  if (!shouldRender) return null;
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div
+      className={`${styles.overlay} ${isClosing ? styles.overlayClosing : ''}`}
+      onClick={onClose}
+    >
       <div
-        className={styles.modal}
+        className={`${styles.modal} ${isClosing ? styles.modalClosing : ''}`}
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
