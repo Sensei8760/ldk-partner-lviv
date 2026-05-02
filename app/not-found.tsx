@@ -1,6 +1,11 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import styles from './not-found.module.css';
+import ContactModal from '@/components/ui/ContactModal';
+import Toast from '@/components/ui/Toast';
 
 const actions = [
     {
@@ -8,22 +13,85 @@ const actions = [
         iconId: 'icon-home',
         title: 'На головну',
         text: 'Поверніться на головну сторінку сайту',
+        type: 'link',
     },
     {
         href: '/catalog',
         iconId: 'icon-catalog-404',
         title: 'Каталог дверей',
         text: 'Перегляньте весь асортимент наших дверей',
+        type: 'link',
     },
     {
         href: '/contacts',
         iconId: 'icon-phone-404',
         title: "Зв’язатися з нами",
         text: 'Ми допоможемо підібрати ідеальні двері для вас',
+        type: 'modal',
     },
-];
+] as const;
+
+type ToastState = {
+    show: boolean;
+    message: string;
+    type: 'success' | 'error';
+};
 
 export default function NotFound() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [toast, setToast] = useState<ToastState>({
+        show: false,
+        message: '',
+        type: 'success',
+    });
+
+    const showToast = (message: string, type: 'success' | 'error') => {
+        setToast({
+            show: true,
+            message,
+            type,
+        });
+    };
+
+    useEffect(() => {
+        if (!toast.show) return;
+
+        const timeoutId = window.setTimeout(() => {
+            setToast((prev) => ({
+                ...prev,
+                show: false,
+            }));
+        }, 3500);
+
+        return () => {
+            window.clearTimeout(timeoutId);
+        };
+    }, [toast.show]);
+
+    const renderActionContent = (action: (typeof actions)[number]) => (
+        <>
+            <span className={styles.actionIconWrap} aria-hidden="true">
+                <svg className={styles.actionIcon}>
+                    <use href={`/icons/symbol-defs.svg#${action.iconId}`} />
+                </svg>
+            </span>
+
+            <span className={styles.actionCardTitle}>
+                {action.title}
+            </span>
+
+            <span className={styles.actionCardText}>
+                {action.text}
+            </span>
+
+            <span className={styles.actionArrow} aria-hidden="true">
+                <svg width="24" height="24">
+                    <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
+                </svg>
+            </span>
+        </>
+    );
+
     return (
         <main className={styles.page}>
             <section className={styles.hero}>
@@ -70,35 +138,41 @@ export default function NotFound() {
                 </h3>
 
                 <div className={styles.actionsGrid}>
-                    {actions.map((action) => (
-                        <Link
-                            key={action.title}
-                            href={action.href}
-                            className={styles.actionCard}
-                        >
-                            <span className={styles.actionIconWrap} aria-hidden="true">
-                                <svg className={styles.actionIcon}>
-                                    <use href={`/icons/symbol-defs.svg#${action.iconId}`} />
-                                </svg>
-                            </span>
+                    {actions.map((action) => {
+                        if (action.type === 'modal') {
+                            return (
+                                <button
+                                    key={action.title}
+                                    type="button"
+                                    className={styles.actionCard}
+                                    onClick={() => setIsModalOpen(true)}
+                                >
+                                    {renderActionContent(action)}
+                                </button>
+                            );
+                        }
 
-                            <span className={styles.actionCardTitle}>
-                                {action.title}
-                            </span>
-
-                            <span className={styles.actionCardText}>
-                                {action.text}
-                            </span>
-
-                            <span className={styles.actionArrow} aria-hidden="true">
-                                <svg width="18" height="18">
-                                    <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
-                                </svg>
-                            </span>
-                        </Link>
-                    ))}
+                        return (
+                            <Link
+                                key={action.title}
+                                href={action.href}
+                                className={styles.actionCard}
+                            >
+                                {renderActionContent(action)}
+                            </Link>
+                        );
+                    })}
                 </div>
             </section>
+
+            <ContactModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={(message) => showToast(message, 'success')}
+                onError={(message) => showToast(message, 'error')}
+            />
+
+            <Toast show={toast.show} message={toast.message} type={toast.type} />
         </main>
     );
 }

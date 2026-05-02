@@ -41,6 +41,9 @@
     min-width: 337px;
     height: 70px;
     padding: 20px 30px;
+    border: none;
+    appearance: none;
+    -webkit-appearance: none;
     border-radius: 16px;
     background-color: #107c41;
     color: #fff;
@@ -52,9 +55,10 @@
     font-family: var(--font-family);
     letter-spacing: 0.01em;
     transition: background-color 0.2s ease;
-        font-weight: 500;
-        font-size: 20px;
-        line-height: 120%;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 120%;
+    cursor: pointer;
 }
 
 .button:hover,

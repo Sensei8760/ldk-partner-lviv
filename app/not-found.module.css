@@ -169,6 +169,10 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.025),
         0 4px 16px rgba(0, 0, 0, 0.35);
     transition: background 0.2s ease, transform 0.2s ease;
+    border: none;
+        font-family: inherit;
+        cursor: pointer;
+        text-align: left;
 }
 .actionCard::before {
     content: "";
@@ -224,8 +228,8 @@
 }
 
 .actionIcon {
-    width: 28px;
-    height: 28px;
+    width: 35px;
+    height: 35px;
     display: block;
     fill: currentColor;
 }
