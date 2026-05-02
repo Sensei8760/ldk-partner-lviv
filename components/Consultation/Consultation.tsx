@@ -69,8 +69,10 @@ export default function Consultation() {
         >
           <span>Отримати консультацію</span>
           <span className={styles.arrow} aria-hidden="true">
-            →
-          </span>
+  <svg className={styles.arrowIcon}>
+    <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
+  </svg>
+</span>
         </button>
 
         <ul className={styles.list}>

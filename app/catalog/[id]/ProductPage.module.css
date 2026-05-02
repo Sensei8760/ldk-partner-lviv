@@ -17,10 +17,12 @@
 }
 
 .imageBlock {
-    width: 100%;
+    width: 483px;
+    margin-left: -60px;
 }
 
 .gallery {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -28,17 +30,20 @@
 
 .imageWrapper {
     position: relative;
-    width: 423px;
+    width: 100%;
     height: 543px;
     background: #f1f1f1;
     border-radius: 8px;
     overflow: hidden;
     border: none;
     cursor: zoom-in;
+    display: flex;
 }
 
 .image {
     object-fit: contain;
+    box-sizing: border-box;
+    padding: 0;
 }
 
 .galleryArrowOverlay {
@@ -57,11 +62,16 @@
     font-size: 24px;
     line-height: 1;
     z-index: 2;
-    transition: color 0.2s ease, transform 0.2s ease;
+    transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
 }
 
 .galleryArrowOverlay:hover {
-    color: #0e6c33;
+    color: #13833f;
+}
+
+.galleryArrowOverlay:active {
+    color: #0b5328;
+    transform: translateY(-50%) scale(0.96);
 }
 
 .galleryArrowOverlayLeft {
@@ -294,6 +304,7 @@
         font-size: 16px;
         line-height: 150%;
         color: #fff;
+        font-weight: 400;
 }
 
 .zoomOverlay {
@@ -351,13 +362,28 @@
     transform: translateY(-50%);
     width: 54px;
     height: 54px;
+    padding: 0;
     border: none;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.92);
     color: #111111;
-    font-size: 24px;
     cursor: pointer;
     z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.zoomArrow:hover {
+    color: #13833f;
+    background: #ffffff;
+}
+
+.zoomArrow:active {
+    color: #0b5328;
+    transform: translateY(-50%) scale(0.96);
 }
 
 .zoomArrowLeft {
@@ -407,6 +433,30 @@
 
 .galleryCounter {
     display: none;
+}
+
+.galleryArrowIcon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    fill: currentColor;
+}
+
+.galleryArrowOverlayLeft .galleryArrowIcon {
+    transform: rotate(180deg);
+}
+
+.zoomArrowIcon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    flex-shrink: 0;
+    fill: currentColor;
+    transform-origin: center;
+}
+
+.zoomArrowLeft .zoomArrowIcon {
+    transform: rotate(180deg);
 }
 
 @media (max-width: 992px) {

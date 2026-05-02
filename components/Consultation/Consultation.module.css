@@ -39,7 +39,7 @@
 .button {
     margin-bottom: 34px;
     min-width: 337px;
-    height: 70px;
+    height: 64px;
     padding: 20px 30px;
     border: none;
     appearance: none;
@@ -59,20 +59,35 @@
     font-size: 20px;
     line-height: 120%;
     cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .button:hover,
 .button:focus-visible {
     background-color: #13833f;
+    transform: translateY(-2px);
 }
 
 .button:active {
     background-color: #0B5328;
+    transform: translateY(0);
 }
 
 .arrow {
-    font-size: 28px;
-    line-height: 1;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #ffffff;
+}
+
+.arrowIcon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    fill: currentColor;
 }
 
 .list {

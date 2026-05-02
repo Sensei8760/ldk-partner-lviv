@@ -8,7 +8,7 @@
     max-width: 1440px;
     height: 80px;
     margin: 0 auto;
-    padding: 0 68.5px;
+    padding: 0 86.5px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -35,7 +35,7 @@
 .nav {
     display: flex;
     align-items: center;
-    gap: 66px;
+    gap: 48px;
     margin-left: auto;
 }
 

@@ -105,15 +105,18 @@
         font-size: 20px;
         line-height: 120%;
         letter-spacing: 0.01em;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .primaryButton:hover,
 .primaryButton:focus-visible {
     background-color: #13833f;
+    transform: translateY(-2px);
 }
 
 .primaryButton:active {
     background-color: #0b5328;
+    transform: translateY(0);
 }
 
 @media (max-width: 1200px) {

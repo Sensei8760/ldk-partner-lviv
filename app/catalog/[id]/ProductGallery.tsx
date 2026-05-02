@@ -119,7 +119,9 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
                 }}
                 aria-label="Попереднє фото"
               >
-                ←
+                <svg className={styles.galleryArrowIcon} aria-hidden="true">
+  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
+</svg>
               </button>
 
               <button
@@ -131,7 +133,9 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
                 }}
                 aria-label="Наступне фото"
               >
-                →
+                <svg className={styles.galleryArrowIcon} aria-hidden="true">
+  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
+</svg>
               </button>
             </>
           )}
@@ -186,7 +190,9 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
                 onClick={showPrev}
                 aria-label="Попереднє фото"
               >
-                ←
+                <svg className={styles.zoomArrowIcon} aria-hidden="true">
+  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
+</svg>
               </button>
             )}
 
@@ -213,7 +219,9 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
                 onClick={showNext}
                 aria-label="Наступне фото"
               >
-                →
+                <svg className={styles.zoomArrowIcon} aria-hidden="true">
+  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-arrow-right" />
+</svg>
               </button>
             )}
           </div>
