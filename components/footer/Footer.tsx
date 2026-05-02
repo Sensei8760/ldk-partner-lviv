@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import styles from './Footer.module.css';
+import ViberModal from '@/components/ui/ViberModal';
 
 const EMAIL = 'ldk.partner.lviv@gmail.com';
 const MAPS_LINK = 'https://maps.app.goo.gl/9NGfCBWctETQbjSC7';
 
 const Footer = () => {
   const [copied, setCopied] = useState(false);
+  const [isViberModalOpen, setIsViberModalOpen] = useState(false);
 
   const handleCopyEmail = async () => {
     try {
@@ -44,17 +46,17 @@ const Footer = () => {
 
             <ul className={styles.list}>
               <li>
-                <Link href="/catalog/vhidni-dveri" className={styles.link}>
+                <Link href="/catalog?type=entrance" className={styles.link}>
                   Вхідні двері
                 </Link>
               </li>
               <li>
-                <Link href="/catalog/mizhkimnatni-dveri" className={styles.link}>
+                <Link href="/catalog?type=interior" className={styles.link}>
                   Міжкімнатні двері
                 </Link>
               </li>
               <li>
-                <Link href="/sale" className={styles.link}>
+                <Link href="/catalog?type=sale" className={styles.link}>
                   Знижки
                 </Link>
               </li>
@@ -130,18 +132,28 @@ const Footer = () => {
                 </svg>
               </Link>
 
-              <Link href="#" className={styles.socialLink} aria-label="Viber">
+              <button
+                type="button"
+                className={`${styles.socialLink} ${styles.socialButton}`}
+                aria-label="Viber"
+                onClick={() => setIsViberModalOpen(true)}
+              >
                 <svg
                   className={`${styles.socialIcon} ${styles.viberIcon}`}
                   aria-hidden="true"
                 >
                   <use href="/icons/symbol-defs.svg?v=6#icon-Vector2" />
                 </svg>
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      <ViberModal
+        open={isViberModalOpen}
+        onClose={() => setIsViberModalOpen(false)}
+      />
     </footer>
   );
 };

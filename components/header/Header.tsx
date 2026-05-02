@@ -20,7 +20,7 @@ export default function Header() {
             Каталог
           </Link>
 
-          <Link href="/contacts" className={styles.navLink}>
+          <Link href="/#contacts" className={styles.navLink}>
             Контакти
           </Link>
         </nav>

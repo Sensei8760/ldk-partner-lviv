@@ -217,7 +217,11 @@
     width: 23px;
     height: 25px;
 }
-
+.socialButton {
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
 @media (max-width: 1200px) {
     .container {
         padding: 0 40px;

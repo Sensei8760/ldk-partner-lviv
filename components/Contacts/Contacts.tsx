@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import styles from './Contacts.module.css';
+import ViberModal from '@/components/ui/ViberModal';
 
 const EMAIL = 'ldk.partner.lviv@gmail.com';
 const MAPS_LINK = 'https://maps.app.goo.gl/9NGfCBWctETQbjSC7';
 
 export default function Contacts() {
   const [copied, setCopied] = useState(false);
+  const [isViberModalOpen, setIsViberModalOpen] = useState(false);
 
   const handleCopyEmail = async () => {
     try {
@@ -24,7 +26,7 @@ export default function Contacts() {
   };
 
   return (
-    <section className={styles.section}>
+    <section id="contacts" className={styles.section}>
       <div className={styles.container}>
         <div className={styles.card}>
           <h2 className={styles.title}>Зв&apos;яжіться з нами</h2>
@@ -118,24 +120,33 @@ export default function Contacts() {
           </div>
 
           <div className={styles.socials}>
-  <Link href="#" className={styles.socialLink} aria-label="Telegram">
-    <svg
-      className={`${styles.socialIcon} ${styles.telegramIcon}`}
-      aria-hidden="true"
-    >
-      <use href="/icons/symbol-defs.svg?v=6#icon-Vector1" />
-    </svg>
-  </Link>
+            <Link
+              href="https://t.me/LDK_Partner_Lviv"
+              className={styles.socialLink}
+              aria-label="Telegram"
+            >
+              <svg
+                className={`${styles.socialIcon} ${styles.telegramIcon}`}
+                aria-hidden="true"
+              >
+                <use href="/icons/symbol-defs.svg?v=6#icon-Vector1" />
+              </svg>
+            </Link>
 
-  <Link href="#" className={styles.socialLink} aria-label="Viber">
-    <svg
-      className={`${styles.socialIcon} ${styles.viberIcon}`}
-      aria-hidden="true"
-    >
-      <use href="/icons/symbol-defs.svg?v=6#icon-Vector2" />
-    </svg>
-  </Link>
-</div>
+            <button
+              type="button"
+              className={`${styles.socialLink} ${styles.socialButton}`}
+              aria-label="Viber"
+              onClick={() => setIsViberModalOpen(true)}
+            >
+              <svg
+                className={`${styles.socialIcon} ${styles.viberIcon}`}
+                aria-hidden="true"
+              >
+                <use href="/icons/symbol-defs.svg?v=6#icon-Vector2" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div className={styles.mapWrap}>
@@ -149,6 +160,11 @@ export default function Contacts() {
           />
         </div>
       </div>
+
+      <ViberModal
+        open={isViberModalOpen}
+        onClose={() => setIsViberModalOpen(false)}
+      />
     </section>
   );
 }

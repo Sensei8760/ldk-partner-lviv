@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import CatalogCard from '@/components/catalogCard/CatalogCard';
 import styles from '@/app/catalog/CatalogPage.module.css';
 import type { Product, ProductSize } from '@/lib/products';
@@ -9,6 +10,7 @@ import { getFavoriteIds } from '@/store/favorites';
 const productTypeItems = [
   { id: 'interior', label: 'Міжкімнатні' },
   { id: 'entrance', label: 'Вхідні' },
+  { id: 'sale', label: 'Знижки' },
 ] as const;
 
 const installPlaceItems = [
@@ -57,6 +59,22 @@ type ProductTypeValue = (typeof productTypeItems)[number]['id'];
 type InstallPlaceValue = (typeof installPlaceItems)[number]['id'];
 type OpeningValue = (typeof openingItems)[number]['id'];
 type SizeValue = (typeof sizeItems)[number]['id'];
+
+function getProductTypesFromQuery(type: string | null): ProductTypeValue[] {
+  if (type === 'entrance') {
+    return ['entrance'];
+  }
+
+  if (type === 'interior') {
+    return ['interior'];
+  }
+
+  if (type === 'sale') {
+    return ['sale'];
+  }
+
+  return [];
+}
 
 const sortOptions: { value: SortValue; label: string }[] = [
   { value: 'price-asc', label: 'Від дешевих до дорогих' },
@@ -171,11 +189,23 @@ function getDisplayPrice(product: Product) {
     : product.price;
 }
 
+function hasDiscount(product: Product) {
+  return (
+    product.discountPrice !== null &&
+    product.discountPrice !== undefined &&
+    product.discountPrice > 0 &&
+    product.discountPrice < product.price
+  );
+}
+
 export default function CatalogClient({
   initialProducts,
 }: {
   initialProducts: Product[];
 }) {
+  const searchParams = useSearchParams();
+  const productTypeFromUrl = searchParams.get('type');
+
   const products = initialProducts;
 
   const priceBounds = useMemo(() => {
@@ -198,7 +228,9 @@ export default function CatalogClient({
   }, [products]);
 
   const [showAllStyles, setShowAllStyles] = useState(false);
-  const [selectedProductTypes, setSelectedProductTypes] = useState<ProductTypeValue[]>([]);
+  const [selectedProductTypes, setSelectedProductTypes] = useState<ProductTypeValue[]>(
+  () => getProductTypesFromQuery(productTypeFromUrl)
+);
   const [selectedInstallPlaces, setSelectedInstallPlaces] = useState<InstallPlaceValue[]>([]);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [selectedOpenings, setSelectedOpenings] = useState<OpeningValue[]>([]);
@@ -295,11 +327,12 @@ export default function CatalogClient({
     sortOptions.find((option) => option.value === sortBy) ?? sortOptions[0];
 
   const productTypeCounts = useMemo(() => {
-    return {
-      interior: products.filter((product) => getProductType(product) === 'interior').length,
-      entrance: products.filter((product) => getProductType(product) === 'entrance').length,
-    };
-  }, [products]);
+  return {
+    interior: products.filter((product) => getProductType(product) === 'interior').length,
+    entrance: products.filter((product) => getProductType(product) === 'entrance').length,
+    sale: products.filter((product) => hasDiscount(product)).length,
+  };
+}, [products]);
 
   const installPlaceCounts = useMemo(() => {
     return {
@@ -346,8 +379,14 @@ export default function CatalogClient({
       const currentPrice = getDisplayPrice(product);
 
       const matchesProductType =
-        selectedProductTypes.length === 0 ||
-        selectedProductTypes.includes(productType);
+  selectedProductTypes.length === 0 ||
+  selectedProductTypes.some((type) => {
+    if (type === 'sale') {
+      return hasDiscount(product);
+    }
+
+    return productType === type;
+  });
 
       const matchesInstallPlace =
         selectedInstallPlaces.length === 0 ||
@@ -553,10 +592,7 @@ const hasActiveFilters =
           <div className={styles.filtersList}>
             {productTypeItems.map((item) => {
               const isChecked = selectedProductTypes.includes(item.id);
-              const count =
-                item.id === 'interior'
-                  ? productTypeCounts.interior
-                  : productTypeCounts.entrance;
+              const count = productTypeCounts[item.id] || 0;
 
               return (
                 <label key={item.id} className={styles.filterLabel}>
