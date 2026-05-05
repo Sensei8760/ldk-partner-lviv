@@ -19,8 +19,45 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'LDK Partner Lviv',
-  description: 'Виробництво та продаж сучасних міжкімнатних та вхідних дверей.',
+  metadataBase: new URL('https://ldk-partner-lviv.vercel.app'),
+  title: {
+    default: 'LDK Partner Львів — вхідні та міжкімнатні двері',
+    template: '%s | LDK Partner Львів',
+  },
+  description:
+    'LDK Partner у Львові: вхідні та міжкімнатні двері в наявності, консультація, підбір моделі та допомога з вибором.',
+  applicationName: 'LDK Partner Львів',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'uk_UA',
+    url: '/',
+    siteName: 'LDK Partner Львів',
+    title: 'LDK Partner Львів — вхідні та міжкімнатні двері',
+    description:
+      'Каталог вхідних та міжкімнатних дверей у Львові. Допоможемо підібрати двері під ваш інтер’єр.',
+    images: [
+      {
+        url: '/images/image-hero.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'LDK Partner Львів — двері для вашого простору',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'LDK Partner Львів — вхідні та міжкімнатні двері',
+    description:
+      'Каталог вхідних та міжкімнатних дверей у Львові. Допоможемо підібрати двері під ваш інтер’єр.',
+    images: ['/images/image-hero.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -36,7 +73,8 @@ export default function RootLayout({
     >
       <body>
         <Header />
-        <main>{children}
+        <main>
+          {children}
           <ScrollToTopBtn />
         </main>
         <Footer />
