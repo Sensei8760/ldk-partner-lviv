@@ -19,6 +19,9 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+   verification: {
+    google: '04QvHUW2T_ak7Gn3ZR3HTtzysiwTtrn5Q4FfxddGNhQ',
+  },
   metadataBase: new URL('https://ldk-partner-lviv.vercel.app'),
   title: {
     default: 'LDK Partner Львів — вхідні та міжкімнатні двері',
