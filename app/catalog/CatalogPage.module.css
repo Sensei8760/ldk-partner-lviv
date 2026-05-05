@@ -1,6 +1,6 @@
 .catalogPage {
     padding: 72px 0 82px;
-    background: #181818;
+    background: var(--backgr);
 }
 
 .container {
@@ -11,7 +11,7 @@
 
 .title {
     margin: 0 0 64px;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--second-family);
     font-weight: 600;
     letter-spacing: 0.01em;
@@ -30,7 +30,7 @@
 .sidebar {
     width: 327px;
     max-width: 100%;
-    background: #ebebeb;
+    background: var(--back-gray);
     position: sticky;
     top: 16px;
     margin-top: 88px;
@@ -44,7 +44,7 @@
     font-weight: 600;
     font-size: 20px;
     line-height: 140%;
-    color: #000;
+    color: var(--text-black);
 }
 
 .filterGroup+.filterGroup {
@@ -57,7 +57,7 @@
     font-weight: 600;
     line-height: 1.2;
     font-size: 16px;
-    color: #000;
+    color: var(--text-black);
 }
 
 .filtersList {
@@ -86,7 +86,7 @@
     height: 18px;
     min-width: 18px;
     margin-top: 0;
-    border: 1px solid #000000;
+    border: 1px solid var(--text-black);
     border-radius: 3px;
     background: transparent;
     transition: border-color 0.2s ease, background 0.2s ease;
@@ -100,13 +100,13 @@
     width: 12px;
     height: 12px;
     border-radius: 2px;
-    background: #4eb376;
+    background: var(--fill-components);
     transform: translate(-50%, -50%);
 }
 
 .checkbox:checked+.customCheckbox {
     background: transparent;
-    border-color: #000000;
+    border-color: var(--text-black);
 }
 
 .checkbox:checked+.customCheckbox::after {
@@ -117,12 +117,12 @@
     width: 12px;
     height: 12px;
     border-radius: 2px;
-    background: #0e6c33;
+    background: var(--accept-button);
     transform: translate(-50%, -50%);
 }
 
 .filterLabel:active .checkbox:checked+.customCheckbox::after {
-    background: #0e6c33;
+    background: var(--accept-button);
 }
 
 .filterText {
@@ -138,11 +138,11 @@
     font-size: 16px;
     line-height: 131%;
     letter-spacing: 0.01em;
-    color: #000;
+    color: var(--text-black);
 }
 
 .filterNameActive {
-    color: #0e6c33;
+    color: var(--accept-button);
 }
 
 .count {
@@ -150,7 +150,7 @@
     font-family: var(--font-family);
     font-size: 12px;
     line-height: 167%;
-    color: #585858;
+    color: var(--stock)
 }
 
 .priceInputs {
@@ -163,9 +163,9 @@
 
 .priceInput {
     width: 100%;
-    background: #fff;
+    background: var(--text);
     outline: none;
-    color: #111111;
+    color: var(--text-black);
     font-family: var(--font-family);
     text-align: center;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
@@ -181,7 +181,7 @@
 
 .priceInput:focus,
 .sortSelect:focus {
-    border-color: #107c41;
+    border-color: var(--accept-button);
     box-shadow: 0 0 0 2px rgba(16, 124, 65, 0.12);
 }
 
@@ -196,7 +196,7 @@
     font-size: 16px;
     line-height: 131%;
     letter-spacing: 0.01em;
-    color: #303035;
+    color: var(--border-gray);
 }
 
 .rangeWrapper {
@@ -212,7 +212,7 @@
     right: 0;
     top: 50%;
     height: 2px;
-    background: #0e6c33;
+    background: var(--accept-button);
     border-radius: 999px;
     transform: translateY(-50%);
 }
@@ -221,7 +221,7 @@
     position: absolute;
     top: 50%;
     height: 2px;
-    background: #0e6c33;
+    background: var(--accept-button);
     border-radius: 999px;
     transform: translateY(-50%);
 }
@@ -253,7 +253,7 @@
     width: 20px;
     height: 28px;
     border: none;
-    background: #0e6c33;
+    background: var(--accept-button);
     cursor: pointer;
     pointer-events: auto;
     -webkit-appearance: none;
@@ -267,7 +267,7 @@
     height: 28px;
     border: none;
     border-radius: 0;
-    background: #0e6c33;
+    background: var(--accept-button);
     cursor: pointer;
     pointer-events: auto;
     clip-path: polygon(100% 0, 100% 100%, 0 50%);
@@ -310,7 +310,7 @@
     line-height: 131%;
     letter-spacing: 0.01em;
     text-align: right;
-    color: #000;
+    color: var(--text-black);
 }
 
 .showMoreIcon {
@@ -332,7 +332,7 @@
     width: 24px;
     height: 24px;
     display: block;
-    color: #111111;
+    color: var(--text-black);
     fill: currentColor;
 }
 
@@ -361,7 +361,7 @@
     top: 50%;
     width: 24px;
     height: 24px;
-    color: #0e6c33;
+    color: var(--accept-button);
     transform: translateY(-50%);
     display: inline-flex;
     align-items: center;
@@ -379,12 +379,12 @@
 .searchInput {
     width: 100%;
     height: 56px;
-    border: 2px solid #0e6c33;
+    border: 2px solid var(--accept-button);
     border-radius: 8px;
     background: transparent;
     padding: 0 50px 0 16px;
     outline: none;
-    color: #fff;
+    color: var(--text);
     font-family: var(--font-family);
     text-align: right;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -395,11 +395,11 @@
 }
 
 .searchInput::placeholder {
-    color: #8a8a8a;
+    color: var(--border-focus);
 }
 
 .searchInput:focus {
-    border-color: #0e6c33;
+    border-color: var(--accept-button);
     box-shadow: none;
 }
 
@@ -423,12 +423,12 @@
     width: 100%;
     min-width: 230px;
     height: 56px;
-    border: 2px solid #0E6C33;
+    border: 2px solid var(--accept-button);
     border-radius: 8px;
     background: transparent;
     padding: 10 16px;
     outline: none;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
     cursor: pointer;
     font-weight: 600;
@@ -456,12 +456,12 @@
     flex-shrink: 0;
     transform: rotate(180deg);
     transition: transform 0.2s ease, color 0.2s ease;
-    color: #0E6C33;
+    color: var(--accept-button);
 }
 
 .sortSelectOpen .sortSelectIcon {
     transform: rotate(0deg);
-    color: #0b5328;
+    color: var(--button-active);
 }
 
 .sortSelectIconSvg {
@@ -477,9 +477,9 @@
     left: 0;
     right: 0;
     z-index: 20;
-    border: 2px solid #0E6C33;
+    border: 2px solid var(--accept-button);
     border-radius: 8px;
-    background: #181818;
+    background: var(--backgr);
     overflow: hidden;
 }
 
@@ -487,8 +487,8 @@
     width: 100%;
     min-height: 40px;
     border: none;
-    background: #181818;
-    color: #ffffff;
+    background: var(--backgr);
+    color: var(--text);
     padding: 0 22.5px;
     cursor: pointer;
     font-family: var(--font-family);
@@ -502,15 +502,15 @@
 .sortOption:hover,
 .sortOption:focus-visible,
 .sortOptionActive {
-    background: #0E6C33;
-    color: #ffffff;
+    background: var(--accept-button);
+    color: var(--text);
     outline: none;
 }
 
 .favoriteFilterButton {
     min-width: 167px;
     height: 56px;
-    border: 2px solid #0E6C33;
+    border: 2px solid var(--accept-button);
     border-radius: 8px;
     background: transparent;
     display: inline-flex;
@@ -539,20 +539,20 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #0E6C33;
+    color: var(--accept-button);
     transition: color 0.2s ease;
 }
 
 .favoriteFilterButton:hover .favoriteFilterIcon {
-    color: #13833f;
+    color: var(--button-hover);
 }
 
 .favoriteFilterButton:active .favoriteFilterIcon {
-    color: #0b5328;
+    color: var(--button-active);
 }
 
 .favoriteFilterButtonActive .favoriteFilterIcon {
-    color: #0b5328;
+    color: var(--button-active);
 }
 
 .favoriteFilterIconSvg {
@@ -563,7 +563,7 @@
 }
 
 .favoriteFilterLabel {
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
     white-space: nowrap;
         font-weight: 700;
@@ -580,7 +580,7 @@
 
 .stateBox {
     border-radius: 14px;
-    background: #ebebeb;
+    background: var(--back-gray);
     padding: 24px 32px;
     display: flex;
     flex-direction: column;
@@ -594,7 +594,7 @@
     line-height: 1.2;
         font-weight: 600;
         font-size: 28px;
-        color: #000;
+        color: var(--text-black);
 }
 
 .stateText {
@@ -604,7 +604,7 @@
         font-weight: 400;
         font-size: 18px;
         line-height: 144%;
-        color: #000;
+        color: var(--text-black);
 }
 
 .resetFiltersButton {
@@ -613,28 +613,28 @@
     height: 56px;
     border: none;
     border-radius: 16px;
-    background: #0E6C33;
+    background: var(--accept-button);
     padding: 20px 30px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
         font-weight: 700;
         font-size: 16px;
         line-height: 150%;
-        color: #fff;
+        color: var(--text);
     cursor: pointer;
     transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .resetFiltersButton:hover {
-    background: #13833F;
+    background: var(--button-hover);
     transform: translateY(-1px);
 }
 
 .resetFiltersButton:active {
-    background: #0B5328;
+    background: var(--button-active);
     transform: translateY(0);
 }
 
@@ -649,13 +649,13 @@
     height: 64px;
     border: none;
     border-radius: 16px;
-    background: #0E6C33;
+    background: var(--accept-button);
     padding: 0 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 500;
     cursor: pointer;
@@ -666,12 +666,12 @@
 }
 
 .showMoreProductsButton:hover {
-    background: #13833F;
+    background: var(--button-hover);
     transform: translateY(-2px);
 }
 
 .showMoreProductsButton:active {
-    background: #0B5328;
+    background: var(--button-active);
     transform: translateY(0);
 }
 
@@ -682,7 +682,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #ffffff;
+    color: var(--text);
 }
 
 .showMoreProductsArrowSvg {

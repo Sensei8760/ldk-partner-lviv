@@ -1,19 +1,19 @@
-import ImageKit from 'imagekit';
+import ImageKit from '@imagekit/nodejs';
 
-const publicKey = process.env.IMAGEKIT_PUBLIC_KEY;
-const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
-const urlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
+const imagekitPrivateKey = process.env.IMAGEKIT_PRIVATE_KEY;
+const imagekitUrlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
 
-if (!publicKey || !privateKey || !urlEndpoint) {
+if (!imagekitPrivateKey || !imagekitUrlEndpoint) {
   throw new Error(
-    'Missing IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY or IMAGEKIT_URL_ENDPOINT in environment variables.'
+    'Missing IMAGEKIT_PRIVATE_KEY or IMAGEKIT_URL_ENDPOINT in environment variables.'
   );
 }
 
+const privateKey = imagekitPrivateKey;
+const urlEndpoint = imagekitUrlEndpoint.replace(/\/+$/, '');
+
 const imagekit = new ImageKit({
-  publicKey,
   privateKey,
-  urlEndpoint,
 });
 
 function transliterate(value: string) {
@@ -108,18 +108,27 @@ export async function uploadProductImage(
   const fileName = `${safeBaseName}-${side}-${Date.now()}.${extension}`;
 
   const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  const base64 = Buffer.from(arrayBuffer).toString('base64');
 
-  const result = await imagekit.upload({
-    file: buffer,
+  const result = await imagekit.files.upload({
+    file: base64,
     fileName,
     folder: '/products',
     useUniqueFileName: true,
   });
 
+  const fileId = result.fileId;
+  const uploadedUrl =
+    result.url ||
+    (result.filePath ? `${urlEndpoint}/${result.filePath.replace(/^\/+/, '')}` : '');
+
+  if (!fileId || !uploadedUrl) {
+    throw new Error('ImageKit upload succeeded but response is missing fileId or url.');
+  }
+
   return {
-    url: result.url,
-    fileId: result.fileId,
+    url: uploadedUrl,
+    fileId,
   };
 }
 
@@ -127,7 +136,7 @@ export async function deleteImageKitFile(fileId: string | null | undefined) {
   if (!fileId) return;
 
   try {
-    await imagekit.deleteFile(fileId);
+    await imagekit.files.delete(fileId);
   } catch (error) {
     console.error('Failed to delete ImageKit file:', error);
   }

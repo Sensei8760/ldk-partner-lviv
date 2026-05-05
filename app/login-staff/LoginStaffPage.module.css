@@ -3,14 +3,14 @@
     display: grid;
     place-items: center;
     padding: 40px 20px;
-    background: #181818;
+    background: var(--backgr);
 }
 
 .card {
     width: 100%;
     max-width: 544px;
-    background: #fff;
-    border: 1px solid #ebebeb;;
+    background: var(--text);
+    border: 1px solid var(--back-gray);
     border-radius: 14px;
     padding: 42px;
 }
@@ -20,6 +20,6 @@
     font-family: var(--font-family);
         font-weight: 600;
         font-size: 28px;
-        color: #000;
+        color: var(--text-black);
         text-align: center;
 }

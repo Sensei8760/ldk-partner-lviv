@@ -3,6 +3,24 @@
   --foreground: #171717;
   --font-family: var(--font-inter);
   --second-family: var(--font-playfair);
+  --text:#fff;
+  --accept-button: #0E6C33;
+  --button-hover: #13833F;
+  --button-active: #0B5328;
+  --backgr: #181818;
+  --fill-components: #4EB376;
+  --back-gray: #EBEBEB;
+  --discount: #CE0E0E;
+  --text-black: #000;
+  --gray-btn: #D9D9D9;
+  --back-black: #0C0F0E;
+  --stock: #484848;
+  --stock-out: #2f2f2f;
+  --btn-disabled:#45474f;
+  --out-stock: #cfcfcf;
+  --border-gray: #303035;
+  --back-login: #757575;
+  --border-focus: #8a8a8a;
 }
 
 @media (prefers-color-scheme: dark) {

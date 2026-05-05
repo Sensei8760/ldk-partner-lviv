@@ -1,7 +1,7 @@
 .card {
     position: relative;
     min-height: 559px;
-    background: #ebebeb;
+    background: var(--back-gray);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -10,7 +10,7 @@
 }
 
 .cardOutOfStock {
-    background: #cfcfcf;
+    background: var(--out-stock);
 }
 
 .badge {
@@ -18,9 +18,9 @@
     top: 10px;
     left: 10px;
     border-radius: 4px;
-    background: #d94a4a;
+    background: var(--discount);
     padding: 5px 8px;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 700;
     font-size: 11px;
@@ -83,7 +83,7 @@
     font-size: 20px;
     line-height: 120%;
     letter-spacing: 0.01em;
-    color: #000;
+    color: var(--text-black);
 }
 
 .bottom {
@@ -104,7 +104,7 @@
 
 .price {
     margin: 0;
-    color: #111111;
+    color: var(--text-black);
     font-family: var(--font-family);
     line-height: 1;
 }
@@ -114,13 +114,13 @@
     font-family: var(--font-family);
     font-size: 24px;
     letter-spacing: 0.01em;
-    color: #000;
+    color: var(--text-black);
 }
 
 .currency {
     font-family: var(--font-family);
     letter-spacing: 0.01em;
-    color: #000;
+    color: var(--text-black);
     font-weight: 600;
     font-size: 16px;
     line-height: 175%;
@@ -135,7 +135,7 @@
 
 .priceOld {
     margin: 0;
-    color: #000;
+    color: var(--text-black);
     line-height: 1;
     text-decoration: line-through;
 }
@@ -146,7 +146,7 @@
         font-weight: 400;
         font-size: 16px;
         text-decoration: line-through;
-        color: #000;
+        color: var(--text-black);
 }
 
 .priceOldCurrency {
@@ -159,7 +159,7 @@
     line-height: 1;
     text-align: right;
         letter-spacing: 0.01em;
-        color: #ce0e0e;
+        color: var(--discount);
 }
 
 .priceSaleValue {
@@ -181,11 +181,11 @@
     font-weight: 400;
     font-size: 14px;
     line-height: 143%;
-    color: #484848;
+    color: var(--stock);
 }
 
 .stockOut {
-    color: #2f2f2f;
+    color: var(--stock-out);
 }
 
 .arrowButton {
@@ -193,33 +193,33 @@
     height: 30px;
     padding: 4px 8px;
     border-radius: 4px;
-    background: #0E6C33;
+    background: var(--accept-button);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #ffffff;
+    color: var(--text);
     text-decoration: none;
     transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .arrowButton:hover {
-    background: #13833F;
+    background: var(--button-hover);
     transform: translateY(-1px);
 }
 
 .arrowButton:active {
-    background: #0B5328;
+    background: var(--button-active);
     transform: translateY(0);
 }
 
 .arrowButtonDisabled {
-    background: #45474f;
+    background: var(--btn-disabled);
 }
 
 .arrowButtonDisabled:hover,
 .arrowButtonDisabled:active {
-    background: #45474f;
+    background: var(--btn-disabled);
     transform: none;
 }
 
@@ -227,7 +227,7 @@
     width: 22px;
     height: 22px;
     display: block;
-    color: #ffffff;
+    color: var(--text);
     fill: currentColor;
 }
 

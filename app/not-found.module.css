@@ -1,5 +1,5 @@
 .page {
-    background: #181818;
+    background: var(--backgr);
     min-height: 100vh;
     padding-bottom: 88px;
 }
@@ -8,7 +8,7 @@
     position: relative;
     width: 100%;
     height: 783px;
-    background-color: #181818;
+    background-color: var(--backgr);
     overflow: hidden;
 }
 
@@ -58,12 +58,12 @@
     letter-spacing: 0.01em;
     font-size: 128px;
     line-height: 0.9;
-    color: #fff;
+    color: var(--text);
 }
 
 .title {
     margin: 0 0 16px;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 600;
     font-size: 48px;
@@ -73,7 +73,7 @@
 
 .text {
     margin: 0 0 24px;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
     font-size: 18px;
@@ -85,13 +85,13 @@
     height: 64px;
     border: none;
     border-radius: 16px;
-    background: #0e6c33;
+    background: var(--accept-button);
     padding: 20px 30px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    color: #ffffff;
+    color: var(--text);
     text-decoration: none;
     font-family: var(--font-family);
     cursor: pointer;
@@ -104,12 +104,12 @@
 
 .primaryButton:hover,
 .primaryButton:focus-visible {
-    background: #13833f;
+    background: var(--button-hover);
     transform: translateY(-1px);
 }
 
 .primaryButton:active {
-    background: #0b5328;
+    background: var(--button-active);
     transform: translateY(0);
 }
 
@@ -120,7 +120,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #ffffff;
+    color: var(--text);
     line-height: 1;
 }
 
@@ -143,7 +143,7 @@
         font-size: 36px;
         line-height: 131%;
         letter-spacing: 0.01em;
-        color: #fff;
+        color: var(--text);
 }
 
 .actionsGrid {
@@ -223,7 +223,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #0e6c33;
+    color: var(--accept-button);
     flex-shrink: 0;
 }
 
@@ -236,7 +236,7 @@
 
 .actionCardTitle {
     margin-bottom: 4px;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 600;
         font-size: 20px;
@@ -245,7 +245,7 @@
 
 .actionCardText {
     margin-bottom: 4px;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
         font-size: 14px;
@@ -260,7 +260,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #0e6c33;
+    color: var(--accept-button);
     line-height: 1;
     transition: color 0.2s ease, transform 0.2s ease;
 }
@@ -274,12 +274,12 @@
 
 .actionCard:hover .actionArrow,
 .actionCard:focus-visible .actionArrow {
-    color: #13833f;
+    color: var(--button-hover);
     transform: translateX(2px);
 }
 
 .actionCard:active .actionArrow {
-    color: #0b5328;
+    color: var(--button-active);
     transform: translateX(0);
 }
 

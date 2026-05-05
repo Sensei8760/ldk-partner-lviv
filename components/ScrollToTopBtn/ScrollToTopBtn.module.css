@@ -10,8 +10,8 @@
     justify-content: center;
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(6px);
-    border: 2px solid #0e6c33;
-    color: #ffffff;
+    border: 2px solid var(--accept-button);
+    color: var(--text);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     opacity: 0;
     transform: translateY(10px);
@@ -33,7 +33,7 @@
     position: absolute;
     inset: 0;
     border-radius: 6px;
-    background: #0e6c33;
+    background: var(--accept-button);
     transform: scale(var(--fillScale, 0.48));
     transform-origin: center;
     z-index: 0;
@@ -68,30 +68,30 @@
 
 @media (hover: hover) and (pointer: fine) {
 .btn:hover {
-        background: #0e6c33;
-        border-color: #4eb376;
-        color: #ffffff;
+        background: var(--accept-button);
+        border-color: var(--fill-components);
+        color: var(--text);
         transform: translateY(0) scale(1.5);
         box-shadow: 0 10px 28px rgba(14, 108, 51, 0.35);
     }
 
     .btn:hover::before {
         transform: scale(1);
-        background: #0e6c33;
+        background: var(--accept-button);
     }
 }
 
 .btn:focus-visible {
     outline: none;
-    border-color: #4eb376;
+    border-color: var(--fill-components);
     box-shadow: 0 0 0 3px rgba(78, 179, 118, 0.28);
     transform: translateY(0);
 }
 
 .btn:active {
     background: rgba(78, 179, 118, 0.14);
-    border-color: #0e6c33;
-    color: #000000;
+    border-color: var(--fill-components);
+    color: var(--text-black);
     transform: translateY(0) scale(1.45);
     box-shadow: 0 8px 24px rgba(14, 108, 51, 0.24);
 }

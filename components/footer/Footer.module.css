@@ -184,7 +184,7 @@
     width: 40px;
     height: 40px;
     border-radius: 5px;
-    background: #107c41;
+    background: var(--accept-button);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -194,18 +194,18 @@
 
 .socialLink:hover,
 .socialLink:focus-visible {
-    background-color: #13833f;
+    background-color: var(--button-hover);
     transform: translateY(-2px);
 }
 
 .socialLink:active {
-    background-color: #0b5328;
+    background-color: var(--button-active);
     transform: translateY(0);
 }
 
 .socialIcon {
     display: block;
-    color: #fff;
+    color: var(--text);
 }
 
 .telegramIcon {

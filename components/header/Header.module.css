@@ -1,7 +1,11 @@
 .header {
     width: 100%;
-    background-color: #050B09;
+    background-color: var(--back-black);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.section {
+    scroll-margin-top: 90px;
 }
 
 .container {
@@ -21,7 +25,7 @@
     justify-content: center;
     flex-shrink: 0;
     text-decoration: none;
-    color: #ffffff;
+    color: var(--text);
 }
 
 .logo {
@@ -40,7 +44,7 @@
 }
 
 .navLink {
-    color: #ffffff;
+    color: var(--text);
     text-decoration: none;
     transition: color 0.2s ease, opacity 0.2s ease;
     white-space: nowrap;
@@ -52,15 +56,15 @@
 
 .navLink:hover,
 .navLink:focus-visible {
-    color: #13833f;
+    color: var(--button-hover);
 }
 
 .navLink:active {
-    color: #0B5328;
+    color: var(--button-active);
 }
 
 .activeLink {
-    color: #13833f;
+    color: var(--button-hover);
 }
 
 @media (max-width: 1024px) {

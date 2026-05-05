@@ -1,6 +1,6 @@
 .section {
     width: 100%;
-    background-color: #181818;
+    background-color: var(--backgr);
     padding: 74px 0 74px;
 }
 
@@ -14,7 +14,7 @@
     padding-top: 7px;
     margin-bottom: 12px;
     text-align: center;
-    color: #fff;
+    color: var(--text);
     font-family: var(--second-family);
     font-weight: 600;
     letter-spacing: 0.01em;
@@ -25,7 +25,7 @@
 .subtitle {
     margin-bottom: 55px;
     text-align: center;
-    color: #fff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
     line-height: 125%;
@@ -96,13 +96,13 @@
 .icon {
     width: 100px;
     height: 100px;
-    fill: #4EB376;
-    color: #4EB376;
+    fill: var(--fill-components);
+    color: var(--fill-components);
 }
 
 .cardTitle {
     margin-bottom: 6px;
-    color: #fff;
+    color: var(--text);
     font-family: var(--second-family);
     line-height: 117%;
     letter-spacing: 0.01em;
@@ -112,7 +112,7 @@
 }
 
 .cardText {
-    color: #fff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
         font-size: 16px;

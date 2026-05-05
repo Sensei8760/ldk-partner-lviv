@@ -97,8 +97,8 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    background-color: #0E6C33;
-    color: #ffffff;
+    background-color: var(--accept-button);
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 500;
     transition: background-color 0.2s ease;
@@ -110,12 +110,12 @@
 
 .primaryButton:hover,
 .primaryButton:focus-visible {
-    background-color: #13833f;
+    background-color: var(--button-hover);
     transform: translateY(-2px);
 }
 
 .primaryButton:active {
-    background-color: #0b5328;
+    background-color: var(--button-active);
     transform: translateY(0);
 }
 

@@ -1,7 +1,28 @@
+'use client';
+
 import Link from 'next/link';
 import styles from './Header.module.css';
 
 export default function Header() {
+  const handleContactsClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (window.location.pathname !== '/') {
+      return;
+    }
+
+    event.preventDefault();
+
+    const contactsSection = document.getElementById('contacts');
+
+    if (contactsSection) {
+      contactsSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+
+      window.history.pushState(null, '', '/#contacts');
+    }
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -20,7 +41,11 @@ export default function Header() {
             Каталог
           </Link>
 
-          <Link href="/#contacts" className={styles.navLink}>
+          <Link
+            href="/#contacts"
+            className={styles.navLink}
+            onClick={handleContactsClick}
+          >
             Контакти
           </Link>
         </nav>

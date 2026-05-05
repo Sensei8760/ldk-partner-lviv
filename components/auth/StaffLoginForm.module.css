@@ -9,27 +9,27 @@
 
 .input {
     width: 100%;
-    border: 0.50px solid #303035;
+    border: 0.50px solid var(--border-gray);
         border-radius: 16px;
         padding: 10px 10px 10px 16px;
     outline: none;
-    background: #fff;
+    background: var(--text);
     font-family: var(--font-family);
         font-weight: 400;
         font-size: 16px;
         line-height: 150%;
-        color: #757575;
+        color: var(--back-login);
         height: 56px;
 }
 
 .input:focus {
-    border-color: #8a8a8a;
+    border-color: var(--border-focus);
 }
 
 .button {
     border: none;
-    background: #0e6c33;
-    color: #fff;
+    background: var(--accept-button);
+    color: var(--text);
     font-weight: 700;
     cursor: pointer;
     border-radius: 16px;
@@ -47,11 +47,11 @@
 }
 .button:hover,
 .button:focus-visible {
-    background-color: #13833f;
+    background-color: var(--button-hover);
 }
 
 .button:active {
-    background-color: #0b5328;
+    background-color: var(--button-active);
 }
 .button:disabled {
     opacity: 0.7;
@@ -60,6 +60,6 @@
 
 .error {
     margin: 0;
-    color: #d43b3b;
+    color: var(--discount);
     font-size: 13px;
 }

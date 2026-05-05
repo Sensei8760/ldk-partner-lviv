@@ -1,6 +1,6 @@
 .section {
     width: 100%;
-    background-color: #181818;
+    background-color: var(--backgr);
     padding: 74px 0 148px 0;
 }
 
@@ -66,7 +66,7 @@
 .title {
     width: 100%;
     margin: 0 0 40px;
-    color: #fff;
+    color: var(--text);
     font-family: var(--second-family);
     font-weight: 600;
     font-size: 36px;
@@ -119,7 +119,7 @@
 
 .label {
     margin: 0 0 2px;
-    color: #fff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
     font-size: 18px;
@@ -131,7 +131,7 @@
 .contactLink,
 .contactButton {
     margin: 0;
-    color: #fff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
     font-size: 18px;
@@ -171,13 +171,13 @@
 .contactButton:focus-visible,
 .interactiveLink:hover,
 .interactiveLink:focus-visible {
-    color: #4eb376;
+    color: var(--fill-components);
 }
 
 .contactLink:active,
 .contactButton:active,
 .interactiveLink:active {
-    color: #0b5328;
+    color: var(--button-active);
 }
 
 .copyStatus {
@@ -187,7 +187,7 @@
     margin-top: 6px;
     font-size: 14px;
     line-height: 1.3;
-    color: #4eb376;
+    color: var(--fill-components);
     white-space: nowrap;
     opacity: 0;
     transform: translateY(-2px);
@@ -211,7 +211,7 @@
     width: 40px;
     height: 40px;
     border-radius: 5px;
-    background: #107c41;
+    background: var(--accept-button);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -220,16 +220,16 @@
 
 .socialLink:hover,
 .socialLink:focus-visible {
-    background-color: #13833f;
+    background-color: var(--button-hover);
 }
 
 .socialLink:active {
-    background-color: #0b5328;
+    background-color: var(--button-active);
 }
 
 .socialIcon {
     display: block;
-    color: #fff;
+    color: var(--text);
 }
 .socialLink:hover {
     transform: translateY(-2px);

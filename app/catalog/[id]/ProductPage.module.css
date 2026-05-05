@@ -1,6 +1,6 @@
 .productPage {
     padding: 72px 20px 82px 20px;
-    background: #181818;
+    background: var(--backgr);
     min-height: 100vh;
 }
 
@@ -32,7 +32,7 @@
     position: relative;
     width: 100%;
     height: 543px;
-    background: #f1f1f1;
+    background: var(--back-gray);
     border-radius: 8px;
     overflow: hidden;
     border: none;
@@ -54,7 +54,7 @@
     height: 24px;
     border: none;
     background: transparent;
-    color: #111111;
+    color: var(--text-black);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -66,11 +66,11 @@
 }
 
 .galleryArrowOverlay:hover {
-    color: #13833f;
+    color: var(--button-hover);
 }
 
 .galleryArrowOverlay:active {
-    color: #0b5328;
+    color: var(--button-active);
     transform: translateY(-50%) scale(0.96);
 }
 
@@ -91,12 +91,12 @@
     grid-column: 1 / -1;
     margin: 0 0 24px;
     font-family: var(--font-family);
-    color: #ffffff;
+    color: var(--text);
         font-weight: 600;
         font-size: 40px;
         line-height: 130%;
         letter-spacing: 0.01em;
-        color: #fff;
+        color: var(--text);
 }
 
 .priceBlock {
@@ -114,7 +114,7 @@
         font-weight: 700;
         font-size: 32px;
         letter-spacing: 0.01em;
-        color: #fff;
+        color: var(--text);
 }
 
 .price span {
@@ -131,7 +131,7 @@
     font-family: var(--font-family);
         font-weight: 400;
         font-size: 15px;
-        color: #fff;
+        color: var(--text);
 }
 
 .oldPrice span {
@@ -146,7 +146,7 @@
     font-family: var(--font-family);
         font-size: 32px;
         letter-spacing: 0.01em;
-        color: #ce0e0e;
+        color: var(--discount);
 }
 
 .salePrice span {
@@ -162,7 +162,7 @@
         font-weight: 400;
         font-size: 14px;
         line-height: 143%;
-        color: #ebebeb;
+        color: var(--back-gray);
 }
 
 .stock span {
@@ -170,7 +170,7 @@
 }
 
 .stockEmpty {
-    color: #8a8a8a;
+    color: var(--border-focus);
     font-weight: 600;
 }
 
@@ -211,7 +211,7 @@
 }
 
 .sizeAvailabilityItem {
-    background: #303035;
+    background: var(--border-gray);
     border: none;
     border-radius: 14px;
     padding: 10px 24px;
@@ -230,7 +230,7 @@
     font-family: var(--font-family);
         font-size: 16px;
         line-height: 150%;
-        color: #fff;
+        color: var(--text);
 }
 
 .sizeAvailabilityStock {
@@ -240,7 +240,7 @@
         font-size: 16px;
         line-height: 131%;
         letter-spacing: 0.01em;
-        color: #fff;
+        color: var(--text);
 }
 
 .sizeAvailabilityStockOut {
@@ -255,12 +255,12 @@
         font-weight: 600;
         font-size: 20px;
         line-height: 140%;
-        color: #fff;
+        color: var(--text);
 }
 
 .characteristics {
     grid-column: 1 / -1;
-    background: #303035;
+    background: var(--border-gray);
     border: none;
     border-radius: 14px;
     padding: 24px;
@@ -273,7 +273,7 @@
         font-weight: 600;
         font-size: 20px;
         line-height: 140%;
-        color: #fff;
+        color: var(--text);
 }
 
 .characteristicsList {
@@ -288,7 +288,7 @@
 .characteristicItem {
     font-size: 12px;
     line-height: 1.35;
-    color: #ffffff;
+    color: var(--text);
 }
 
 .characteristicLabel {
@@ -296,14 +296,14 @@
         font-weight: 700;
         font-size: 16px;
         line-height: 150%;
-        color: #fff;
+        color: var(--text);
 }
 
 .characteristicValue {
     font-family: var(--font-family);
         font-size: 16px;
         line-height: 150%;
-        color: #fff;
+        color: var(--text);
         font-weight: 400;
 }
 
@@ -335,8 +335,8 @@
     height: 46px;
     border: none;
     border-radius: 50%;
-    background: #ffffff;
-    color: #111111;
+    background: var(--text);
+    color: var(--text-black);
     font-size: 22px;
     cursor: pointer;
     z-index: 3;
@@ -347,7 +347,7 @@
     width: 100%;
     max-width: 900px;
     aspect-ratio: 1 / 1;
-    background: #ffffff;
+    background: var(--text);
     border-radius: 20px;
     overflow: hidden;
 }
@@ -366,7 +366,7 @@
     border: none;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.92);
-    color: #111111;
+    color: var(--text-black);
     cursor: pointer;
     z-index: 2;
     display: inline-flex;
@@ -377,12 +377,12 @@
 }
 
 .zoomArrow:hover {
-    color: #13833f;
-    background: #ffffff;
+    color: var(--button-hover);
+    background: var(--text);
 }
 
 .zoomArrow:active {
-    color: #0b5328;
+    color: var(--button-active);
     transform: translateY(-50%) scale(0.96);
 }
 
@@ -415,7 +415,7 @@
     height: 12px;
     border: none;
     border-radius: 50%;
-    background: #d9d9d9;
+    background: var(--gray-btn);
     cursor: pointer;
     padding: 0;
     transition: transform 0.2s ease, background 0.2s ease;
@@ -423,11 +423,11 @@
 
 .galleryDot:hover {
     transform: scale(1.08);
-    background: #13833f;
+    background: var(--button-hover);
 }
 
 .galleryDotActive {
-    background: #0b5328;
+    background: var(--button-active);
     transform: scale(1.08);
 }
 
