@@ -23,7 +23,7 @@
 }
 
 .input:focus {
-    border-color: var(--border-focus);
+    border: 1px solid var(--accept-button);
 }
 
 .button {

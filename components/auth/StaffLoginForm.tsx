@@ -38,7 +38,7 @@ export default function StaffLoginForm({ compact = false, onSuccess }: Props) {
     }
 
     if (result.error) {
-      setErrorText('Невірний логін або пароль.');
+      setErrorText('Неправильний логін або пароль.');
       return;
     }
 

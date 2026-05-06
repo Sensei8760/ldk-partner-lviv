@@ -61,6 +61,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
@@ -75,6 +78,18 @@ export default function RootLayout({
       className={`${inter.variable} ${playfairDisplay.variable}`}
     >
       <body>
+        <script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'LDK Partner Львів',
+      alternateName: 'LDK Partner',
+      url: 'https://ldk-partner-lviv.vercel.app',
+    }).replace(/</g, '\\u003c'),
+  }}
+/>
         <Header />
         <main>
           {children}
