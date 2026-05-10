@@ -12,6 +12,7 @@ import {
   type ProductOpening,
   type ProductSize,
   type ProductSizeStock,
+  type ProductUpsertInput,
   updateProduct,
 } from '@/lib/products';
 
@@ -96,6 +97,59 @@ type StoredProductImageRecord = {
 };
 
 type AuditAction = 'created' | 'updated' | 'deleted';
+
+type StyleCharacteristicPresetRow = {
+  style: string;
+  characteristics: ProductCharacteristic[];
+  updated_at: string;
+  updated_by_name: string | null;
+  updated_by_email: string | null;
+};
+
+function unauthorizedResponse() {
+  return NextResponse.json({ message: 'Потрібна авторизація.' }, { status: 401 });
+}
+
+function revalidateProductsCache(productId?: string) {
+  revalidateTag('products', 'max');
+  revalidatePath('/catalog');
+  revalidatePath('/admin');
+
+  if (productId) {
+    revalidatePath(`/catalog/${productId}`);
+  }
+}
+
+async function createAuditLog(params: {
+  action: AuditAction;
+  productSlug: string | null;
+  productTitle: string;
+  actorName?: string | null;
+  actorEmail?: string | null;
+  actorRole?: string | null;
+  details?: string[];
+}) {
+  await sql`
+    INSERT INTO product_audit_logs (
+      action,
+      product_slug,
+      product_title,
+      actor_name,
+      actor_email,
+      actor_role,
+      details
+    )
+    VALUES (
+      ${params.action},
+      ${params.productSlug},
+      ${params.productTitle},
+      ${params.actorName ?? null},
+      ${params.actorEmail ?? null},
+      ${params.actorRole ?? null},
+      ${params.details ?? []}
+    )
+  `;
+}
 
 function formatValue(value: string | number | boolean | null | undefined) {
   if (value === null || value === undefined || value === '') {
@@ -215,49 +269,66 @@ function buildUpdateDetails(
   return details.length > 0 ? details : ['Без помітних змін'];
 }
 
-function unauthorizedResponse() {
-  return NextResponse.json({ message: 'Потрібна авторизація.' }, { status: 401 });
+function sanitizePresetCharacteristics(
+  characteristics: ProductCharacteristic[]
+): ProductCharacteristic[] {
+  return characteristics
+    .map((item) => ({
+      label: String(item.label || '').trim(),
+      value: String(item.value || '').trim(),
+    }))
+    .filter(
+      (item) =>
+        item.label &&
+        item.value &&
+        CHARACTERISTIC_LABELS.includes(
+          item.label as (typeof CHARACTERISTIC_LABELS)[number]
+        )
+    );
 }
 
-function revalidateProductsCache(productId?: string) {
-  revalidateTag('products', 'max');
-  revalidatePath('/catalog');
-  revalidatePath('/admin');
-
-  if (productId) {
-    revalidatePath(`/catalog/${productId}`);
-  }
-}
-
-async function createAuditLog(params: {
-  action: AuditAction;
-  productSlug: string | null;
-  productTitle: string;
+async function saveStyleCharacteristicPresets(params: {
+  styles: string[];
+  characteristics: ProductCharacteristic[];
   actorName?: string | null;
   actorEmail?: string | null;
-  actorRole?: string | null;
-  details?: string[];
 }) {
-  await sql`
-    INSERT INTO product_audit_logs (
-      action,
-      product_slug,
-      product_title,
-      actor_name,
-      actor_email,
-      actor_role,
-      details
-    )
-    VALUES (
-      ${params.action},
-      ${params.productSlug},
-      ${params.productTitle},
-      ${params.actorName ?? null},
-      ${params.actorEmail ?? null},
-      ${params.actorRole ?? null},
-      ${params.details ?? []}
-    )
-  `;
+  const normalizedStyles = uniqueStrings(
+    params.styles.map((item) => item.trim()).filter(Boolean)
+  );
+
+  const normalizedCharacteristics = sanitizePresetCharacteristics(
+    params.characteristics
+  );
+
+  if (normalizedStyles.length === 0 || normalizedCharacteristics.length === 0) {
+    return;
+  }
+
+  for (const style of normalizedStyles) {
+    await sql`
+      INSERT INTO style_characteristic_presets (
+        style,
+        characteristics,
+        updated_by_name,
+        updated_by_email,
+        updated_at
+      )
+      VALUES (
+        ${style},
+        ${JSON.stringify(normalizedCharacteristics)},
+        ${params.actorName ?? null},
+        ${params.actorEmail ?? null},
+        NOW()
+      )
+      ON CONFLICT (style)
+      DO UPDATE SET
+        characteristics = EXCLUDED.characteristics,
+        updated_by_name = EXCLUDED.updated_by_name,
+        updated_by_email = EXCLUDED.updated_by_email,
+        updated_at = NOW()
+    `;
+  }
 }
 
 function uniqueStrings<T extends string>(values: T[]) {
@@ -483,7 +554,7 @@ function validateAndNormalizeProduct(
     requireFrontImage?: boolean;
   }
 ):
-  | { success: true; data: Omit<Parameters<typeof createProduct>[0], never> }
+  | { success: true; data: ProductUpsertInput }
   | { success: false; errors: ValidationErrors } {
   const errors: ValidationErrors = {};
 
@@ -742,9 +813,31 @@ async function setStoredProductImageFileIds(
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const includeStylePresets = searchParams.get('includeStylePresets') === 'true';
+
   const products = await getProducts();
-  return NextResponse.json({ products });
+
+  if (!includeStylePresets) {
+    return NextResponse.json({ products });
+  }
+
+  const presetRows = (await sql`
+    SELECT
+      style,
+      characteristics,
+      updated_at,
+      updated_by_name,
+      updated_by_email
+    FROM style_characteristic_presets
+    ORDER BY style ASC
+  `) as StyleCharacteristicPresetRow[];
+
+  return NextResponse.json({
+    products,
+    stylePresets: presetRows,
+  });
 }
 
 export async function POST(request: Request) {
@@ -835,16 +928,23 @@ export async function POST(request: Request) {
       ]);
     }
 
+    await saveStyleCharacteristicPresets({
+      styles: product.styles,
+      characteristics: product.characteristics,
+      actorName: session.user.name ?? null,
+      actorEmail: session.user.email ?? null,
+    });
+
     await createAuditLog({
-  action: 'created',
-  productSlug: product.id,
-  productTitle: product.title,
-  actorName: session.user.name ?? null,
-  actorEmail: session.user.email ?? null,
-  actorRole:
-    typeof session.user.role === 'string' ? session.user.role : null,
-  details: ['Створено новий товар'],
-});
+      action: 'created',
+      productSlug: product.id,
+      productTitle: product.title,
+      actorName: session.user.name ?? null,
+      actorEmail: session.user.email ?? null,
+      actorRole:
+        typeof session.user.role === 'string' ? session.user.role : null,
+      details: ['Створено новий товар'],
+    });
 
     revalidateProductsCache(product.id);
 
@@ -995,6 +1095,8 @@ export async function PATCH(request: Request) {
       );
     }
 
+    const safeUpdatedProduct = updatedProduct;
+
     const nextFrontFileId =
       uploadedFront?.fileId ??
       (imageFront && imageFront === currentFrontStored?.imageUrl
@@ -1034,20 +1136,27 @@ export async function PATCH(request: Request) {
 
     await Promise.all(removedFileIds.map((fileId) => deleteImageKitFile(fileId)));
 
+    await saveStyleCharacteristicPresets({
+      styles: safeUpdatedProduct.styles,
+      characteristics: safeUpdatedProduct.characteristics,
+      actorName: session.user.name ?? null,
+      actorEmail: session.user.email ?? null,
+    });
+
     await createAuditLog({
-  action: 'updated',
-  productSlug: updatedProduct.id,
-  productTitle: updatedProduct.title,
-  actorName: session.user.name ?? null,
-  actorEmail: session.user.email ?? null,
-  actorRole:
-    typeof session.user.role === 'string' ? session.user.role : null,
-  details: buildUpdateDetails(currentProduct, updatedProduct),
-});
+      action: 'updated',
+      productSlug: safeUpdatedProduct.id,
+      productTitle: safeUpdatedProduct.title,
+      actorName: session.user.name ?? null,
+      actorEmail: session.user.email ?? null,
+      actorRole:
+        typeof session.user.role === 'string' ? session.user.role : null,
+      details: buildUpdateDetails(currentProduct, safeUpdatedProduct),
+    });
 
     revalidateProductsCache(id);
 
-    return NextResponse.json({ ok: true, product: updatedProduct });
+    return NextResponse.json({ ok: true, product: safeUpdatedProduct });
   } catch (error) {
     await Promise.all([
       deleteImageKitFile(uploadedFront?.fileId),
@@ -1112,15 +1221,15 @@ export async function DELETE(request: Request) {
     await Promise.all(fileIdsToDelete.map((fileId) => deleteImageKitFile(fileId)));
 
     await createAuditLog({
-  action: 'deleted',
-  productSlug: currentProduct.id,
-  productTitle: currentProduct.title,
-  actorName: session.user.name ?? null,
-  actorEmail: session.user.email ?? null,
-  actorRole:
-    typeof session.user.role === 'string' ? session.user.role : null,
-  details: ['Товар видалено'],
-});
+      action: 'deleted',
+      productSlug: currentProduct.id,
+      productTitle: currentProduct.title,
+      actorName: session.user.name ?? null,
+      actorEmail: session.user.email ?? null,
+      actorRole:
+        typeof session.user.role === 'string' ? session.user.role : null,
+      details: ['Товар видалено'],
+    });
 
     revalidateProductsCache(id);
 

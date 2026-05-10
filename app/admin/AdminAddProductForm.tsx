@@ -26,7 +26,9 @@ const styleOptions = [
   'Протипожежні + Економ + Епік',
   'РОЗПРОДАЖ',
   'РОЗПРОДАЖ Преміум NEW',
-];
+] as const;
+
+const styleOptionsList: readonly string[] = styleOptions;
 
 const doorTypeOptions = [
   { id: 'interior', label: 'Міжкімнатні' },
@@ -137,6 +139,14 @@ type FormErrors = Partial<{
   general: string;
 }>;
 
+type StylePreset = {
+  style: string;
+  characteristics: CharacteristicField[];
+  updated_at?: string;
+  updated_by_name?: string | null;
+  updated_by_email?: string | null;
+};
+
 function createEmptyCharacteristics(): CharacteristicField[] {
   return characteristicLabels.map((label) => ({
     label,
@@ -179,6 +189,33 @@ function mapCharacteristicsToFields(
 
     return {
       label,
+      value: found?.value || '',
+    };
+  });
+}
+
+function mapPresetCharacteristicsToFields(
+  characteristics: { label: string; value: string }[]
+): CharacteristicField[] {
+  return characteristicLabels.map((label) => {
+    const found = characteristics.find((item) => item.label === label);
+
+    return {
+      label,
+      value: found?.value || '',
+    };
+  });
+}
+
+function applyStylePresetToCharacteristics(
+  current: CharacteristicField[],
+  preset: CharacteristicField[]
+) {
+  return current.map((field) => {
+    const found = preset.find((item) => item.label === field.label);
+
+    return {
+      ...field,
       value: found?.value || '',
     };
   });
@@ -356,7 +393,7 @@ function validateForm(form: FormState): FormErrors {
     errors.doorType = 'Оберіть тип дверей.';
   }
 
-  const invalidStyles = form.styles.filter((style) => !styleOptions.includes(style));
+  const invalidStyles = form.styles.filter((style) => !styleOptionsList.includes(style));
   if (invalidStyles.length > 0) {
     errors.styles = 'Обрано некоректний стиль.';
   }
@@ -482,6 +519,7 @@ export default function AdminAddProductForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [stylePresets, setStylePresets] = useState<StylePreset[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [productsLoadError, setProductsLoadError] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -534,7 +572,7 @@ export default function AdminAddProductForm() {
         setIsLoadingProducts(true);
         setProductsLoadError('');
 
-        const response = await fetch('/api/products', {
+        const response = await fetch('/api/products?includeStylePresets=true', {
           method: 'GET',
           cache: 'no-store',
         });
@@ -545,10 +583,31 @@ export default function AdminAddProductForm() {
 
         const data = await response.json();
         const loadedProducts = Array.isArray(data.products) ? data.products : [];
+        const loadedPresets = Array.isArray(data.stylePresets)
+          ? data.stylePresets.map(
+              (preset: {
+                style: string;
+                characteristics: { label: string; value: string }[];
+                updated_at?: string;
+                updated_by_name?: string | null;
+                updated_by_email?: string | null;
+              }) => ({
+                style: String(preset.style || '').trim(),
+                characteristics: mapPresetCharacteristicsToFields(
+                  Array.isArray(preset.characteristics) ? preset.characteristics : []
+                ),
+                updated_at: preset.updated_at,
+                updated_by_name: preset.updated_by_name ?? null,
+                updated_by_email: preset.updated_by_email ?? null,
+              })
+            )
+          : [];
 
         setProducts(loadedProducts);
+        setStylePresets(loadedPresets);
       } catch {
         setProducts([]);
+        setStylePresets([]);
         setProductsLoadError('Не вдалося завантажити список товарів. Спробуйте ще раз.');
 
         if (showErrorToast) {
@@ -596,17 +655,44 @@ export default function AdminAddProductForm() {
 
   function handleToggleStyle(style: string) {
     setForm((prev) => {
-      const nextStyles = prev.styles.includes(style)
+      const alreadySelected = prev.styles.includes(style);
+      const nextStyles = alreadySelected
         ? prev.styles.filter((item) => item !== style)
         : [...prev.styles, style];
+
+      if (alreadySelected) {
+        return {
+          ...prev,
+          styles: nextStyles,
+        };
+      }
+
+      const preset = stylePresets.find((preset: StylePreset) => preset.style === style);
+
+      if (!preset) {
+        return {
+          ...prev,
+          styles: nextStyles,
+        };
+      }
 
       return {
         ...prev,
         styles: nextStyles,
+        characteristics: applyStylePresetToCharacteristics(
+          prev.characteristics,
+          preset.characteristics
+        ),
       };
     });
 
     clearFieldError('styles');
+    clearFieldError('characteristics');
+
+    const preset = stylePresets.find((preset: StylePreset) => preset.style === style);
+    if (preset) {
+      triggerToast(`Підтягнуто останні характеристики для стилю "${style}".`, 'success');
+    }
   }
 
   function handleToggleSize(size: ProductSize) {
