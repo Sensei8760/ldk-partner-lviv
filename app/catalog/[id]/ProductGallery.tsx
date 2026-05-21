@@ -100,7 +100,7 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
   alt={title}
   fill
   className={styles.zoomImage}
-  sizes="(max-width: 768px) 100vw, 90vw"
+  sizes="(max-width: 768px) 100vw, 600px"
   onError={() => {
     const originalSrc = safeImages[normalizedIndex];
     if (originalSrc && originalSrc !== FALLBACK_PRODUCT_IMAGE) {
@@ -202,7 +202,7 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
                 alt={title}
                 fill
                 className={styles.zoomImage}
-                sizes="100vw"
+                sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 onError={() => {
                   const originalSrc = safeImages[normalizedIndex];
                   if (originalSrc && originalSrc !== FALLBACK_PRODUCT_IMAGE) {

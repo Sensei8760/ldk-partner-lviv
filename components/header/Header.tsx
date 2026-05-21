@@ -1,9 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styles from './Header.module.css';
 
 export default function Header() {
+  const pathname = usePathname();
+
   const handleContactsClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (window.location.pathname !== '/') {
       return;
@@ -23,6 +26,15 @@ export default function Header() {
     }
   };
 
+  const getLinkClassName = (href: string) => {
+    const isActive =
+      href === '/'
+        ? pathname === '/'
+        : pathname === href || pathname.startsWith(`${href}/`);
+
+    return `${styles.navLink} ${isActive ? styles.activeLink : ''}`;
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -33,11 +45,15 @@ export default function Header() {
         </Link>
 
         <nav className={styles.nav} aria-label="Основна навігація">
-          <Link href="/about-us" className={styles.navLink}>
+          <Link href="/" className={getLinkClassName('/')}>
+            Головна
+          </Link>
+
+          <Link href="/about-us" className={getLinkClassName('/about-us')}>
             Про нас
           </Link>
 
-          <Link href="/catalog" className={styles.navLink}>
+          <Link href="/catalog" className={getLinkClassName('/catalog')}>
             Каталог
           </Link>
 

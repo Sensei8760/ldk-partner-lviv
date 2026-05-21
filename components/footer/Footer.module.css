@@ -1,17 +1,17 @@
 .footer {
-    background: #040909;
-    color: #ffffff;
+    background: var(--back-black);
+    color: var(--text);
     padding: 48px 0 40px;
 }
 
 .container {
     max-width: 1440px;
     margin: 0 auto;
-    padding: 0 100px;
+    padding: 0 50px;
     display: grid;
     grid-template-columns: 114px minmax(0, 1fr);
     align-items: start;
-    gap: 187px;
+    gap: 278px;
 }
 
 .logoBlock {
@@ -32,7 +32,7 @@
 .logo {
     width: 103px;
     height: 76px;
-    fill: #ffffff;
+    fill: var(--text);
     flex-shrink: 0;
 }
 
@@ -43,7 +43,7 @@
     line-height: 182%;
         font-weight: 100;
         text-align: center;
-        color: #fff;
+        color: var(--text);
 }
 
 .content {
@@ -65,9 +65,9 @@
 .title,
 .titleLink {
     margin: 0 0 12px;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
-    font-weight: 600;
+    font-weight: 700;
     font-size: 16px;
     line-height: 150%;
     text-decoration: none;
@@ -79,11 +79,11 @@
 
 .titleLink:hover,
 .titleLink:focus-visible {
-    color: #4eb376;
+    color: var(--button-hover);
 }
 
 .titleLink:active {
-    color: #0b5328;
+    color: var(--button-active);
 }
 
 .list {
@@ -96,7 +96,7 @@
 .text,
 .emailButton {
     margin: 0;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
     font-size: 14px;
@@ -116,11 +116,11 @@
 
 .link:hover,
 .link:focus-visible {
-    color: #4eb376;
+    color: var(--button-hover);
 }
 
 .link:active {
-    color: #0b5328;
+    color: var(--button-active);
 }
 
 .contacts {
@@ -147,11 +147,11 @@
 
 .emailButton:hover,
 .emailButton:focus-visible {
-    color: #4eb376;
+    color: var(--button-hover);
 }
 
 .emailButton:active {
-    color: #0b5328;
+    color: var(--button-active);
 }
 
 .copyStatus {
@@ -161,7 +161,7 @@
     margin-top: 6px;
     font-size: 13px;
     line-height: 1.3;
-    color: #4eb376;
+    color: var(--fill-components);
     white-space: nowrap;
     opacity: 0;
     transform: translateY(-2px);
@@ -175,8 +175,10 @@
 }
 
 .socials {
+    width: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 16px;
 }
 
