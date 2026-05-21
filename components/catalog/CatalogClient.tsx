@@ -61,17 +61,9 @@ type OpeningValue = (typeof openingItems)[number]['id'];
 type SizeValue = (typeof sizeItems)[number]['id'];
 
 function getProductTypesFromQuery(type: string | null): ProductTypeValue[] {
-  if (type === 'entrance') {
-    return ['entrance'];
-  }
-
-  if (type === 'interior') {
-    return ['interior'];
-  }
-
-  if (type === 'sale') {
-    return ['sale'];
-  }
+  if (type === 'entrance') return ['entrance'];
+  if (type === 'interior') return ['interior'];
+  if (type === 'sale') return ['sale'];
 
   return [];
 }
@@ -208,6 +200,10 @@ export default function CatalogClient({
 
   const products = initialProducts;
 
+  const productIds = useMemo(() => {
+    return new Set(products.map((product) => product.id));
+  }, [products]);
+
   const priceBounds = useMemo(() => {
     if (products.length === 0) {
       return { min: 0, max: 0 };
@@ -229,8 +225,8 @@ export default function CatalogClient({
 
   const [showAllStyles, setShowAllStyles] = useState(false);
   const [selectedProductTypes, setSelectedProductTypes] = useState<ProductTypeValue[]>(
-  () => getProductTypesFromQuery(productTypeFromUrl)
-);
+    () => getProductTypesFromQuery(productTypeFromUrl)
+  );
   const [selectedInstallPlaces, setSelectedInstallPlaces] = useState<InstallPlaceValue[]>([]);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [selectedOpenings, setSelectedOpenings] = useState<OpeningValue[]>([]);
@@ -248,6 +244,10 @@ export default function CatalogClient({
 
   const sortDropdownRef = useRef<HTMLDivElement | null>(null);
 
+  const validFavoriteIds = useMemo(() => {
+    return favoriteIds.filter((id) => productIds.has(id));
+  }, [favoriteIds, productIds]);
+
   useEffect(() => {
     const syncFavorites = () => {
       setFavoriteIds(getFavoriteIds());
@@ -263,6 +263,7 @@ export default function CatalogClient({
       window.removeEventListener('storage', syncFavorites);
     };
   }, []);
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -294,24 +295,24 @@ export default function CatalogClient({
   };
 
   const resetAllFilters = () => {
-  setSelectedProductTypes([]);
-  setSelectedInstallPlaces([]);
-  setSelectedStyles([]);
-  setSelectedOpenings([]);
-  setSelectedSizes([]);
+    setSelectedProductTypes([]);
+    setSelectedInstallPlaces([]);
+    setSelectedStyles([]);
+    setSelectedOpenings([]);
+    setSelectedSizes([]);
 
-  setPriceFrom(priceBounds.min);
-  setPriceTo(priceBounds.max);
-  setPriceFromInput(String(priceBounds.min));
-  setPriceToInput(String(priceBounds.max));
+    setPriceFrom(priceBounds.min);
+    setPriceTo(priceBounds.max);
+    setPriceFromInput(String(priceBounds.min));
+    setPriceToInput(String(priceBounds.max));
 
-  setSearchQuery('');
-  setShowOnlyFavorites(false);
-  setShowAllStyles(false);
-  setSortBy('price-asc');
+    setSearchQuery('');
+    setShowOnlyFavorites(false);
+    setShowAllStyles(false);
+    setSortBy('price-asc');
 
-  resetVisibleCount();
-};
+    resetVisibleCount();
+  };
 
   const handleSortSelect = (value: SortValue) => {
     setSortBy(value);
@@ -327,12 +328,12 @@ export default function CatalogClient({
     sortOptions.find((option) => option.value === sortBy) ?? sortOptions[0];
 
   const productTypeCounts = useMemo(() => {
-  return {
-    interior: products.filter((product) => getProductType(product) === 'interior').length,
-    entrance: products.filter((product) => getProductType(product) === 'entrance').length,
-    sale: products.filter((product) => hasDiscount(product)).length,
-  };
-}, [products]);
+    return {
+      interior: products.filter((product) => getProductType(product) === 'interior').length,
+      entrance: products.filter((product) => getProductType(product) === 'entrance').length,
+      sale: products.filter((product) => hasDiscount(product)).length,
+    };
+  }, [products]);
 
   const installPlaceCounts = useMemo(() => {
     return {
@@ -379,14 +380,14 @@ export default function CatalogClient({
       const currentPrice = getDisplayPrice(product);
 
       const matchesProductType =
-  selectedProductTypes.length === 0 ||
-  selectedProductTypes.some((type) => {
-    if (type === 'sale') {
-      return hasDiscount(product);
-    }
+        selectedProductTypes.length === 0 ||
+        selectedProductTypes.some((type) => {
+          if (type === 'sale') {
+            return hasDiscount(product);
+          }
 
-    return productType === type;
-  });
+          return productType === type;
+        });
 
       const matchesInstallPlace =
         selectedInstallPlaces.length === 0 ||
@@ -420,7 +421,7 @@ export default function CatalogClient({
         product.title.toLowerCase().includes(normalizedSearch);
 
       const matchesFavorites =
-        !showOnlyFavorites || favoriteIds.includes(product.id);
+        !showOnlyFavorites || validFavoriteIds.includes(product.id);
 
       return (
         matchesProductType &&
@@ -459,7 +460,7 @@ export default function CatalogClient({
     priceTo,
     searchQuery,
     showOnlyFavorites,
-    favoriteIds,
+    validFavoriteIds,
     sortBy,
   ]);
 
@@ -467,16 +468,16 @@ export default function CatalogClient({
   const hasMoreProducts = visibleProductsCount < filteredProducts.length;
   const hasProducts = products.length > 0;
 
-const hasActiveFilters =
-  selectedProductTypes.length > 0 ||
-  selectedInstallPlaces.length > 0 ||
-  selectedStyles.length > 0 ||
-  selectedOpenings.length > 0 ||
-  selectedSizes.length > 0 ||
-  priceFrom !== priceBounds.min ||
-  priceTo !== priceBounds.max ||
-  searchQuery.trim().length > 0 ||
-  showOnlyFavorites;
+  const hasActiveFilters =
+    selectedProductTypes.length > 0 ||
+    selectedInstallPlaces.length > 0 ||
+    selectedStyles.length > 0 ||
+    selectedOpenings.length > 0 ||
+    selectedSizes.length > 0 ||
+    priceFrom !== priceBounds.min ||
+    priceTo !== priceBounds.max ||
+    searchQuery.trim().length > 0 ||
+    showOnlyFavorites;
 
   const handleToggleProductType = (id: ProductTypeValue) => {
     setSelectedProductTypes((prev) =>
@@ -916,49 +917,49 @@ const hasActiveFilters =
             </div>
 
             <button
-  type="button"
-  className={`${styles.favoriteFilterButton} ${
-    showOnlyFavorites ? styles.favoriteFilterButtonActive : ''
-  }`}
-  onClick={() => {
-    setShowOnlyFavorites((prev) => !prev);
-    resetVisibleCount();
-  }}
-  aria-label="Показати збережені двері"
-  title="Показати збережені двері"
->
-  <span className={styles.favoriteFilterLabel}>
-    Збережені ({favoriteIds.length})
-  </span>
+              type="button"
+              className={`${styles.favoriteFilterButton} ${
+                showOnlyFavorites ? styles.favoriteFilterButtonActive : ''
+              }`}
+              onClick={() => {
+                setShowOnlyFavorites((prev) => !prev);
+                resetVisibleCount();
+              }}
+              aria-label="Показати збережені двері"
+              title="Показати збережені двері"
+            >
+              <span className={styles.favoriteFilterLabel}>
+                Збережені ({validFavoriteIds.length})
+              </span>
 
-  <span className={styles.favoriteFilterIcon} aria-hidden="true">
-    <svg className={styles.favoriteFilterIconSvg}>
-      <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
-    </svg>
-  </span>
-</button>
+              <span className={styles.favoriteFilterIcon} aria-hidden="true">
+                <svg className={styles.favoriteFilterIconSvg}>
+                  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
+                </svg>
+              </span>
+            </button>
           </div>
         </div>
 
         {filteredProducts.length === 0 ? (
-  <div className={styles.stateBox}>
-    <h2 className={styles.stateTitle}>Нічого не знайдено</h2>
+          <div className={styles.stateBox}>
+            <h2 className={styles.stateTitle}>Нічого не знайдено</h2>
 
-    <p className={styles.stateText}>
-      Спробуйте змінити параметри пошуку або скинути фільтри.
-    </p>
+            <p className={styles.stateText}>
+              Спробуйте змінити параметри пошуку або скинути фільтри.
+            </p>
 
-    {hasActiveFilters ? (
-      <button
-        type="button"
-        className={styles.resetFiltersButton}
-        onClick={resetAllFilters}
-      >
-        Скинути фільтри
-      </button>
-    ) : null}
-  </div>
-) : (
+            {hasActiveFilters ? (
+              <button
+                type="button"
+                className={styles.resetFiltersButton}
+                onClick={resetAllFilters}
+              >
+                Скинути фільтри
+              </button>
+            ) : null}
+          </div>
+        ) : (
           <>
             <div className={styles.grid}>
               {visibleProducts.map((product) => (
