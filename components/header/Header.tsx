@@ -33,7 +33,7 @@ export default function Header() {
         </Link>
 
         <nav className={styles.nav} aria-label="Основна навігація">
-          <Link href="/about" className={styles.navLink}>
+          <Link href="/about-us" className={styles.navLink}>
             Про нас
           </Link>
 
