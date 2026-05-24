@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import ScrollToTopBtn from '@/components/ScrollToTopBtn/ScrollToTopBtn';
+import MicrosoftClarity from '@/components/analytics/MicrosoftClarity';
 
 import Header from '@/components/header/Header';
 import Footer from '@/components/footer/Footer';
@@ -78,6 +79,7 @@ export default function RootLayout({
       className={`${inter.variable} ${playfairDisplay.variable}`}
     >
       <body>
+        <MicrosoftClarity />
         <script
   type="application/ld+json"
   dangerouslySetInnerHTML={{
