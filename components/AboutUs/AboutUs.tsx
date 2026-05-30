@@ -1,14 +1,23 @@
+'use client';
+
 import Image from 'next/image';
+import { useState } from 'react';
 import styles from './AboutUs.module.css';
 
 export default function AboutUs() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
         <div className={styles.content}>
           <h2 className={styles.title}>Про нас</h2>
 
-          <div className={styles.textBlock}>
+          <div
+            className={`${styles.textBlock} ${
+              isOpen ? styles.textBlockOpen : ''
+            }`}
+          >
             <p className={styles.text}>
               LDK Partner забезпечує повний цикл робіт із дверними рішеннями у
               Львові. Ми беремо на себе підбір, постачання, монтаж і сервісний
@@ -29,6 +38,23 @@ export default function AboutUs() {
               реалізації проєкту.
             </p>
           </div>
+
+          <button
+            type="button"
+            className={`${styles.moreButton} ${
+              isOpen ? styles.moreButtonOpen : ''
+            }`}
+            onClick={() => setIsOpen((prev) => !prev)}
+            aria-expanded={isOpen}
+          >
+            {isOpen ? 'Згорнути' : 'Детальніше'}
+
+            <span className={styles.moreIcon} aria-hidden="true">
+              <svg className={styles.moreIconSvg}>
+                <use href="/icons/symbol-defs.svg#arrow_back_ios_new" />
+              </svg>
+            </span>
+          </button>
         </div>
 
         <div className={styles.imageWrap}>

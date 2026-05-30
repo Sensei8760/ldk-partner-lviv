@@ -1,7 +1,7 @@
 .hero {
     position: relative;
     width: 100%;
-    background-color: #181818;
+    background-color: var(--backgr);
     overflow: hidden;
     padding-bottom: 74px;
 }
@@ -66,7 +66,7 @@
 .title {
     max-width: 668px;
     margin: 0 0 16px;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--second-family);
     font-weight: 600;
         font-size: 48px;
@@ -76,7 +76,7 @@
 
 .text {
     margin: 0 0 28px 48px;
-    color: #ffffff;
+    color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
     font-size: 28px;
@@ -119,157 +119,91 @@
     transform: translateY(0);
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 560px) {
+    .hero {
+        padding-bottom: 0;
+    }
+
     .inner {
-        height: 640px;
-        min-height: 640px;
-    }
-
-    .backgroundImage {
-        object-position: 62% center;
-    }
-
-    .content {
-        top: 154px;
-        width: 680px;
-        height: 325px;
-        padding: 46px 30px 34px 42px;
-    }
-
-    .title {
-        max-width: 610px;
-        font-size: 56px;
-    }
-
-    .text {
-        margin: 0 0 30px 48px;
-        font-size: 24px;
-    }
-
-    .actions {
-        margin-left: 170px;
-    }
-
-    .primaryButton {
-        width: 320px;
-        height: 68px;
-        font-size: 17px;
-        border-radius: 16px;
-    }
-}
-
-@media (max-width: 992px) {
-    .inner {
-        height: 580px;
-        min-height: 580px;
-    }
-
-    .backgroundImage {
-        object-position: 68% center;
-    }
-
-    .content {
-        top: 145px;
-        width: 600px;
-        height: 290px;
-        padding: 38px 26px 30px 34px;
-    }
-
-    .title {
-        max-width: 540px;
-        font-size: 46px;
-    }
-
-    .text {
-        margin: 0 0 26px 30px;
-        font-size: 22px;
-    }
-
-    .actions {
-        margin-left: 126px;
-    }
-
-    .primaryButton {
-        width: 290px;
-        height: 60px;
-        font-size: 16px;
-        border-radius: 14px;
-    }
-}
-
-@media (max-width: 768px) {
-    .inner {
-        height: 540px;
-        min-height: 540px;
-    }
-
-    .backgroundImage {
-        object-position: 74% center;
-    }
-
-    .content {
-        top: 138px;
-        width: calc(100% - 16px);
+        width: 100%;
+        max-width: 100%;
         height: auto;
-        min-height: 250px;
-        padding: 28px 20px 28px 24px;
-        border-radius: 0 18px 18px 0;
+        min-height: 356px;
+        overflow: hidden;
+    }
+
+    .imageLayer {
+        position: relative;
+        top: auto;
+        left: auto;
+        bottom: auto;
+        width: 100%;
+        height: 182px;
+        transform: none;
+        z-index: 0;
+    }
+
+        .backgroundImage {
+            object-fit: cover;
+            object-position: 100% top;
+        }
+
+    .content {
+        position: relative;
+        top: auto;
+        left: auto;
+        z-index: 2;
+        width: 100%;
+        height: auto;
+        min-height: 173px;
+        padding: 10px 19px 40px;
+        margin-top: -1px;
+        border-radius: 20px 20px 0 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .content::before {
+        display: none;
     }
 
     .title {
         max-width: 100%;
-        margin: 0 0 16px;
-        font-size: 36px;
-        line-height: 1.05;
+        margin: 0 0 10px;
+        font-family: var(--second-family);
+        font-weight: 600;
+        line-height: 130%;
+            font-size: 25px;
+            letter-spacing: 0.01em;
+            text-align: center;
     }
 
     .text {
-        margin: 0 0 24px;
-        font-size: 18px;
-        line-height: 1.2;
+        margin: 0 0 10px;
+        font-family: var(--font-family);
+        line-height: 120%;
+            font-weight: 400;
+            font-size: 16px;
+            text-align: center;
     }
 
     .actions {
+        display: flex;
+        justify-content: center;
         margin-left: 0;
     }
 
     .primaryButton {
-        width: 240px;
+        width: 233px;
         height: 52px;
-        padding: 0 18px;
-        font-size: 15px;
-        border-radius: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    .inner {
-        height: 500px;
-        min-height: 500px;
-    }
-
-    .backgroundImage {
-        object-position: 78% center;
-    }
-
-    .content {
-        top: 122px;
-        width: calc(100% - 8px);
-        min-height: 220px;
-        padding: 22px 16px 24px;
-    }
-
-    .title {
-        font-size: 30px;
-    }
-
-    .text {
-        margin-bottom: 20px;
-        font-size: 16px;
-    }
-
-    .primaryButton {
-        width: 100%;
-        height: 50px;
+        padding: 0 20px;
+        border-radius: 16px;
+        font-family: var(--font-family);
+        font-weight: 500;
+        text-align: center;
+            font-size: 16px;
+            line-height: 150%;
+            letter-spacing: 0.01em;
     }
 }

@@ -248,6 +248,27 @@
     height: 25px;
 }
 
+.socialButton {
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: var(--accept-button);
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+}
+
+.socialButton:hover,
+.socialButton:focus-visible {
+    background-color: var(--button-hover);
+}
+
+.socialButton:active {
+    background-color: var(--button-active);
+}
+
 .mapWrap {
     width: 634px;
     min-height: 613px;
@@ -263,103 +284,137 @@
     display: block;
 }
 
-@media (max-width: 1100px) {
-    .container {
-        grid-template-columns: 1fr;
-        gap: 32px;
-    }
-
-    .card {
-        min-height: auto;
-        padding: 36px 28px;
-    }
-
-    .mapWrap,
-    .mapFrame {
-        width: 100%;
-        min-height: 420px;
-    }
-}
-
-@media (max-width: 768px) {
+@media (max-width: 560px) {
     .section {
-        padding: 48px 0;
+        padding: 20px 0 40px;
     }
 
     .container {
+        width: 100%;
+        max-width: 100%;
         padding: 0 16px;
-        gap: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
     }
 
     .card {
-        padding: 28px 20px 32px;
+        width: 100%;
+        min-height: auto;
+        padding: 28px 0;
+        border-radius: 10px;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .card::before {
+        background: linear-gradient(180deg,
+                rgba(107, 79, 58, 0.9) 0%,
+                rgba(107, 79, 58, 0.55) 45%,
+                rgba(107, 79, 58, 0.28) 100%);
     }
 
     .title {
-        margin-bottom: 28px;
-        font-size: 32px;
+        margin: 0 0 20px;
+        font-family: var(--second-family);
+        font-weight: 600;
+        line-height: 130%;
+        letter-spacing: 0.01em;
+        text-align: center;
+            font-size: 22px;
     }
 
     .infoList {
-        width: 100%;
-        max-width: 320px;
-        gap: 24px;
-        margin: 0 auto 28px;
-        align-items: stretch;
+        width: fit-content;
+        max-width: 100%;
+        margin: 0 auto 20px;
+        gap: 14px;
+        align-items: flex-start;
     }
 
     .infoItem {
-        width: 100%;
-        grid-template-columns: 48px minmax(0, 1fr);
+        width: fit-content;
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: 32px minmax(0, 1fr);
         column-gap: 12px;
-        align-items: start;
+        align-items: center;
     }
 
     .iconCircle {
-        width: 48px;
-        height: 48px;
+        
+        display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
     }
 
     .infoIcon {
-        width: 22px;
-        height: 22px;
+        width: 40px;
+        height: 40px;
     }
 
     .infoContent {
         width: auto;
-        padding-top: 2px;
+        padding-top: 0;
     }
 
-    .label,
+    .label {
+        margin: 0;
+        font-family: var(--font-family);
+        font-weight: 400;
+        letter-spacing: 0.01em;
+            font-size: 14px;
+            line-height: 136%;
+    }
+
     .text,
     .contactLink,
     .contactButton {
-        font-size: 16px;
+        font-family: var(--font-family);
+        font-weight: 400;
+        letter-spacing: 0.01em;
+            font-size: 14px;
+            line-height: 136%;
     }
 
-    .mapWrap,
-    .mapFrame {
-        min-height: 320px;
-    }
-}
-
-@media (max-width: 480px) {
-    .title {
-        font-size: 28px;
+    .copyStatus {
+        font-size: 12px;
     }
 
     .socials {
-        gap: 16px;
+        gap: 20px;
     }
-}
-.socialButton {
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
 
-.socialButton {
-    border: none;
-    padding: 0;
-    cursor: pointer;
+    .socialLink {
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+    }
+
+    .telegramIcon {
+        width: 19px;
+        height: 18px;
+    }
+
+    .viberIcon {
+        width: 19px;
+        height: 21px;
+    }
+
+    .mapWrap {
+        width: 100%;
+        height: 225px;
+        min-height: 225px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .mapFrame {
+        width: 100%;
+        height: 225px;
+        min-height: 225px;
+        border: 0;
+        display: block;
+    }
 }
