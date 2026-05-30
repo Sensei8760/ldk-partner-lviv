@@ -21,6 +21,7 @@
   --border-gray: #303035;
   --back-login: #757575;
   --border-focus: #8a8a8a;
+  --choco: #A57755;
 }
 
 @media (prefers-color-scheme: dark) {

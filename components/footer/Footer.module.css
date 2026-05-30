@@ -224,9 +224,16 @@
     padding: 0;
     cursor: pointer;
 }
+.mobileAccordionButton {
+    display: none;
+}
+
+.accordionContent {
+    display: block;
+}
 @media (max-width: 560px) {
     .footer {
-        padding: 24px 34px;
+        padding: 24px 16px;
     }
 
     .container {
@@ -235,59 +242,115 @@
         padding: 0;
         display: flex;
         flex-direction: column;
-        gap: 0;
         align-items: stretch;
+        gap: 0;
     }
 
     .content {
-        display: grid;
-        grid-template-columns: max-content max-content;
-        column-gap: 29px;
-        row-gap: 24px;
-        justify-content: center;
-        align-items: start;
         order: 1;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
     }
 
     .column {
-        align-items: flex-start;
+        width: 100%;
+        min-width: 0;
+        padding: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .title,
-    .titleLink {
-        margin: 0 0 6px;
+    .desktopTitle {
+        display: none;
+    }
+
+    .mobileAccordionButton {
+        width: 100%;
+        min-height: 60px;
+        padding: 0 10px;
+        border: none;
+        background: transparent;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
         font-family: var(--font-family);
         font-weight: 700;
-        line-height: 143%;
-            font-size: 14px;
+        font-size: 14px;
+        line-height: 140%;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .mobileAccordionIcon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        fill: currentColor;
+        transform: rotate(-90deg);
+        transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .mobileAccordionIconOpen {
+        transform: rotate(90deg);
+        color: var(--accept-button);
+    }
+
+        .accordionContent {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 12px;
+            opacity: 0;
+            transition: max-height 0.25s ease, opacity 0.2s ease;
+        }
+    
+        .accordionContentOpen {
+            max-height: 240px;
+            padding-bottom: 18px;
+            opacity: 1;
+        }
+
+    .list {
+        margin: 0;
+        padding: 0;
+    }
+
+    .list li+li,
+    .contacts a+a {
+        margin-top: 4px;
     }
 
     .link,
     .text,
     .emailButton {
         font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 14px;
         line-height: 140%;
         letter-spacing: 0.01em;
-            font-weight: 400;
-            font-size: 12px;
-    }
-
-    .list li+li,
-    .contacts a+a {
-        margin-top: 0;
+        color: var(--text);
     }
 
     .contacts {
-        margin-bottom: 8px;
+        margin-bottom: 12px;
+    }
+
+    .emailWrap {
+        max-width: 100%;
+    }
+
+    .copyStatus {
+        font-size: 12px;
     }
 
     .socials {
-        gap: 12px;
         width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-        
+        gap: 20px;
     }
 
     .socialLink {
@@ -310,6 +373,7 @@
         border: none;
         padding: 0;
         margin: 0;
+        background: var(--accept-button);
         appearance: none;
         -webkit-appearance: none;
         cursor: pointer;
@@ -318,30 +382,27 @@
     .logoBlock {
         order: 2;
         min-width: 0;
-        margin-top: -55px;
-        margin-right: -80px;
+        margin-top: 24px;
         align-items: center;
         align-self: center;
     }
 
     .logoLink {
-        margin-bottom: 8px;
+        margin-bottom: 10px;
     }
 
     .logo {
-        width: 41px;
-        height: 31px;
+        width: 61px;
+        height: 45px;
     }
 
     .copy {
+        margin: 0;
         font-family: var(--font-family);
         font-weight: 100;
-        font-size: 10px;
+        font-size: 11px;
         line-height: 182%;
         text-align: center;
-    }
-
-    .copyStatus {
-        font-size: 10px;
+        color: rgba(255, 255, 255, 0.55);
     }
 }

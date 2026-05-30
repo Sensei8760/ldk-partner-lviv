@@ -286,7 +286,7 @@
 
 @media (max-width: 560px) {
     .section {
-        padding: 20px 0 40px;
+        padding: 32px 0 40px;
     }
 
     .container {
@@ -321,7 +321,7 @@
         line-height: 130%;
         letter-spacing: 0.01em;
         text-align: center;
-            font-size: 22px;
+            font-size: 25px;
     }
 
     .infoList {

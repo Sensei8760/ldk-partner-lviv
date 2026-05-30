@@ -73,7 +73,6 @@
 @media (max-width: 560px) {
     .section {
         padding: 0;
-        background-color: var(--backgr);
     }
 
     .container {
@@ -94,7 +93,7 @@
         margin: 0 0 10px;
         line-height: 130%;
             font-weight: 600;
-            font-size: 22px;
+            font-size: 25px;
             letter-spacing: 0.01em;
             text-align: center;
     }
@@ -122,14 +121,14 @@
     }
 
     .moreButton {
-        margin: 10px 0 20px auto;
+        margin: 10px 0 32px auto;
         padding: 0;
         border: none;
         background: transparent;
-        color: var(--accept-button);
+        color: var(--choco);
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 2px;
         font-family: var(--font-family);
         font-weight: 400;
         cursor: pointer;
@@ -171,5 +170,9 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
+    border-bottom: 4px solid var(--text-black);
+        border-left: 4px solid var(--text-black);
+        border-top: 4px solid var(--text-black);
+    border-radius: 10px 0 0 10px;
 }
 }
