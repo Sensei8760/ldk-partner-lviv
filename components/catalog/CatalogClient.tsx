@@ -241,6 +241,7 @@ export default function CatalogClient({
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const sortDropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -264,6 +265,26 @@ export default function CatalogClient({
     };
   }, []);
 
+useEffect(() => {
+  if (!isFiltersOpen) return;
+
+  const previousOverflow = document.body.style.overflow;
+
+  document.body.style.overflow = 'hidden';
+
+  const handleEscape = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      setIsFiltersOpen(false);
+    }
+  };
+
+  window.addEventListener('keydown', handleEscape);
+
+  return () => {
+    document.body.style.overflow = previousOverflow;
+    window.removeEventListener('keydown', handleEscape);
+  };
+}, [isFiltersOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -293,7 +314,9 @@ export default function CatalogClient({
   const resetVisibleCount = () => {
     setVisibleProductsCount(PRODUCTS_STEP);
   };
-
+const closeFilters = () => {
+  setIsFiltersOpen(false);
+};
   const resetAllFilters = () => {
     setSelectedProductTypes([]);
     setSelectedInstallPlaces([]);
@@ -583,9 +606,33 @@ export default function CatalogClient({
       : 0;
 
   return (
-    <div className={styles.layout}>
-      <aside className={styles.sidebar}>
-        <h2 className={styles.sidebarTitle}>Фільтри</h2>
+  <div className={styles.layout}>
+    <button
+      type="button"
+      className={`${styles.filterBackdrop} ${
+        isFiltersOpen ? styles.filterBackdropVisible : ''
+      }`}
+      onClick={closeFilters}
+      aria-label="Закрити фільтри"
+    />
+
+    <aside
+      className={`${styles.sidebar} ${
+        isFiltersOpen ? styles.sidebarOpen : ''
+      }`}
+    >
+        <div className={styles.sidebarHeader}>
+  <h2 className={styles.sidebarTitle}>Фільтри</h2>
+
+  <button
+    type="button"
+    className={styles.sidebarClose}
+    onClick={closeFilters}
+    aria-label="Закрити фільтри"
+  >
+    ✕
+  </button>
+</div>
 
         <div className={styles.filterGroup}>
           <h3 className={styles.groupTitle}>Тип</h3>
@@ -854,6 +901,23 @@ export default function CatalogClient({
             })}
           </div>
         </div>
+        <div className={styles.mobileFilterActions}>
+  <button
+    type="button"
+    className={styles.mobileResetButton}
+    onClick={resetAllFilters}
+  >
+    Скинути
+  </button>
+
+  <button
+    type="button"
+    className={styles.mobileApplyButton}
+    onClick={closeFilters}
+  >
+    Застосувати
+  </button>
+</div>
       </aside>
 
       <section className={styles.products}>
@@ -873,30 +937,45 @@ export default function CatalogClient({
                 resetVisibleCount();
               }}
               className={styles.searchInput}
-              placeholder="Пошук"
+              placeholder="Пошук дверей..."
               aria-label="Пошук дверей по назві"
             />
           </div>
 
           <div className={styles.topBarActions}>
+            <button
+  type="button"
+  className={styles.mobileActionButton}
+  onClick={() => setIsFiltersOpen(true)}
+>
+  <svg className={styles.mobileActionIcon} aria-hidden="true">
+    <use href="/icons/symbol-defs.svg#icon-filter-icon" />
+  </svg>
+  Фільтри
+</button>
             <div className={styles.sortSelectWrap} ref={sortDropdownRef}>
               <button
-                type="button"
-                className={`${styles.sortSelect} ${
-                  isSortOpen ? styles.sortSelectOpen : ''
-                }`}
-                onClick={() => setIsSortOpen((prev) => !prev)}
-                aria-label="Сортування товарів"
-                aria-expanded={isSortOpen}
-              >
-                <span>{selectedSortOption.label}</span>
+  type="button"
+  className={`${styles.sortSelect} ${
+    isSortOpen ? styles.sortSelectOpen : ''
+  }`}
+  onClick={() => setIsSortOpen((prev) => !prev)}
+  aria-label="Сортування товарів"
+  aria-expanded={isSortOpen}
+>
+  <svg className={styles.mobileSortIcon} aria-hidden="true">
+    <use href="/icons/symbol-defs.svg#icon-sorting-icon" />
+  </svg>
 
-                <span className={styles.sortSelectIcon} aria-hidden="true">
-                  <svg className={styles.sortSelectIconSvg}>
-                    <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-angle-small-up" />
-                  </svg>
-                </span>
-              </button>
+  <span className={styles.sortLabelDesktop}>{selectedSortOption.label}</span>
+<span className={styles.sortLabelMobile}>Сортування</span>
+
+  <span className={styles.sortSelectIcon} aria-hidden="true">
+    <svg className={styles.sortSelectIconSvg}>
+      <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-angle-small-up" />
+    </svg>
+  </span>
+</button>
 
               {isSortOpen ? (
                 <div className={styles.sortMenu}>
@@ -917,27 +996,31 @@ export default function CatalogClient({
             </div>
 
             <button
-              type="button"
-              className={`${styles.favoriteFilterButton} ${
-                showOnlyFavorites ? styles.favoriteFilterButtonActive : ''
-              }`}
-              onClick={() => {
-                setShowOnlyFavorites((prev) => !prev);
-                resetVisibleCount();
-              }}
-              aria-label="Показати збережені двері"
-              title="Показати збережені двері"
-            >
-              <span className={styles.favoriteFilterLabel}>
-                Збережені ({validFavoriteIds.length})
-              </span>
+  type="button"
+  className={`${styles.favoriteFilterButton} ${
+    showOnlyFavorites ? styles.favoriteFilterButtonActive : ''
+  }`}
+  onClick={() => {
+    setShowOnlyFavorites((prev) => !prev);
+    resetVisibleCount();
+  }}
+  aria-label="Показати збережені двері"
+  title="Показати збережені двері"
+>
+  <span className={styles.favoriteFilterLabel}>
+    Збережені ({validFavoriteIds.length})
+  </span>
 
-              <span className={styles.favoriteFilterIcon} aria-hidden="true">
-                <svg className={styles.favoriteFilterIconSvg}>
-                  <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
-                </svg>
-              </span>
-            </button>
+  <span className={styles.favoriteFilterIcon} aria-hidden="true">
+    <svg className={styles.favoriteFilterIconSvg}>
+      <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
+    </svg>
+  </span>
+
+  <span className={styles.favoriteMobileCount}>
+    {validFavoriteIds.length}
+  </span>
+</button>
           </div>
         </div>
 
