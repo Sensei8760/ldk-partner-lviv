@@ -65,10 +65,6 @@
     transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
 }
 
-.galleryArrowOverlay:hover {
-    color: var(--button-hover);
-}
-
 .galleryArrowOverlay:active {
     color: var(--button-active);
     transform: translateY(-50%) scale(0.96);
@@ -376,11 +372,6 @@
     transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
 }
 
-.zoomArrow:hover {
-    color: var(--button-hover);
-    background: var(--text);
-}
-
 .zoomArrow:active {
     color: var(--button-active);
     transform: translateY(-50%) scale(0.96);
@@ -419,11 +410,6 @@
     cursor: pointer;
     padding: 0;
     transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.galleryDot:hover {
-    transform: scale(1.08);
-    background: var(--button-hover);
 }
 
 .galleryDotActive {
@@ -479,6 +465,23 @@
 .characteristicsListWrapOpen {
     overflow: visible;
 }
+
+@media (hover: hover) and (pointer: fine) {
+    .galleryArrowOverlay:hover {
+        color: var(--button-hover);
+    }
+
+    .zoomArrow:hover {
+        color: var(--button-hover);
+        background: var(--text);
+    }
+
+    .galleryDot:hover {
+        transform: scale(1.08);
+        background: var(--button-hover);
+    }
+}
+
 @media (max-width: 560px) {
     .productPage {
         padding: 34px 16px 38px;
@@ -497,7 +500,7 @@
 
    .imageBlock {
        width: 100%;
-       max-width: 343px;
+       max-width: 330px;
        margin: 0 auto;
    }
 
@@ -509,11 +512,12 @@
             width: 100%;
             height: 440px;
             border-radius: 14px;
-            background: var(--back-gray);
+            background: var(--backgr);
         }
     .image {
         object-fit: contain;
         padding: 0;
+        border-radius: 14px;
     }
 
     .galleryArrowOverlay {
@@ -776,4 +780,69 @@
         .characteristicsListWrapOpen {
             max-height: 900px;
         }
+
+                .zoomOverlay {
+                    padding: 0 16px;
+                    background: rgba(17, 17, 17, 0.86);
+                    align-items: center;
+                    justify-content: center;
+                }
+        
+                .zoomContent {
+                    width: 100%;
+                    max-width: 343px;
+                    gap: 0;
+                }
+        
+                .zoomImageWrapper {
+                    width: 100%;
+                    max-width: 643px;
+                    height: 457px;
+                    aspect-ratio: auto;
+                    border-radius: 14px;
+                    background: var(--backgr);
+                    overflow: hidden;
+                }
+        
+                .zoomImage {
+                    object-fit: contain;
+                }
+        
+                .zoomClose {
+                    top: 10px;
+                    right: 10px;
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 50%;
+                    background: var(--text);
+                    color: var(--text-black);
+                    font-size: 18px;
+                    line-height: 1;
+                    z-index: 5;
+                }
+.zoomClose:active {
+    color: var(--button-active);
+}
+        
+                .zoomArrow {
+                    width: 34px;
+                    height: 34px;
+                    background: var(--text);
+                    color: var(--text-black);
+                    border-radius: 50%;
+                    z-index: 4;
+                }
+        
+                .zoomArrowLeft {
+                    left: 10px;
+                }
+        
+                .zoomArrowRight {
+                    right: 10px;
+                }
+        
+                .zoomArrowIcon {
+                    width: 14px;
+                    height: 14px;
+                }
 }
