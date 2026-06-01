@@ -8,6 +8,7 @@ import ProductGallery from './ProductGallery';
 import ProductActions from './ProductActions';
 import styles from './ProductPage.module.css';
 import FavoriteButton from '@/components/ui/FavoriteButton';
+import ProductCharacteristics from './ProductCharacteristics';
 
 const SITE_URL = 'https://ldk-partner-lviv.vercel.app';
 
@@ -290,31 +291,7 @@ export default async function ProductPage({ params }: PageProps) {
               <p className={styles.description}>{product.description}</p>
             ) : null}
 
-            <div className={styles.characteristics}>
-              <h2 className={styles.characteristicsTitle}>Характеристики</h2>
-
-              {product.characteristics.length > 0 ? (
-                <ul className={styles.characteristicsList}>
-                  {product.characteristics.map((item) => (
-                    <li
-                      key={`${item.label}-${item.value}`}
-                      className={styles.characteristicItem}
-                    >
-                      <span className={styles.characteristicLabel}>
-                        {item.label}:
-                      </span>{' '}
-                      <span className={styles.characteristicValue}>
-                        {item.value}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className={styles.description}>
-                  Характеристики ще не додані.
-                </p>
-              )}
-            </div>
+            <ProductCharacteristics characteristics={product.characteristics} />
           </div>
         </div>
       </div>

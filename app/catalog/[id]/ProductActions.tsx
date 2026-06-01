@@ -22,7 +22,7 @@ const sizeLabels: Record<ProductSizeDisplayItem['size'], string> = {
 export default function ProductActions({ sizeStocks }: ProductActionsProps) {
   return (
     <div className={styles.sizeAvailability}>
-      <p className={styles.sizeAvailabilityTitle}>Доступні розміри</p>
+      <h2 className={styles.sizeAvailabilityTitle}>Розміри</h2>
 
       <div className={styles.sizeAvailabilityList}>
         {sizeStocks.map((item) => {

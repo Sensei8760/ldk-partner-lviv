@@ -458,152 +458,6 @@
 .zoomArrowLeft .zoomArrowIcon {
     transform: rotate(180deg);
 }
-
-@media (max-width: 992px) {
-    .container {
-        max-width: 100%;
-    }
-
-    .layout {
-        grid-template-columns: 1fr;
-        gap: 28px;
-    }
-
-    .imageBlock {
-        max-width: 340px;
-        margin: 0 auto;
-    }
-
-   .infoBlock {
-       padding-top: 0;
-       display: grid;
-       grid-template-columns: max-content 1fr;
-       column-gap: 90px;
-       align-items: start;
-   }
-
-    .title {
-        font-size: 28px;
-    }
-
-    .sizeAvailabilityList {
-        max-width: 100%;
-    }
-
-    .characteristics {
-        width: 100%;
-    }
-}
-
-@media (max-width: 640px) {
-    .productPage {
-        padding: 24px 12px 60px;
-    }
-
-    .layout {
-        gap: 24px;
-    }
-
-    .imageBlock {
-        max-width: 100%;
-    }
-
-    .imageWrapper {
-        height: auto;
-        aspect-ratio: 340 / 470;
-        border-radius: 8px;
-    }
-
-    .zoomImageWrapper {
-        border-radius: 16px;
-    }
-
-    .galleryArrowOverlay {
-        width: 28px;
-        height: 28px;
-        font-size: 24px;
-    }
-
-    .galleryArrowOverlayLeft {
-        left: 6px;
-    }
-
-    .galleryArrowOverlayRight {
-        right: 6px;
-    }
-
-    .title {
-        font-size: 22px;
-        margin-bottom: 14px;
-    }
-
-    .price,
-    .salePrice {
-        font-size: 22px;
-    }
-
-    .price span,
-    .salePrice span {
-        font-size: 12px;
-    }
-
-    .oldPrice {
-        font-size: 11px;
-    }
-
-    .oldPrice span {
-        font-size: 9px;
-    }
-
-    .stock {
-        font-size: 11px;
-    }
-
-    .actionsSection {
-        margin-bottom: 16px;
-    }
-
-    .sizeAvailabilityList {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-
-    .sizeAvailabilityItem {
-        min-height: auto;
-    }
-
-    .sizeAvailabilityName {
-        font-size: 13px;
-    }
-
-    .sizeAvailabilityStock {
-        font-size: 12px;
-    }
-
-    .description {
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
-
-    .characteristics {
-        padding: 17px 15px;
-        border-radius: 7px;
-    }
-
-    .characteristicsTitle {
-        font-size: 13px;
-    }
-
-    .characteristicItem {
-        font-size: 10px;
-    }
-
-    .zoomArrow {
-        width: 44px;
-        height: 44px;
-        font-size: 20px;
-    }
-}
 .productTopRow {
     display: flex;
     align-items: flex-start;
@@ -613,4 +467,313 @@
 .priceInfo {
     display: flex;
     flex-direction: column;
+}
+
+.showAllCharacteristics {
+    display: none;
+}
+.characteristicsListWrap {
+    overflow: visible;
+}
+
+.characteristicsListWrapOpen {
+    overflow: visible;
+}
+@media (max-width: 560px) {
+    .productPage {
+        padding: 34px 16px 38px;
+    }
+
+    .container {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .layout {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+   .imageBlock {
+       width: 100%;
+       max-width: 343px;
+       margin: 0 auto;
+   }
+
+    .gallery {
+        gap: 16px;
+    }
+
+        .imageWrapper {
+            width: 100%;
+            height: 440px;
+            border-radius: 14px;
+            background: var(--back-gray);
+        }
+    .image {
+        object-fit: contain;
+        padding: 0;
+    }
+
+    .galleryArrowOverlay {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--text);
+        color: var(--text-black);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .galleryArrowOverlayLeft {
+        left: 10px;
+    }
+
+    .galleryArrowOverlayRight {
+        right: 10px;
+    }
+
+    .galleryArrowIcon {
+        width: 14px;
+        height: 14px;
+    }
+
+    .galleryFooter {
+        margin-top: 0;
+        gap: 10px;
+    }
+
+    .galleryDots {
+        gap: 10px;
+    }
+
+    .galleryDot {
+        width: 8px;
+        height: 8px;
+    }
+.galleryDotActive {
+    background: var(--choco);
+}
+    .infoBlock {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        padding-top: 0;
+    }
+
+    .title {
+        margin: 0 0 24px;
+        line-height: 120%;
+        font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 25px;
+            letter-spacing: 0.01em;
+    }
+
+    .productTopRow {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 44px;
+    }
+
+    .priceInfo {
+        min-width: 0;
+    }
+
+    .priceBlock {
+        margin: 0 0 2px;
+    }
+
+    .price,
+    .salePrice {
+        line-height: 1;
+        font-family: var(--font-family);
+            font-weight: 700;
+            font-size: 30px;
+            letter-spacing: 0.01em;
+    }
+
+    .price span,
+    .salePrice span {
+        font-weight: 600;
+            font-size: 19px;
+            line-height: 147%;
+    }
+
+    .oldPrice {
+        margin-top: 8px;
+        font-family: var(--font-family);
+            font-weight: 400;
+            font-size: 15px;
+    }
+
+    .oldPrice span {
+        font-size: 13px;
+    }
+
+    .stock {
+        margin: 0;
+        font-family: var(--font-family);
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 143%;
+    }
+
+.sizeAvailabilityTitle {
+    display: block;
+    margin: 0 0 14px;
+    padding: 0 12px;
+    font-family: var(--font-family);
+    color: var(--text);
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 140%;
+}
+
+    .actions {
+        flex-shrink: 0;
+        gap: 0;
+    }
+
+    .sizeAvailability {
+        width: calc(100% + 24px);
+        margin-left: -12px;
+        overflow: hidden;
+    }
+
+    .sizeAvailabilityList {
+        display: flex;
+        grid-template-columns: none;
+        gap: 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        padding: 0 12px 20px;
+        margin: 0 0 4px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .sizeAvailabilityList::-webkit-scrollbar {
+        display: none;
+    }
+
+    .sizeAvailabilityItem {
+        flex: 0 0 127px;
+        min-height: 78px;
+        scroll-snap-align: end;
+        border-radius: 14px;
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .sizeAvailabilityName {
+        white-space: nowrap;
+        font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 136%;
+    }
+
+    .sizeAvailabilityStock {
+        font-family: var(--font-family);
+            font-weight: 300;
+            font-size: 15px;
+            line-height: 127%;
+            letter-spacing: 0.01em;
+    }
+
+    .description {
+        margin: 0 0 12px;
+        font-size: 12px;
+        line-height: 140%;
+    }
+
+    .characteristics {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 14px;
+        padding: 16px 10px;
+        margin-top: 0;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .characteristicsTitle {
+        margin: 0 0 19px;
+        font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 20px;
+            line-height: 140%;
+    }
+
+    .characteristicsList {
+        gap: 10px;
+        
+    }
+
+    .characteristicItem {
+        font-size: 10px;
+        line-height: 140%;
+        overflow-wrap: anywhere;
+    }
+
+    .characteristicLabel,
+    .characteristicValue {
+        font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 136%;
+    }
+
+        .showAllCharacteristics {
+            position: relative;
+            width: 100%;
+            margin: 19px auto 0;
+            padding: 10px 0 0;
+            border: none;
+            background: transparent;
+            color: var(--button-hover);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            font-family: var(--font-family);
+            font-weight: 500;
+            cursor: pointer;
+                font-size: 14px;
+                line-height: 136%;
+        }
+
+.showAllCharacteristics::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--border-black);
+}
+
+    .showAllCharacteristicsIcon {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+        transition: transform 0.2s ease;
+     transform: rotate(180deg);
+    }
+
+    .showAllCharacteristicsIconOpen {
+        transform: rotate(90deg);
+    }
+        .characteristicsListWrap {
+            max-height: 166px;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+    
+        .characteristicsListWrapOpen {
+            max-height: 900px;
+        }
 }

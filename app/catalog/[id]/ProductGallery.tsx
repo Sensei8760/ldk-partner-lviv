@@ -99,8 +99,8 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
   src={currentImage}
   alt={title}
   fill
-  className={styles.zoomImage}
-  sizes="(max-width: 768px) 100vw, 600px"
+  className={styles.image}
+  sizes="(max-width: 560px) 100vw, 600px"
   onError={() => {
     const originalSrc = safeImages[normalizedIndex];
     if (originalSrc && originalSrc !== FALLBACK_PRODUCT_IMAGE) {

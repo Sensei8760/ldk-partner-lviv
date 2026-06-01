@@ -9,11 +9,6 @@
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.button:hover {
-    transform: translateY(-1px);
-    opacity: 0.92;
-}
-
 .button:active {
     transform: translateY(0);
     opacity: 1;
@@ -58,10 +53,6 @@
     color: #0E6C33;
 }
 
-.md:hover .icon {
-    color: #13833f;
-}
-
 .md:active .icon,
 .active.md .icon {
     color: #0b5328;
@@ -94,10 +85,6 @@
     transition: color 0.2s ease;
 }
 
-.button:hover .icon {
-    color: #13833f;
-}
-
 .button:active .icon {
     color: #0b5328;
 }
@@ -125,6 +112,22 @@
     background: rgba(14, 108, 51, 0.14);
 }
 
+@media (hover: hover) and (pointer: fine) {
+    .md:hover .icon {
+            color: #13833f;
+        }
+
+
+    .button:hover {
+            transform: translateY(-1px);
+            opacity: 0.92;
+        }
+
+    .button:hover .icon {
+            color: #13833f;
+        }
+}
+
 @media (max-width: 1200px) {
 
     .sm,
@@ -139,4 +142,21 @@
     .icon{
         color: var(--choco-btn);
     }
+        .md {
+            min-width: 138px;
+            height: 44px;
+            border: 0.20px solid var(--choco);
+            border-radius: 8px;
+            background: transparent;
+            padding: 10px 16px;
+            gap: 10px;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+.md .text {
+        font-size: 15px;
+        line-height: 160%;
+}
+    .md .icon {
+            color: var(--text);
+        }
 }
