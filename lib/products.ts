@@ -614,79 +614,89 @@ async function getRelationsForProductIds(productIds: number[]) {
 }
 
 async function getProductsFromDatabase(): Promise<Product[]> {
-  const productRows = (await sql`
-    SELECT
-      id,
-      slug,
-      title,
-      price,
-      discount_price,
-      description,
-      type,
-      door_type,
-      sizes,
-      styles,
-      openings,
-      stock_total,
-      is_hit,
-      is_active,
-      created_at
-    FROM products
-    WHERE is_active = TRUE
-    ORDER BY created_at DESC, id DESC
-  `) as ProductRow[];
+  try {
+    const productRows = (await sql`
+      SELECT
+        id,
+        slug,
+        title,
+        price,
+        discount_price,
+        description,
+        type,
+        door_type,
+        sizes,
+        styles,
+        openings,
+        stock_total,
+        is_hit,
+        is_active,
+        created_at
+      FROM products
+      WHERE is_active = TRUE
+      ORDER BY created_at DESC, id DESC
+    `) as ProductRow[];
 
-  const productIds = productRows.map((row) => row.id);
-  const relations = await getRelationsForProductIds(productIds);
+    const productIds = productRows.map((row) => row.id);
+    const relations = await getRelationsForProductIds(productIds);
 
-  return mapRowsToProducts(
-    productRows,
-    relations.imageRows,
-    relations.sizeStockRows,
-    relations.characteristicRows
-  );
+    return mapRowsToProducts(
+      productRows,
+      relations.imageRows,
+      relations.sizeStockRows,
+      relations.characteristicRows
+    );
+  } catch (error) {
+    console.error('[products-list-db] Error', error);
+    return [];
+  }
 }
 
 async function getProductBySlugFromDatabase(slug: string): Promise<Product | null> {
-  const productRows = (await sql`
-    SELECT
-      id,
-      slug,
-      title,
-      price,
-      discount_price,
-      description,
-      type,
-      door_type,
-      sizes,
-      styles,
-      openings,
-      stock_total,
-      is_hit,
-      is_active,
-      created_at
-    FROM products
-    WHERE slug = ${slug}
-      AND is_active = TRUE
-    LIMIT 1
-  `) as ProductRow[];
+  try {
+    const productRows = (await sql`
+      SELECT
+        id,
+        slug,
+        title,
+        price,
+        discount_price,
+        description,
+        type,
+        door_type,
+        sizes,
+        styles,
+        openings,
+        stock_total,
+        is_hit,
+        is_active,
+        created_at
+      FROM products
+      WHERE slug = ${slug}
+        AND is_active = TRUE
+      LIMIT 1
+    `) as ProductRow[];
 
-  const row = productRows[0];
+    const row = productRows[0];
 
-  if (!row) {
+    if (!row) {
+      return null;
+    }
+
+    const relations = await getRelationsForProductIds([row.id]);
+
+    const products = mapRowsToProducts(
+      [row],
+      relations.imageRows,
+      relations.sizeStockRows,
+      relations.characteristicRows
+    );
+
+    return products[0] || null;
+  } catch (error) {
+    console.error('[product-detail-db] Error', error);
     return null;
   }
-
-  const relations = await getRelationsForProductIds([row.id]);
-
-  const products = mapRowsToProducts(
-    [row],
-    relations.imageRows,
-    relations.sizeStockRows,
-    relations.characteristicRows
-  );
-
-  return products[0] || null;
 }
 
 const getCachedProductsInternal = unstable_cache(
@@ -742,8 +752,7 @@ export async function getProductById(id: string): Promise<Product | null> {
 }
 
 export async function getProductByIdCached(id: string): Promise<Product | null> {
-  const products = await getProductsCached();
-  return products.find((item) => item.id === id) || null;
+  return getProductBySlugFromDatabase(id);
 }
 
 export async function getAllProductIdsCached(): Promise<string[]> {

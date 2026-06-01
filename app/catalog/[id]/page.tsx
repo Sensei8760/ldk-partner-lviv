@@ -1,9 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import {
-  getAllProductIdsCached,
-  getProductByIdCached,
-} from '@/lib/products';
+import { getProductByIdCached } from '@/lib/products';
 import ProductGallery from './ProductGallery';
 import ProductActions from './ProductActions';
 import styles from './ProductPage.module.css';
@@ -31,15 +28,8 @@ const ALL_SIZES: ProductSizeDisplayItem['size'][] = [
   '1200x2040',
 ];
 
-export const revalidate = 300;
-
-export async function generateStaticParams() {
-  const ids = await getAllProductIdsCached();
-
-  return ids.map((id) => ({
-    id,
-  }));
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 function toAbsoluteUrl(url: string) {
   if (!url) return `${SITE_URL}/images/image-hero.jpg`;
