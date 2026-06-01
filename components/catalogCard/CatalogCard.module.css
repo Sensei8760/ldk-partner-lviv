@@ -203,11 +203,6 @@
     transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.arrowButton:hover {
-    background: var(--button-hover);
-    transform: translateY(-1px);
-}
-
 .arrowButton:active {
     background: var(--button-active);
     transform: translateY(0);
@@ -217,7 +212,6 @@
     background: var(--btn-disabled);
 }
 
-.arrowButtonDisabled:hover,
 .arrowButtonDisabled:active {
     background: var(--btn-disabled);
     transform: none;
@@ -233,6 +227,18 @@
 
 .arrowIcon use {
     fill: currentColor;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .arrowButton:hover {
+        background: var(--button-hover);
+        transform: translateY(-1px);
+    }
+
+    .arrowButtonDisabled:hover {
+        background: var(--btn-disabled);
+        transform: none;
+    }
 }
 
 @media (max-width: 560px) {
@@ -257,34 +263,42 @@
     }
 
     .imageWrapper {
-        width: 110px;
+        width: 125px;
         height: 158px;
         margin: 0;
     }
 
-    .content {
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        padding-right: 12px;
-    }
-
-    .title {
-        min-height: auto;
-        margin: 0 0 55px;
-        font-family: var(--font-family);
-            font-weight: 500;
-            font-size: 16px;
-            line-height: 120%;
-            letter-spacing: 0.01em;
-    }
-
-    .bottom {
-        margin-top: 0;
-        padding-right: 0;
-        align-items: flex-end;
-        gap: 8px;
-    }
+        .content {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            height: 158px;
+        }
+    
+                                .title {
+                                    width: 163px;
+                                    max-width: 163px;
+                                    min-height: 58px;
+                                    max-height: 58px;
+                                    margin: 0;
+                                    display: -webkit-box;
+                                    line-clamp: 3;
+                                    -webkit-line-clamp: 3;
+                                    -webkit-box-orient: vertical;
+                                    overflow: hidden;
+                                    font-family: var(--font-family);
+                                    font-weight: 500;
+                                    font-size: 16px;
+                                    line-height: 120%;
+                                    letter-spacing: 0.01em;
+                                }
+    
+        .bottom {
+            margin-top: auto;
+            padding-right: 0;
+            align-items: flex-end;
+            gap: 8px;
+        }
 
     .priceValue,
     .priceSaleValue {

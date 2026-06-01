@@ -260,6 +260,10 @@
     fill: currentColor;
 }
 
+.inner::before {
+    content: none;
+}
+
 .actionCard:active .actionArrow {
     color: var(--button-active);
     transform: translateX(0);
@@ -296,7 +300,6 @@
             height: 252px;
             overflow: hidden;
         }
-    
         .inner {
             height: 252px;
             min-height: 252px;
@@ -309,9 +312,24 @@
             transform: none;
         }
     
+.inner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 252px;
+    height: 253px;
+    border-radius: 0 500px 500px 0;
+    background: linear-gradient(270deg,
+            rgba(15, 15, 15, 0.8) 0.01%,
+            rgba(15, 15, 15, 0.8) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
         .backgroundImage {
             object-fit: cover;
-            object-position: 62% center;
+            object-position: 30% center;
         }
     
         .content {

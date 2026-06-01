@@ -30,7 +30,7 @@
 .sidebar {
     width: 327px;
     max-width: 100%;
-    background: var(--back-gray);
+    background: var(--field);
     position: sticky;
     top: 16px;
     margin-top: 88px;
@@ -44,7 +44,7 @@
     font-weight: 600;
     font-size: 20px;
     line-height: 140%;
-    color: var(--text-black);
+    color: var(--text);
 }
 
 .filterGroup+.filterGroup {
@@ -57,7 +57,7 @@
     font-weight: 600;
     line-height: 1.2;
     font-size: 16px;
-    color: var(--text-black);
+    color: var(--text);
 }
 
 .filtersList {
@@ -69,7 +69,7 @@
 .filterLabel {
     display: flex;
     align-items: flex-start;
-    gap: 8px;
+    gap: 10px;
     cursor: pointer;
     user-select: none;
 }
@@ -86,27 +86,15 @@
     height: 18px;
     min-width: 18px;
     margin-top: 0;
-    border: 1px solid var(--text-black);
+    border: 1px solid var(--text);
     border-radius: 3px;
     background: transparent;
     transition: border-color 0.2s ease, background 0.2s ease;
 }
 
-.filterLabel:hover .customCheckbox::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
-    background: var(--fill-components);
-    transform: translate(-50%, -50%);
-}
-
 .checkbox:checked+.customCheckbox {
     background: transparent;
-    border-color: var(--text-black);
+    border-color: var(--text);
 }
 
 .checkbox:checked+.customCheckbox::after {
@@ -138,7 +126,7 @@
     font-size: 16px;
     line-height: 131%;
     letter-spacing: 0.01em;
-    color: var(--text-black);
+    color: var(--text);
 }
 
 .filterNameActive {
@@ -150,7 +138,7 @@
     font-family: var(--font-family);
     font-size: 12px;
     line-height: 167%;
-    color: var(--stock)
+    color: #585858;
 }
 
 .priceInputs {
@@ -163,13 +151,13 @@
 
 .priceInput {
     width: 100%;
-    background: var(--text);
+    background: var(--backgr);
     outline: none;
-    color: var(--text-black);
+    color: var(--text);
     font-family: var(--font-family);
     text-align: center;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-    border: 0.5px solid var(--gray);
+    border: 0.5px solid var(--border-gray);
     border-radius: 5px;
     padding: 4px 12px;
     height: 39px;
@@ -181,7 +169,7 @@
 
 .priceInput:focus,
 .sortSelect:focus {
-    border-color: var(--accept-button);
+    border-color: var(--choco);
     box-shadow: 0 0 0 2px rgba(16, 124, 65, 0.12);
 }
 
@@ -196,7 +184,7 @@
     font-size: 16px;
     line-height: 131%;
     letter-spacing: 0.01em;
-    color: var(--border-gray);
+    color: var(--text);
 }
 
 .rangeWrapper {
@@ -212,7 +200,7 @@
     right: 0;
     top: 50%;
     height: 2px;
-    background: var(--accept-button);
+    background: var(--choco);
     border-radius: 999px;
     transform: translateY(-50%);
 }
@@ -221,7 +209,7 @@
     position: absolute;
     top: 50%;
     height: 2px;
-    background: var(--accept-button);
+    background: var(--choco);
     border-radius: 999px;
     transform: translateY(-50%);
 }
@@ -253,7 +241,7 @@
     width: 20px;
     height: 28px;
     border: none;
-    background: var(--accept-button);
+    background: var(--choco);
     cursor: pointer;
     pointer-events: auto;
     -webkit-appearance: none;
@@ -267,7 +255,7 @@
     height: 28px;
     border: none;
     border-radius: 0;
-    background: var(--accept-button);
+    background: var(--choco);
     cursor: pointer;
     pointer-events: auto;
     clip-path: polygon(100% 0, 100% 100%, 0 50%);
@@ -310,7 +298,7 @@
     line-height: 131%;
     letter-spacing: 0.01em;
     text-align: right;
-    color: var(--text-black);
+    color: var(--text);
 }
 
 .showMoreIcon {
@@ -332,7 +320,7 @@
     width: 24px;
     height: 24px;
     display: block;
-    color: var(--text-black);
+    color: var(--text);
     fill: currentColor;
 }
 
@@ -344,24 +332,26 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 26px;
+    gap: 10px;
     margin-bottom: 32px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .searchWrap {
     position: relative;
+    flex: 1 1 auto;
     width: 100%;
-    max-width: 196px;
+    max-width: none;
 }
 
 .searchIcon {
     position: absolute;
-    right: 16px;
+    left: 10px;
+    right: auto;
     top: 50%;
-    width: 24px;
-    height: 24px;
-    color: var(--accept-button);
+    width: 18px;
+    height: 18px;
+    color: var(--text);
     transform: translateY(-50%);
     display: inline-flex;
     align-items: center;
@@ -370,8 +360,8 @@
 }
 
 .searchIconSvg {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     display: block;
     fill: currentColor;
 }
@@ -379,27 +369,26 @@
 .searchInput {
     width: 100%;
     height: 56px;
-    border: 2px solid var(--accept-button);
+    border: none;
     border-radius: 8px;
-    background: transparent;
-    padding: 0 50px 0 16px;
+    background: var(--field);
+    padding: 10px 10px 10px 34px;
     outline: none;
     color: var(--text);
     font-family: var(--font-family);
-    text-align: right;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    font-size: 16px;
-    line-height: 150%;
+    text-align: left;
+    transition: background 0.2s ease;
+    line-height: 140%;
         font-weight: 700;
-
+        font-size: 14px;
 }
 
 .searchInput::placeholder {
-    color: var(--border-focus);
+    color: var(--back-login);
 }
 
 .searchInput:focus {
-    border-color: var(--accept-button);
+    border-color: transparent;
     box-shadow: none;
 }
 
@@ -410,46 +399,41 @@
 .topBarActions {
     display: flex;
     align-items: center;
-    gap: 26px;
-    flex-wrap: wrap;
+    gap: 8px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
 }
 
 .sortSelectWrap {
     position: relative;
-    min-width: 230px;
+    min-width: 166px;
 }
 
 .sortSelect {
     width: 100%;
-    min-width: 230px;
+    min-width: 166px;
     height: 56px;
-    border: 2px solid var(--accept-button);
     border-radius: 8px;
     background: transparent;
-    padding: 10 16px;
+    padding: 10px;
     outline: none;
     color: var(--text);
     font-family: var(--font-family);
     cursor: pointer;
-    font-weight: 600;
-    font-size: 16px;
     line-height: 150%;
     display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 4px;
+    gap: 5px;
     text-align: left;
-}
-
-.sortSelect:hover,
-.sortSelect:focus-visible,
-.sortSelectOpen {
-    background: rgba(16, 124, 65, 0.12);
+        font-weight: 700;
+        font-size: 14px;
+        background: var(--field);
+        border: none;
 }
 
 .sortSelectIcon {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -465,8 +449,8 @@
 }
 
 .sortSelectIconSvg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     display: block;
     fill: currentColor;
 }
@@ -477,7 +461,7 @@
     left: 0;
     right: 0;
     z-index: 20;
-    border: 2px solid var(--accept-button);
+    /* border: 2px solid var(--accept-button); */
     border-radius: 8px;
     background: var(--backgr);
     overflow: hidden;
@@ -499,8 +483,6 @@
         font-size: 16px;
 }
 
-.sortOption:hover,
-.sortOption:focus-visible,
 .sortOptionActive {
     background: var(--accept-button);
     color: var(--text);
@@ -508,24 +490,18 @@
 }
 
 .favoriteFilterButton {
-    min-width: 167px;
+    width: 170px;
+    min-width: 170px;
     height: 56px;
-    border: 2px solid var(--accept-button);
+    border: none;
     border-radius: 8px;
-    background: transparent;
+    background: var(--field);
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 0 16px;
+    gap: 5px;
+    padding: 0 10px;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
-
-}
-
-.favoriteFilterButton:hover,
-.favoriteFilterButton:focus-visible {
-    background: rgba(16, 124, 65, 0.12);
+    transition: background 0.2s ease;
 }
 
 .favoriteFilterButtonActive {
@@ -533,18 +509,14 @@
 }
 
 .favoriteFilterIcon {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: var(--accept-button);
+    color: var(--text);
     transition: color 0.2s ease;
-}
-
-.favoriteFilterButton:hover .favoriteFilterIcon {
-    color: var(--button-hover);
 }
 
 .favoriteFilterButton:active .favoriteFilterIcon {
@@ -556,8 +528,8 @@
 }
 
 .favoriteFilterIconSvg {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     display: block;
     fill: currentColor;
 }
@@ -566,9 +538,9 @@
     color: var(--text);
     font-family: var(--font-family);
     white-space: nowrap;
-        font-weight: 700;
-        font-size: 16px;
-        line-height: 150%;
+    font-weight: 700;
+    line-height: 140%;
+        font-size: 14px;
 }
 
 .grid {
@@ -580,7 +552,7 @@
 
 .stateBox {
     border-radius: 14px;
-    background: var(--back-gray);
+    background: var(--field);
     padding: 24px 32px;
     display: flex;
     flex-direction: column;
@@ -594,7 +566,7 @@
     line-height: 1.2;
         font-weight: 600;
         font-size: 28px;
-        color: var(--text-black);
+        color: var(--text);
 }
 
 .stateText {
@@ -604,7 +576,7 @@
         font-weight: 400;
         font-size: 18px;
         line-height: 144%;
-        color: var(--text-black);
+        color: var(--text);
 }
 
 .resetFiltersButton {
@@ -626,11 +598,6 @@
         color: var(--text);
     cursor: pointer;
     transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.resetFiltersButton:hover {
-    background: var(--button-hover);
-    transform: translateY(-1px);
 }
 
 .resetFiltersButton:active {
@@ -663,11 +630,6 @@
     font-size: 20px;
     line-height: 120%;
     letter-spacing: 0.01em;
-}
-
-.showMoreProductsButton:hover {
-    background: var(--button-hover);
-    transform: translateY(-2px);
 }
 
 .showMoreProductsButton:active {
@@ -725,6 +687,63 @@
 .favoriteMobileCount {
     display: none;
 }
+.sortIconMain {
+    width: 20px;
+    height: 20px;
+    display: block;
+    flex-shrink: 0;
+    color: var(--text);
+    fill: currentColor;
+}
+.sortSelectOpen {
+    background: rgba(16, 124, 65, 0.12);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .filterLabel:hover .customCheckbox::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+        background: var(--fill-components);
+        transform: translate(-50%, -50%);
+    }
+
+    .sortSelect:hover,
+    .sortSelect:focus-visible {
+        background: rgba(16, 124, 65, 0.12);
+    }
+
+    .sortOption:hover,
+    .sortOption:focus-visible {
+        background: var(--accept-button);
+        color: var(--text);
+        outline: none;
+    }
+
+    .favoriteFilterButton:hover,
+    .favoriteFilterButton:focus-visible {
+        background: rgba(16, 124, 65, 0.12);
+    }
+
+    .favoriteFilterButton:hover .favoriteFilterIcon {
+        color: var(--button-hover);
+    }
+
+    .resetFiltersButton:hover {
+        background: var(--button-hover);
+        transform: translateY(-1px);
+    }
+
+    .showMoreProductsButton:hover {
+        background: var(--button-hover);
+        transform: translateY(-2px);
+    }
+}
+
 @media (max-width: 560px) {
     .catalogPage {
         padding: 24px 0 40px;
@@ -868,13 +887,18 @@
         background: var(--backgr);
         overflow: hidden;
     }
-
+.sortIconMain {
+    width: 18px;
+    height: 18px;
+    color: var(--text);
+}
     .sortOption {
         min-height: 38px;
         background: var(--backgr);
         color: var(--text);
         font-size: 10px;
         padding: 0 5px;
+        text-align: center;
     }
 
     .favoriteFilterButton {
@@ -976,11 +1000,11 @@
             color: var(--button-active);
         }
 
-    .filterGroup+.filterGroup {
-        margin-top: 30px;
-        padding-top: 0;
-        border-top: 1px solid var(--back-black);
-    }
+        .filterGroup+.filterGroup {
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-black);
+        }
 
     .groupTitle {
         margin: 0 0 10px;
@@ -1027,12 +1051,11 @@
         border-color: var(--text);
     }
 
-    .checkbox:checked+.customCheckbox::after,
-    .filterLabel:hover .customCheckbox::after {
-        width: 12px;
-        height: 12px;
-        border-radius: 1px;
-    }
+        .checkbox:checked+.customCheckbox::after {
+            width: 12px;
+            height: 12px;
+            border-radius: 1px;
+        }
 
     .priceInputs {
         grid-template-columns: 1fr auto 1fr;
@@ -1188,4 +1211,13 @@
                         font-weight: 500;
                         letter-spacing: 0.01em;
                 }
+}
+
+.showAllCharacteristics::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--border-black);
 }

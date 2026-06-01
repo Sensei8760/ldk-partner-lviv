@@ -22,7 +22,7 @@
 .md {
     min-width: 142px;
     height: 56px;
-    border: 2px solid #0E6C33;
+    border: 0.20px solid var(--choco);
     border-radius: 8px;
     background: transparent;
     padding: 10px 16px;
@@ -50,7 +50,7 @@
     order: 2;
     width: 24px;
     height: 24px;
-    color: #0E6C33;
+    color: var(--text);
 }
 
 .md:active .icon,

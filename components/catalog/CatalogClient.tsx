@@ -347,9 +347,6 @@ const closeFilters = () => {
     ? styleItems
     : styleItems.slice(0, STYLE_VISIBLE_COUNT);
 
-  const selectedSortOption =
-    sortOptions.find((option) => option.value === sortBy) ?? sortOptions[0];
-
   const productTypeCounts = useMemo(() => {
     return {
       interior: products.filter((product) => getProductType(product) === 'interior').length,
@@ -963,18 +960,12 @@ const closeFilters = () => {
   aria-label="Сортування товарів"
   aria-expanded={isSortOpen}
 >
-  <svg className={styles.mobileSortIcon} aria-hidden="true">
-    <use href="/icons/symbol-defs.svg#icon-sorting-icon" />
-  </svg>
+  <svg className={styles.sortIconMain} aria-hidden="true">
+  <use href="/icons/symbol-defs.svg?v=6#icon-sorting-icon" />
+</svg>
 
-  <span className={styles.sortLabelDesktop}>{selectedSortOption.label}</span>
+  <span className={styles.sortLabelDesktop}>Сортування</span>
 <span className={styles.sortLabelMobile}>Сортування</span>
-
-  <span className={styles.sortSelectIcon} aria-hidden="true">
-    <svg className={styles.sortSelectIconSvg}>
-      <use href="/icons/symbol-defs.svg?v=6#icon-fi-rs-angle-small-up" />
-    </svg>
-  </span>
 </button>
 
               {isSortOpen ? (
@@ -1006,15 +997,15 @@ const closeFilters = () => {
   }}
   aria-label="Показати збережені двері"
   title="Показати збережені двері"
->
-  <span className={styles.favoriteFilterLabel}>
-    Збережені ({validFavoriteIds.length})
-  </span>
-
-  <span className={styles.favoriteFilterIcon} aria-hidden="true">
+            >
+              
+              <span className={styles.favoriteFilterIcon} aria-hidden="true">
     <svg className={styles.favoriteFilterIconSvg}>
       <use href="/icons/symbol-defs.svg?v=6#icon-fi-rr-star" />
     </svg>
+  </span>
+  <span className={styles.favoriteFilterLabel}>
+    Збережені ({validFavoriteIds.length})
   </span>
 
   <span className={styles.favoriteMobileCount}>
