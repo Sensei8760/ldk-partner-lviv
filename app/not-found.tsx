@@ -120,7 +120,7 @@ export default function NotFound() {
                         </p>
 
                         <Link href="/" className={styles.primaryButton}>
-                            <span>Повернутися на головну</span>
+                            <span>На головну</span>
 
                             <span className={styles.buttonArrow} aria-hidden="true">
                                 <svg width="24" height="24">
