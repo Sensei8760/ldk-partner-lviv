@@ -102,63 +102,29 @@
         height: 30px;
     }
 
-        .burgerButton {
-            width: 24px;
-            height: 20px;
-            padding: 0;
-            border: none;
-            background: transparent;
-            color: var(--text);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: color 0.2s ease, transform 0.2s ease;
-        }
-    
-        .burgerButton:hover,
-        .burgerButton:focus-visible {
-            color: var(--text);
-        }
-    
-        .burgerButton:active {
-            color: var(--text);
-            transform: scale(0.96);
-        }
-    
-        .burgerButtonOpen {
-            color: var(--accept-button);
-        }
-    
-        .burgerButtonOpen:hover,
-        .burgerButtonOpen:focus-visible,
-        .burgerButtonOpen:active {
-            color: var(--accept-button);
-        }
-
     .nav {
-        position: absolute;
-        top: 50px;
-        left: 0;
-        right: 0;
-        width: 100%;
-        margin-left: 0;
-        padding: 22px 32px 28px;
-        background: var(--back-black);
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
         display: none;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-        gap: 18px;
     }
 
-    .navOpen {
-        display: flex;
+    .burgerButton {
+        width: 24px;
+        height: 20px;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: var(--text);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
     }
 
-    .navLink {
-        font-size: 18px;
-        line-height: 140%;
+    .burgerButton:active {
+        color: var(--text);
+        transform: scale(0.96);
+    }
+
+    .burgerButtonOpen {
+        color: var(--text);
     }
 }

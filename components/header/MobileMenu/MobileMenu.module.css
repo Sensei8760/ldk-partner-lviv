@@ -1,0 +1,119 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.overlayOpen {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.menu {
+    width: 100%;
+    min-height: 347px;
+    padding: 10px 10px 0px;
+    border-radius: 0 0 20px 20px;
+    background: var(--backgr);
+    transform: translateY(-12px);
+    opacity: 0;
+    transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+}
+
+.menuOpen {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding: 0 10px;
+}
+
+.logoLink {
+    display: inline-flex;
+    width: 61px;
+    height: 45px;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.logo {
+    width: 61px;
+    height: 45px;
+    display: block;
+    fill: currentColor;
+}
+
+.closeButton {
+    /* width: 40px; */
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.closeIcon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    color: currentColor;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.navLink {
+    min-height: 68px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--field);
+    color: var(--text);
+    text-decoration: none;
+    font-family: var(--font-family);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 140%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navLink:last-child {
+    border-bottom: none;
+}
+
+.arrowIcon {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    transform: rotate(180deg);
+    flex-shrink: 0;
+}
+
+.arrowIcon:active, .closeButton:active, .navLink:active {
+    color: var(--accept-button);
+}
+
+@media (max-width: 560px) {
+    .overlay {
+        display: block;
+    }
+}
