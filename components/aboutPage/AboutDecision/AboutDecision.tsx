@@ -4,19 +4,23 @@ import styles from "./AboutDecision.module.css";
 const images = [
   {
     src: "/images/decision-1.jpg",
-    alt: "Будинок з дверима Portala",
+    alt: "Приватний будинок з дверима LDK Partner",
+    className: "imageBoxLarge",
   },
   {
     src: "/images/decision-2.jpg",
-    alt: "Двері для забудовників",
-  },
-  {
-    src: "/images/decision-3.jpg",
-    alt: "Міжкімнатні двері Portala",
+    alt: "Підйом дверних конструкцій для будівельного об’єкта",
+    className: "imageBoxSmall",
   },
   {
     src: "/images/decision-4.jpg",
-    alt: "Комплексні рішення для будинків",
+    alt: "Комплексні дверні рішення для забудовників",
+    className: "imageBoxLarge",
+  },
+  {
+    src: "/images/decision-3.jpg",
+    alt: "Міжкімнатні двері в інтер’єрі",
+    className: "imageBoxSmall",
   },
 ];
 
@@ -33,29 +37,40 @@ export default function AboutDecision() {
 
           <div className={styles.text}>
             <p>
-              Закриваємо весь комплекс рішень по дверях: вхідні, міжкімнатні,
-              технічні, протипожежні.
+              LDK Partner закриває повний комплекс рішень у сфері дверей:
+              вхідні, міжкімнатні, технічні та протипожежні двері для
+              приватних, комерційних і будівельних об’єктів.
             </p>
 
             <p>
-              Без пошуку кількох постачальників, зайвої логістики — усі процеси
-              беремо на себе.
+              Ми беремо на себе ключові етапи роботи — від підбору відповідного
+              рішення до організації виробництва, сервісу та логістики. Це
+              дозволяє клієнтам не витрачати час на пошук кількох
+              постачальників, узгодження між різними командами та контроль
+              окремих процесів.
             </p>
 
             <p>
-              LDK Partner — це єдина екосистема, де поєднані виробництво, сервіс
-              і логістика для реалізації ваших проєктів.
+              LDK Partner — це єдина екосистема, де виробництво, сервіс і
+              логістика працюють як один злагоджений процес. Завдяки цьому ми
+              допомагаємо реалізовувати проєкти ефективніше, зручніше та з
+              меншим навантаженням для клієнта.
             </p>
           </div>
         </div>
 
         <div className={styles.gallery}>
           {images.map((image) => (
-            <div className={styles.imageBox} key={image.src}>
+            <div
+              className={`${styles.imageBox} ${
+                styles[image.className as keyof typeof styles]
+              }`}
+              key={image.src}
+            >
               <Image
                 src={image.src}
                 alt={image.alt}
-                width={230}
+                width={280}
                 height={260}
                 className={styles.image}
               />

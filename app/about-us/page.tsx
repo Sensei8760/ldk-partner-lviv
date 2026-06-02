@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import AboutPageHero from "../../components/aboutPage/AboutPageHero/AboutPageHero";
-import AboutAdvantages from "../../components/aboutPage/AboutAdvantages/AboutAdvantages";
+
 import AboutDecision from "../../components/aboutPage/AboutDecision/AboutDecision";
 import AboutPortfolio from "../../components/aboutPage/AboutPortfolio/AboutPortfolio";
 import AboutCertificates from "../../components/aboutPage/AboutCertificates/AboutCertificates";
@@ -25,9 +25,8 @@ export default function AboutUsPage() {
   return (
     <>
       <AboutPageHero />
-      <AboutAdvantages />
+      <AboutPortfolio />
           <AboutDecision />
-          <AboutPortfolio />
           <AboutCertificates />
     </>
   );

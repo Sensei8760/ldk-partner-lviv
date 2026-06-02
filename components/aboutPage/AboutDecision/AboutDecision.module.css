@@ -1,17 +1,17 @@
 .section {
     background: var(--backgr);
-    padding: 32px 24px 32px;
+    padding: 20px 24px;
 }
 
 .container {
     width: min(1328px, 100%);
     margin: 0 auto;
     min-height: 672px;
-    padding: 56px 40px 56px 40px;
+    padding: 56px 40px;
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: minmax(0, 690px) 1fr;
     align-items: center;
-    gap: 88px;
+    gap: 69px;
     background: var(--back-black);
     border-radius: 10px;
 }
@@ -23,13 +23,13 @@
 
 .label {
     margin: 0 0 8px;
+    font-family: var(--font-family);
     font-weight: 700;
+    font-size: 16px;
+    line-height: 150%;
+    color: var(--choco);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    font-family: var(--font-family);
-        font-size: 16px;
-        line-height: 150%;
-        color: var(--accept-button);
 }
 
 .title {
@@ -37,10 +37,10 @@
     margin: 0 0 32px;
     color: var(--text);
     font-family: var(--second-family);
-        font-weight: 600;
-        font-size: 40px;
-        line-height: 130%;
-        letter-spacing: 0.01em;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 130%;
+    letter-spacing: 0.01em;
 }
 
 .text {
@@ -51,28 +51,39 @@
 
 .text p {
     margin: 0;
+    color: var(--text);
     font-family: var(--font-family);
-        font-weight: 400;
-        font-size: 18px;
-        line-height: 144%;
-        color: var(--text);
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 144%;
 }
 
 .gallery {
     justify-self: end;
+    width: 489px;
+    max-width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    width: 100%;
-    max-width: 426px;
+    grid-template-columns: 1.45fr 0.95fr;
+    grid-template-rows: 252px 252px;
+    gap: 17px;
+    row-gap: 16px;
 }
 
 .imageBox {
+    position: relative;
     width: 100%;
-    aspect-ratio: 1 / 1.36;
+    height: 100%;
     overflow: hidden;
-    border-radius: 12px;
-    background: var(--back-black);
+    border-radius: 10px;
+    background: var(--field);
+}
+
+.imageBoxLarge {
+    min-width: 0;
+}
+
+.imageBoxSmall {
+    min-width: 0;
 }
 
 .image {

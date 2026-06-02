@@ -1,6 +1,6 @@
 .section {
     background: var(--backgr);
-    padding: 32px 24px 64px;
+    padding: 20px 24px 40px;
 }
 
 .container {
@@ -14,7 +14,7 @@
 
 .label {
     margin: 0 0 8px;
-    color: var(--accept-button);
+    color: var(--choco);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     font-family: var(--font-family);

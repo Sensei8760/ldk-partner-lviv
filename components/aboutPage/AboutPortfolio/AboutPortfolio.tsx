@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
-import styles from "./AboutPortfolio.module.css";
+import Image from 'next/image';
+import { useEffect, useMemo, useState } from 'react';
+import styles from './AboutPortfolio.module.css';
 
 const portfolioImages = Array.from({ length: 11 }, (_, index) => ({
   src: `/images/Portfolio/portfolio-${index + 1}.jpg`,
   alt: `Реалізований проєкт Portala ${index + 1}`,
 }));
 
-type SliderMode = "idle" | "next" | "prevStart" | "prev";
+type SliderMode = 'idle' | 'next' | 'prevStart' | 'prev';
 
 export default function AboutPortfolio() {
   const [startIndex, setStartIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(4);
-  const [mode, setMode] = useState<SliderMode>("idle");
+  const [mode, setMode] = useState<SliderMode>('idle');
   const [isHovered, setIsHovered] = useState(false);
 
   const shift = 100 / visibleCount;
@@ -33,9 +33,9 @@ export default function AboutPortfolio() {
     };
 
     updateVisibleCount();
-    window.addEventListener("resize", updateVisibleCount);
+    window.addEventListener('resize', updateVisibleCount);
 
-    return () => window.removeEventListener("resize", updateVisibleCount);
+    return () => window.removeEventListener('resize', updateVisibleCount);
   }, []);
 
   const getImageByIndex = (index: number) => {
@@ -47,7 +47,7 @@ export default function AboutPortfolio() {
   };
 
   const visibleImages = useMemo(() => {
-    if (mode === "prevStart" || mode === "prev") {
+    if (mode === 'prevStart' || mode === 'prev') {
       return Array.from({ length: visibleCount + 1 }, (_, index) =>
         getImageByIndex(startIndex - 1 + index)
       );
@@ -59,74 +59,91 @@ export default function AboutPortfolio() {
   }, [startIndex, visibleCount, mode]);
 
   const goNext = () => {
-    if (mode !== "idle") return;
-    setMode("next");
+    if (mode !== 'idle') return;
+    setMode('next');
   };
 
   const goPrev = () => {
-    if (mode !== "idle") return;
+    if (mode !== 'idle') return;
 
-    setMode("prevStart");
+    setMode('prevStart');
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        setMode("prev");
+        setMode('prev');
       });
     });
   };
 
   const handleTransitionEnd = () => {
-    if (mode === "next") {
+    if (mode === 'next') {
       setStartIndex((current) => (current + 1) % portfolioImages.length);
-      setMode("idle");
+      setMode('idle');
     }
 
-    if (mode === "prev") {
+    if (mode === 'prev') {
       setStartIndex(
         (current) =>
           (current - 1 + portfolioImages.length) % portfolioImages.length
       );
-      setMode("idle");
+      setMode('idle');
     }
   };
 
-useEffect(() => {
-  if (isHovered || mode !== "idle") return;
+  useEffect(() => {
+    if (isHovered || mode !== 'idle') return;
 
-  const timer = setInterval(() => {
-    setMode("next");
-  }, 3000);
+    const timer = setInterval(() => {
+      setMode('next');
+    }, 3000);
 
-  return () => clearInterval(timer);
-}, [isHovered, mode]);
+    return () => clearInterval(timer);
+  }, [isHovered, mode]);
 
   const getTransform = () => {
-    if (mode === "next") return `translateX(-${shift}%)`;
-    if (mode === "prevStart") return `translateX(-${shift}%)`;
-    if (mode === "prev") return "translateX(0)";
-    return "translateX(0)";
+    if (mode === 'next') return `translateX(-${shift}%)`;
+    if (mode === 'prevStart') return `translateX(-${shift}%)`;
+    if (mode === 'prev') return 'translateX(0)';
+    return 'translateX(0)';
   };
 
-  const hasTransition = mode === "next" || mode === "prev";
+  const hasTransition = mode === 'next' || mode === 'prev';
 
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        <p className={styles.label}>Наші роботи</p>
-        <h2 className={styles.title}>Реалізовані проєкти</h2>
+        <div className={styles.header}>
+          <div>
+            <p className={styles.label}>Наші роботи</p>
+            <h2 className={styles.title}>Реалізовані проєкти</h2>
+          </div>
+
+          <div className={styles.arrows}>
+            <button
+              type="button"
+              className={`${styles.arrow} ${styles.arrowLeft}`}
+              onClick={goPrev}
+              aria-label="Попереднє фото"
+            >
+              <svg className={styles.arrowIcon} aria-hidden="true">
+                <use href="/icons/symbol-defs.svg?v=6#arrow_back_ios_new" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              className={`${styles.arrow} ${styles.arrowRight}`}
+              onClick={goNext}
+              aria-label="Наступне фото"
+            >
+              <svg className={styles.arrowIcon} aria-hidden="true">
+                <use href="/icons/symbol-defs.svg?v=6#arrow_back_ios_new" />
+              </svg>
+            </button>
+          </div>
+        </div>
 
         <div className={styles.slider}>
-          <button
-            type="button"
-            className={`${styles.arrow} ${styles.arrowLeft}`}
-            onClick={goPrev}
-            aria-label="Попереднє фото"
-          >
-            <svg className={styles.arrowIcon}>
-              <use href="/icons/symbol-defs.svg#arrow_back_ios_new" />
-            </svg>
-          </button>
-
           <div
             className={styles.viewport}
             onMouseEnter={() => setIsHovered(true)}
@@ -137,7 +154,7 @@ useEffect(() => {
               onTransitionEnd={handleTransitionEnd}
               style={{
                 transform: getTransform(),
-                transition: hasTransition ? "transform 0.7s ease" : "none",
+                transition: hasTransition ? 'transform 0.7s ease' : 'none',
               }}
             >
               {visibleImages.map((image, index) => (
@@ -150,24 +167,13 @@ useEffect(() => {
                     src={image.src}
                     alt={image.alt}
                     width={280}
-                    height={380}
+                    height={381}
                     className={styles.image}
                   />
                 </div>
               ))}
             </div>
           </div>
-
-          <button
-            type="button"
-            className={`${styles.arrow} ${styles.arrowRight}`}
-            onClick={goNext}
-            aria-label="Наступне фото"
-          >
-            <svg className={styles.arrowIcon}>
-              <use href="/icons/symbol-defs.svg#arrow_back_ios_new" />
-            </svg>
-          </button>
         </div>
       </div>
     </section>
