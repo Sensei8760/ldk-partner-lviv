@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './AboutPortfolio.module.css';
 
 const portfolioImages = Array.from({ length: 11 }, (_, index) => ({
@@ -9,20 +9,24 @@ const portfolioImages = Array.from({ length: 11 }, (_, index) => ({
   alt: `Реалізований проєкт Portala ${index + 1}`,
 }));
 
-type SliderMode = 'idle' | 'next' | 'prevStart' | 'prev';
-
 export default function AboutPortfolio() {
-  const [startIndex, setStartIndex] = useState(0);
+  const middleStartIndex = portfolioImages.length;
+
   const [visibleCount, setVisibleCount] = useState(4);
-  const [mode, setMode] = useState<SliderMode>('idle');
+  const [currentIndex, setCurrentIndex] = useState(middleStartIndex);
+  const [withTransition, setWithTransition] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
 
-  const shift = 100 / visibleCount;
+  const isAnimatingRef = useRef(false);
+
+  const loopImages = useMemo(() => {
+    return [...portfolioImages, ...portfolioImages, ...portfolioImages];
+  }, []);
 
   useEffect(() => {
     const updateVisibleCount = () => {
-      if (window.innerWidth <= 480) {
-        setVisibleCount(1);
+      if (window.innerWidth <= 560) {
+        setVisibleCount(1.55);
       } else if (window.innerWidth <= 768) {
         setVisibleCount(2);
       } else if (window.innerWidth <= 1000) {
@@ -38,84 +42,105 @@ export default function AboutPortfolio() {
     return () => window.removeEventListener('resize', updateVisibleCount);
   }, []);
 
-  const getImageByIndex = (index: number) => {
-    const normalizedIndex =
-      ((index % portfolioImages.length) + portfolioImages.length) %
-      portfolioImages.length;
-
-    return portfolioImages[normalizedIndex];
-  };
-
-  const visibleImages = useMemo(() => {
-    if (mode === 'prevStart' || mode === 'prev') {
-      return Array.from({ length: visibleCount + 1 }, (_, index) =>
-        getImageByIndex(startIndex - 1 + index)
-      );
-    }
-
-    return Array.from({ length: visibleCount + 1 }, (_, index) =>
-      getImageByIndex(startIndex + index)
-    );
-  }, [startIndex, visibleCount, mode]);
+  const slideWidth = 100 / visibleCount;
 
   const goNext = () => {
-    if (mode !== 'idle') return;
-    setMode('next');
+    if (isAnimatingRef.current) return;
+
+    isAnimatingRef.current = true;
+    setWithTransition(true);
+    setCurrentIndex((prev) => prev + 1);
   };
 
   const goPrev = () => {
-    if (mode !== 'idle') return;
+    if (isAnimatingRef.current) return;
 
-    setMode('prevStart');
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setMode('prev');
-      });
-    });
+    isAnimatingRef.current = true;
+    setWithTransition(true);
+    setCurrentIndex((prev) => prev - 1);
   };
 
   const handleTransitionEnd = () => {
-    if (mode === 'next') {
-      setStartIndex((current) => (current + 1) % portfolioImages.length);
-      setMode('idle');
+    isAnimatingRef.current = false;
+
+    // Якщо дійшли до третього дубля — непомітно повертаємося
+    // на такий самий слайд у середньому дублі.
+    if (currentIndex >= portfolioImages.length * 2) {
+      setWithTransition(false);
+      setCurrentIndex((prev) => prev - portfolioImages.length);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setWithTransition(true);
+        });
+      });
+
+      return;
     }
 
-    if (mode === 'prev') {
-      setStartIndex(
-        (current) =>
-          (current - 1 + portfolioImages.length) % portfolioImages.length
-      );
-      setMode('idle');
+    // Якщо пішли назад до першого дубля — непомітно повертаємося
+    // на такий самий слайд у середньому дублі.
+    if (currentIndex < portfolioImages.length) {
+      setWithTransition(false);
+      setCurrentIndex((prev) => prev + portfolioImages.length);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setWithTransition(true);
+        });
+      });
     }
   };
 
   useEffect(() => {
-    if (isHovered || mode !== 'idle') return;
+    if (isHovered) return;
 
     const timer = setInterval(() => {
-      setMode('next');
+      goNext();
     }, 3000);
 
     return () => clearInterval(timer);
-  }, [isHovered, mode]);
-
-  const getTransform = () => {
-    if (mode === 'next') return `translateX(-${shift}%)`;
-    if (mode === 'prevStart') return `translateX(-${shift}%)`;
-    if (mode === 'prev') return 'translateX(0)';
-    return 'translateX(0)';
-  };
-
-  const hasTransition = mode === 'next' || mode === 'prev';
+  }, [isHovered]);
 
   return (
     <section className={styles.section}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <div>
-            <p className={styles.label}>Наші роботи</p>
-            <h2 className={styles.title}>Реалізовані проєкти</h2>
+          <p className={styles.label}>Наші роботи</p>
+          <h2 className={styles.title}>Реалізовані проєкти</h2>
+        </div>
+
+        <div className={styles.slider}>
+          <div
+            className={styles.viewport}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <div
+              className={styles.track}
+              onTransitionEnd={handleTransitionEnd}
+              style={{
+                transform: `translateX(-${currentIndex * slideWidth}%)`,
+                transition: withTransition ? 'transform 0.7s ease' : 'none',
+              }}
+            >
+              {loopImages.map((image, index) => (
+                <div
+                  className={styles.slide}
+                  style={{ flexBasis: `${slideWidth}%` }}
+                  key={`${image.src}-${index}`}
+                >
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    width={280}
+                    height={381}
+                    className={styles.image}
+                    priority={index < portfolioImages.length + 4}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className={styles.arrows}>
@@ -140,39 +165,6 @@ export default function AboutPortfolio() {
                 <use href="/icons/symbol-defs.svg?v=6#arrow_back_ios_new" />
               </svg>
             </button>
-          </div>
-        </div>
-
-        <div className={styles.slider}>
-          <div
-            className={styles.viewport}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <div
-              className={styles.track}
-              onTransitionEnd={handleTransitionEnd}
-              style={{
-                transform: getTransform(),
-                transition: hasTransition ? 'transform 0.7s ease' : 'none',
-              }}
-            >
-              {visibleImages.map((image, index) => (
-                <div
-                  className={styles.slide}
-                  style={{ flexBasis: `${100 / visibleCount}%` }}
-                  key={`${image.src}-${index}-${mode}`}
-                >
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    width={280}
-                    height={381}
-                    className={styles.image}
-                  />
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>

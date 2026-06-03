@@ -1,6 +1,6 @@
 .section {
     background: var(--backgr);
-    padding: 40px 56px 195px;
+    padding: 56px 56px 195px;
 }
 
 .container {
@@ -164,10 +164,14 @@
 }
 
 .features {
+    position: absolute;
+    left: 40px;
+    bottom: 56px;
+    z-index: 2;
     width: 839px;
     max-width: none;
     padding: 0;
-    margin: 60px 0 0;
+    margin: 0;
     list-style: none;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -290,5 +294,214 @@
 @media (hover: hover) and (pointer: fine) {
     .detailsButton:hover {
         color: var(--button-hover);
+    }
+}
+@media (max-width: 560px) {
+    .section {
+        padding: 32px 16px 16px;
+    }
+
+        .container {
+            width: 100%;
+            height: auto;
+            min-height: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: visible;
+            background: transparent;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            z-index: 2;
+            padding: 24px 16px 0;
+            border-radius: 10px;
+            background: var(--back-black);
+        }
+
+    .textArea {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .label {
+        margin: 0 0 8px;
+        color: var(--choco);
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 150%;
+    }
+
+    .title {
+        max-width: 100%;
+        margin: 0 0 14px;
+        font-size: 25px;
+        line-height: 130%;
+        letter-spacing: 0.01em;
+            line-height: 124%;
+    }
+
+    .text {
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .text p {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 136%;
+    }
+
+    .expandedTextOpen {
+        max-height: 170px;
+        margin-top: 10px;
+    }
+
+    .expandedText p {
+        font-size: 14px;
+        line-height: 136%;
+    }
+
+    .detailsButton {
+        margin: 10px 0 32px auto;
+        gap: 2px;
+            font-size: 14px;
+            line-height: 136%;
+    }
+
+    .detailsIcon {
+        width: 18px;
+        height: 18px;
+    }
+
+.photoShape {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: 100%;
+    height: 313px;
+    margin: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: 0 0 8px 8px;
+    background: var(--back-black);
+}
+
+.photoShapeSvg {
+    width: 455px;
+    height: 313px;
+    max-width: none;
+    display: block;
+    filter: drop-shadow(1px 1px 4px var(--gray-btn));
+}
+
+        .features {
+            position: relative;
+            left: auto;
+            bottom: auto;
+            z-index: 2;
+            width: 100%;
+            max-width: 100%;
+            margin: 32px 0 16px;
+            padding: 24px 36px;
+            border-radius: 10px;
+            background: var(--back-black);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+        }
+
+    .featuresHidden {
+        opacity: 0;
+        visibility: hidden;
+        max-height: 0;
+        margin: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .featureItem {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .featureIcon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .featureTitle {
+        margin: 0 0 4px;
+        font-size: 14px;
+            font-weight: 700;
+            line-height: 136%;
+    }
+
+    .featureText {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 136%;
+    }
+
+    .stepsBlock {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        transform: none;
+        z-index: 3;
+        width: 100%;
+        margin: 16px 0 0;
+        padding: 14px 26px 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        border-radius: 10px;
+        background: var(--field);
+    }
+
+    .stepItem {
+        min-width: 0;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stepNumber {
+        margin: 0 0 10px;
+        line-height: 100%;
+            font-weight: 600;
+            font-size: 40px;
+            letter-spacing: 0.01em;
+    }
+
+    .stepTitle {
+        margin: 0 0 4px;
+        line-height: 120%;
+            font-weight: 600;
+            font-size: 20px;
+            letter-spacing: 0.01em;
+    }
+
+    .stepText {
+        margin: 0;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 167%;
+    }
+
+    .stepArrowWrap {
+        display: none;
     }
 }

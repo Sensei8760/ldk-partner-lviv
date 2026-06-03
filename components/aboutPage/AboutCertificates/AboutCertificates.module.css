@@ -1,6 +1,6 @@
 .section {
     background: var(--backgr);
-    padding: 20px 24px 40px;
+    padding: 28px 56px 56px;
 }
 
 .container {
@@ -18,32 +18,41 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
     font-family: var(--font-family);
-        font-weight: 700;
-        font-size: 16px;
-        line-height: 150%;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 150%;
 }
 
 .title {
     margin: 0 0 32px;
     font-family: var(--second-family);
-        font-weight: 600;
-        font-size: 40px;
-        line-height: 130%;
-        letter-spacing: 0.01em;
-        color: var(--text);
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 130%;
+    letter-spacing: 0.01em;
+    color: var(--text);
 }
 
 .text {
     max-width: 940px;
     margin: 0 0 40px;
     font-family: var(--font-family);
-        font-weight: 400;
-        font-size: 18px;
-        line-height: 144%;
-        color: var(--text);
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 144%;
+    color: var(--text);
 }
 
-.grid {
+.slider {
+    width: 100%;
+}
+
+.viewport {
+    width: 100%;
+    overflow: visible;
+}
+
+.track {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 33px;
@@ -61,4 +70,144 @@
     aspect-ratio: 300 / 420;
     object-fit: cover;
     display: block;
+}
+
+.arrows {
+    display: none;
+}
+
+.arrow {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    padding: 0;
+    border: 1px solid #5f5f5f;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.arrow:active {
+    color: var(--button-active);
+    border-color: var(--button-active);
+    transform: translateY(0);
+}
+
+.arrowIcon {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.arrowRight .arrowIcon {
+    transform: rotate(180deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .arrow:hover {
+        color: var(--button-hover);
+        border-color: var(--button-hover);
+        transform: translateY(-1px);
+    }
+}
+
+@media (max-width: 560px) {
+    .section {
+        padding: 16px 16px 32px;
+    }
+
+    .container {
+        width: 100%;
+        min-height: auto;
+        padding: 24px 16px;
+        border-radius: 8px;
+        background: var(--back-black);
+        overflow: hidden;
+    }
+
+    .label {
+        margin: 0 0 8px;
+        font-size: 16px;
+        line-height: 150%;
+            font-weight: 700;
+    }
+
+    .title {
+        margin: 0 0 20px;
+        font-size: 25px;
+        line-height: 130%;
+        letter-spacing: 0.01em;
+            font-weight: 600;
+    }
+
+    .text {
+        max-width: 100%;
+        margin: 0 0 28px;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 136%;
+    }
+
+    .slider {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .viewport {
+        width: 100%;
+        overflow: hidden;
+    }
+
+   .track {
+       display: flex;
+       gap: 0;
+       will-change: transform;
+   }
+
+   .card {
+       flex: 0 0 212px;
+       width: 212px;
+       max-width: 212px;
+       padding-right: 12px;
+       border-radius: 10px;
+       background: transparent;
+   }
+
+   .image {
+       width: 200px;
+       height: 289px;
+       aspect-ratio: auto;
+       object-fit: cover;
+       border-radius: 10px;
+   }
+
+    .arrows {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 20px;
+    }
+
+    .arrow {
+        width: 43px;
+        height: 43px;
+        flex: 0 0 43px;
+        display: flex;
+        border: 1px solid #5f5f5f;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text);
+    }
+
+    .arrowIcon {
+        width: 19px;
+        height: 19px;
+    }
 }
