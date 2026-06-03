@@ -207,14 +207,14 @@
             gap: 2px;
             font-family: var(--font-family);
             font-weight: 400;
-            font-size: 12px;
-            line-height: 143%;
             cursor: pointer;
+                font-size: 14px;
+                line-height: 136%;
         }
     
         .detailsIcon {
-            width: 12px;
-            height: 12px;
+            width: 18px;
+            height: 18px;
             fill: currentColor;
             transition: transform 0.2s ease;
             transform: rotate(-90deg);
