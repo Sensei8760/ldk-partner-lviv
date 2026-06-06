@@ -33,7 +33,7 @@
     position: absolute;
     inset: 0;
     border-radius: 6px;
-    background: var(--accept-button);
+    background: var(--field);
     transform: scale(var(--fillScale, 0.48));
     transform-origin: center;
     z-index: 0;

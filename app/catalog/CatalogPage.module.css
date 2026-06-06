@@ -138,7 +138,7 @@
     font-family: var(--font-family);
     font-size: 12px;
     line-height: 167%;
-    color: #585858;
+    color: var(--stock-gray);
 }
 
 .priceInputs {
@@ -473,14 +473,14 @@
     border: none;
     background: var(--backgr);
     color: var(--text);
-    padding: 0 22.5px;
+    padding: 0 6px;
     cursor: pointer;
     font-family: var(--font-family);
     line-height: 150%;
-    text-align: left;
+    text-align: center;
     transition: background 0.2s ease, color 0.2s ease;
         font-weight: 700;
-        font-size: 16px;
+        font-size: 12px;
 }
 
 .sortOptionActive {
@@ -1032,12 +1032,9 @@
     }
 
     .count {
-        color: var(--border-focus);
-        font-family: var(--font-family);
-            font-weight: 400;
             font-size: 12px;
             line-height: 167%;
-    }
+    }*
 
     .customCheckbox {
         width: 18px;

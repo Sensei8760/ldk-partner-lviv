@@ -8,8 +8,10 @@
     width: 100%;
     min-height: 566px;
     display: grid;
-    grid-template-columns: 1fr 560px;
+    grid-template-columns: minmax(0, 666px) 560px;
+    column-gap: 116px;
     align-items: stretch;
+    justify-content: end;
     padding-top: 74px;
     padding-bottom: 74px;
 }
@@ -18,8 +20,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-left: 156px;
-    padding-right: 116px;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .title {
@@ -33,7 +35,8 @@
 }
 
 .textBlock {
-    max-width: 615px;
+    width: 100%;
+    max-width: 666px;
 }
 
 .text {
@@ -65,6 +68,10 @@
     object-fit: cover;
     object-position: center;
     display: block;
+    border-bottom: 4px solid var(--text-black);
+        border-left: 4px solid var(--text-black);
+        border-top: 4px solid var(--text-black);
+        border-radius: 10px 0 0 10px;
 }
 .moreButton {
     display: none;

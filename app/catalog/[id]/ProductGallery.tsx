@@ -98,9 +98,10 @@ export default function ProductGallery({ title, images }: ProductGalleryProps) {
           <Image
   src={currentImage}
   alt={title}
-  fill
+  width={483}
+  height={543}
   className={styles.image}
-  sizes="(max-width: 560px) 100vw, 600px"
+  sizes="(max-width: 560px) 330px, 483px"
   onError={() => {
     const originalSrc = safeImages[normalizedIndex];
     if (originalSrc && originalSrc !== FALLBACK_PRODUCT_IMAGE) {

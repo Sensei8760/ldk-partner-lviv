@@ -37,10 +37,10 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(180deg,
-            rgba(110, 255, 173, 0.55) 0%,
-            rgba(78, 179, 118, 0.34) 45%,
-            rgba(78, 179, 118, 0.18) 100%);
+            background: linear-gradient(180deg,
+                    rgba(107, 79, 58, 0.9) 0%,
+                    rgba(107, 79, 58, 0.55) 45%,
+                    rgba(107, 79, 58, 0.28) 100%);
     -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
@@ -305,13 +305,6 @@
         border-radius: 10px;
         align-items: center;
         justify-content: flex-start;
-    }
-
-    .card::before {
-        background: linear-gradient(180deg,
-                rgba(107, 79, 58, 0.9) 0%,
-                rgba(107, 79, 58, 0.55) 45%,
-                rgba(107, 79, 58, 0.28) 100%);
     }
 
     .title {

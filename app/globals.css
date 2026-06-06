@@ -25,7 +25,10 @@
   --field: #242424;
   --gray-back: #dedede;
   --choco-btn: #6B4F3A;
+  --choco-hover: #C9A184;
+  --choco-active: #6B4F3A;
   --border-black: #1c1c1c;
+  --stock-gray: #afafaf;
 }
 
 @media (prefers-color-scheme: dark) {
