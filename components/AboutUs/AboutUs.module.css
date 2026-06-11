@@ -6,37 +6,42 @@
 
 .container {
     width: 100%;
-    min-height: 566px;
-    display: grid;
-    grid-template-columns: minmax(0, 666px) 560px;
-    column-gap: 116px;
-    align-items: stretch;
-    justify-content: end;
-    padding-top: 74px;
-    padding-bottom: 74px;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 48px 0 25px;
 }
 
 .content {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
+    padding: 0 16px;
+    align-items: center;
+    text-align: center;
 }
 
 .title {
-    margin: 0 0 32px;
+    margin: 0 0 10px;
     color: var(--text);
     font-family: var(--second-family);
-        font-weight: 600;
-        font-size: 40px;
-        line-height: 130%;
-        letter-spacing: 0.01em;
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 130%;
+    letter-spacing: 0.01em;
+    text-align: center;
 }
 
 .textBlock {
     width: 100%;
-    max-width: 666px;
+    max-width: 100%;
+    max-height: 95px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.textBlockOpen {
+    max-height: 520px;
 }
 
 .text {
@@ -44,124 +49,52 @@
     color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
+    font-size: 14px;
+    line-height: 136%;
     letter-spacing: 0.01em;
-        font-size: 18px;
-        line-height: 144%;
+    text-align: start;
 }
 
 .text+.text {
-    margin-top: 25px;
+    margin-top: 18px;
 }
 
-.imageWrap {
-    width: 560px;
-    height: 566px;
-    justify-self: end;
-    overflow: hidden;
-    border-radius: 4px 0 0 4px;
-    position: relative;
-}
-
-.image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-    border-bottom: 4px solid var(--text-black);
-        border-left: 4px solid var(--text-black);
-        border-top: 4px solid var(--text-black);
-        border-radius: 10px 0 0 10px;
-}
 .moreButton {
-    display: none;
+    margin: 10px 0 32px auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--choco);
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-family: var(--font-family);
+    font-weight: 400;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 136%;
 }
 
-@media (max-width: 560px) {
-    .section {
-        padding: 0;
-    }
+.moreIcon {
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    .container {
-        width: 100%;
-        min-height: auto;
-        display: flex;
-        flex-direction: column;
-        padding: 20px 0;
-    }
+.moreIconSvg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    transform: rotate(-90deg);
+    transition: transform 0.2s ease;
+}
 
-    .content {
-        padding: 0 16px;
-        align-items: center;
-        text-align: center;
-    }
+.moreButtonOpen .moreIconSvg {
+    transform: rotate(90deg);
+}
 
-    .title {
-        margin: 0 0 10px;
-        line-height: 130%;
-            font-weight: 600;
-            font-size: 25px;
-            letter-spacing: 0.01em;
-            text-align: center;
-    }
-
-    .textBlock {
-        max-width: 100%;
-        max-height: 95px;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-    }
-
-    .textBlockOpen {
-        max-height: 520px;
-    }
-
-    .text {
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 136%;
-            text-align: start;
-    }
-
-    .text+.text {
-        margin-top: 18px;
-    }
-
-    .moreButton {
-        margin: 10px 0 32px auto;
-        padding: 0;
-        border: none;
-        background: transparent;
-        color: var(--choco);
-        display: inline-flex;
-        align-items: center;
-        gap: 2px;
-        font-family: var(--font-family);
-        font-weight: 400;
-        cursor: pointer;
-            font-size: 14px;
-            line-height: 136%;
-    }
-
-    .moreIcon {
-        width: 18px;
-        height: 18px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .moreIconSvg {
-        width: 18px;
-        height: 18px;
-        fill: currentColor;
-        transform: rotate(-90deg);
-        transition: transform 0.2s ease;
-    }
-
-    .moreButtonOpen .moreIconSvg {
-        transform: rotate(90deg);
-    }
 .imageWrap {
     position: relative;
     width: calc(100% - 88px);
@@ -172,14 +105,95 @@
     overflow: hidden;
     border-radius: 8px 0 0 8px;
 }
+
 .image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
+    display: block;
     border-bottom: 4px solid var(--text-black);
-        border-left: 4px solid var(--text-black);
-        border-top: 4px solid var(--text-black);
+    border-left: 4px solid var(--text-black);
+    border-top: 4px solid var(--text-black);
     border-radius: 10px 0 0 10px;
 }
+
+@media (min-width: 561px) {
+    .container {
+        width: 100%;
+        min-height: 566px;
+        display: grid;
+        grid-template-columns: minmax(0, 666px) 560px;
+        column-gap: 116px;
+        align-items: stretch;
+        justify-content: end;
+        padding-top: 74px;
+        padding-bottom: 74px;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+        text-align: left;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .title {
+        margin: 0 0 32px;
+        font-size: 40px;
+        line-height: 130%;
+        letter-spacing: 0.01em;
+        text-align: left;
+    }
+
+    .textBlock {
+        width: 100%;
+        max-width: 666px;
+        max-height: none;
+        overflow: visible;
+        transition: none;
+    }
+
+    .textBlockOpen {
+        max-height: none;
+    }
+
+    .text {
+        font-size: 18px;
+        line-height: 144%;
+        text-align: left;
+    }
+
+    .text+.text {
+        margin-top: 25px;
+    }
+
+    .moreButton {
+        display: none;
+    }
+
+    .imageWrap {
+        width: 560px;
+        height: 566px;
+        justify-self: end;
+        align-self: auto;
+        overflow: hidden;
+        border-radius: 4px 0 0 4px;
+        position: relative;
+    }
+
+    .image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        border-bottom: 4px solid var(--text-black);
+        border-left: 4px solid var(--text-black);
+        border-top: 4px solid var(--text-black);
+        border-radius: 10px 0 0 10px;
+    }
 }

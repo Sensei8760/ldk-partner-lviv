@@ -10,7 +10,6 @@
     width: 100%;
     max-width: 544px;
     background: var(--gray-back);
-    /* border: 1px solid var(--back-gray); */
     border-radius: 14px;
     padding: 42px;
 }

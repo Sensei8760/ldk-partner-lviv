@@ -1,49 +1,35 @@
 .section {
     background: var(--backgr);
-    padding: 56px 56px 195px;
+    padding: 32px 16px 16px;
 }
 
 .container {
     position: relative;
-    width: min(1328px, 100%);
-    height: 716px;
-    min-height: 716px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
     margin: 0 auto;
-    padding: 56px 40px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
     overflow: visible;
     border-radius: 10px;
-    background: var(--back-black);
-}
-
-.photoShape {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 693px;
-    height: 716px;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-    border-radius: 0 10px 10px 10px;
-}
-
-.photoShapeSvg {
-    width: 1042px;
-    height: 716px;
-    display: block;
-    filter: drop-shadow(1px 1px 4px var(--gray-btn));
+    background: transparent;
 }
 
 .content {
     position: relative;
     z-index: 2;
-    width: 595px;
+    width: 100%;
     max-width: 100%;
-    height: 620px;
+    height: auto;
+    padding: 24px 16px 0;
+    border-radius: 10px;
+    background: var(--back-black);
 }
 
 .textArea {
-    width: 595px;
+    width: 100%;
     max-width: 100%;
 }
 
@@ -54,24 +40,23 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-        font-size: 16px;
-        line-height: 150%;
-        color: var(--choco);
+    font-size: 16px;
+    line-height: 150%;
 }
 
 .title {
-    max-width: 590px;
-    margin: 0 0 32px;
+    max-width: 100%;
+    margin: 0 0 20px;
     color: var(--text);
     font-family: var(--second-family);
     font-weight: 600;
-    font-size: 40px;
+    font-size: 25px;
+    line-height: 124%;
     letter-spacing: 0.01em;
-        line-height: 130%;
 }
 
 .text {
-    max-width: 595px;
+    max-width: 100%;
     margin: 0;
 }
 
@@ -80,8 +65,8 @@
     color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
-        font-size: 18px;
-        line-height: 144%;
+    font-size: 14px;
+    line-height: 136%;
 }
 
 .expandedText {
@@ -98,9 +83,9 @@
 }
 
 .expandedTextOpen {
-    max-height: 180px;
+    max-height: 170px;
     opacity: 1;
-    margin-top: 14px;
+    margin-top: 10px;
     transform: translateY(0);
 }
 
@@ -109,26 +94,13 @@
     color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
-    font-size: 18px;
-    line-height: 144%;
+    font-size: 14px;
+    line-height: 136%;
 }
-/* .offerList {
-    margin: 0 0 10px;
-    padding-left: 18px;
-}
-
-.offerList li {
-    margin-bottom: 2px;
-    color: var(--text);
-    font-family: var(--font-family);
-    font-weight: 400;
-        font-size: 18px;
-        line-height: 144%;
-} */
 
 .detailsButton {
     width: fit-content;
-    margin: 10px 0 60px auto;
+    margin: 10px 0 32px auto;
     padding: 0;
     border: none;
     background: transparent;
@@ -139,8 +111,8 @@
     font-family: var(--font-family);
     font-weight: 400;
     cursor: pointer;
-    font-size: 18px;
-    line-height: 144%;
+    font-size: 14px;
+    line-height: 136%;
     transition: color 0.2s ease;
 }
 
@@ -155,227 +127,6 @@
 .detailsIconOpen {
     transform: rotate(90deg);
 }
-
-.switchArea {
-    position: relative;
-    width: 839px;
-    max-width: none;
-    min-height: 106px;
-}
-
-.features {
-    position: absolute;
-    left: 40px;
-    bottom: 56px;
-    z-index: 2;
-    width: 839px;
-    max-width: none;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    opacity: 1;
-    transform: translateY(0);
-    transition:
-        opacity 0.25s ease,
-        transform 0.3s ease,
-        visibility 0.25s ease;
-}
-
-.featuresHidden {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px);
-    pointer-events: none;
-}
-
-.featureItem {
-    min-width: 0;
-    display: grid;
-    grid-template-columns: 30px 1fr;
-    gap: 11px;
-    align-items: center;
-}
-
-.featureIcon {
-    width: 30px;
-    height: 30px;
-    fill: var(--choco);
-    color: var(--choco);
-}
-
-.featureTitle {
-    margin: 0 0 2px;
-    color: var(--text);
-    font-family: var(--font-family);
-        font-weight: 600;
-        font-size: 19px;
-        line-height: 147%;
-}
-
-.featureText {
-    margin: 0;
-    color: var(--text);
-    font-family: var(--font-family);
-    font-weight: 400;
-        font-size: 14px;
-        line-height: 143%;
-}
-
-.stepsBlock {
-    position: absolute;
-    left: 50%;
-    bottom: -195px;
-    transform: translateX(-50%);
-    z-index: 3;
-    width: min(1233px, calc(100% - 112px));
-    padding: 20px 26px 16px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 50px;
-    border-radius: 10px;
-    background: var(--field);
-}
-
-.stepItem {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.stepNumber {
-    margin: 0 0 14px;
-    color: var(--choco);
-    font-family: var(--second-family);
-    font-weight: 600;
-    line-height: 100%;
-    letter-spacing: 0.01em;
-        font-size: 48px;
-}
-
-.stepTitle {
-    margin: 0 0 10px;
-    color: var(--text);
-    font-family: var(--second-family);
-    font-weight: 600;
-    line-height: 120%;
-        font-size: 22px;
-        letter-spacing: 0.01em;
-}
-
-.stepText {
-    margin: 0;
-    color: var(--text);
-    font-family: var(--font-family);
-    font-weight: 400;
-    line-height: 143%;
-        font-size: 14px;
-}
-
-.stepArrowWrap {
-    margin-top: auto;
-    padding-top: 27px;
-}
-
-.stepArrow {
-    display: block;
-    width: 100%;
-    height: 8px;
-    color: var(--choco);
-    fill: currentColor;
-}
-
-.stepArrow use {
-    fill: currentColor;
-}
-@media (hover: hover) and (pointer: fine) {
-    .detailsButton:hover {
-        color: var(--button-hover);
-    }
-}
-@media (max-width: 560px) {
-    .section {
-        padding: 32px 16px 16px;
-    }
-
-        .container {
-            width: 100%;
-            height: auto;
-            min-height: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            overflow: visible;
-            background: transparent;
-        }
-
-        .content {
-            width: 100%;
-            max-width: 100%;
-            height: auto;
-            z-index: 2;
-            padding: 24px 16px 0;
-            border-radius: 10px;
-            background: var(--back-black);
-        }
-
-    .textArea {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .label {
-        margin: 0 0 8px;
-        color: var(--choco);
-            font-weight: 700;
-            font-size: 16px;
-            line-height: 150%;
-    }
-
-    .title {
-        max-width: 100%;
-        margin: 0 0 14px;
-        font-size: 25px;
-        line-height: 130%;
-        letter-spacing: 0.01em;
-            line-height: 124%;
-    }
-
-    .text {
-        max-width: 100%;
-        margin: 0;
-    }
-
-    .text p {
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 136%;
-    }
-
-    .expandedTextOpen {
-        max-height: 170px;
-        margin-top: 10px;
-    }
-
-    .expandedText p {
-        font-size: 14px;
-        line-height: 136%;
-    }
-
-    .detailsButton {
-        margin: 10px 0 32px auto;
-        gap: 2px;
-            font-size: 14px;
-            line-height: 136%;
-    }
-
-    .detailsIcon {
-        width: 18px;
-        height: 18px;
-    }
 
 .photoShape {
     position: relative;
@@ -400,41 +151,277 @@
     filter: drop-shadow(1px 1px 4px var(--gray-btn));
 }
 
-        .features {
-            position: relative;
-            left: auto;
-            bottom: auto;
-            z-index: 2;
-            width: 100%;
-            max-width: 100%;
-            margin: 32px 0 16px;
-            padding: 24px 36px;
-            border-radius: 10px;
-            background: var(--back-black);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            opacity: 1;
-            visibility: visible;
-            transform: none;
-        }
+.switchArea {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+}
+
+.features {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    z-index: 2;
+    width: 100%;
+    max-width: 100%;
+    margin: 32px 0 16px;
+    padding: 24px 36px;
+    border-radius: 10px;
+    background: var(--back-black);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+        opacity 0.25s ease,
+        transform 0.3s ease,
+        visibility 0.25s ease;
+}
+
+.featuresHidden {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.featureItem {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 16px;
+    align-items: center;
+}
+
+.featureIcon {
+    width: 30px;
+    height: 30px;
+    fill: var(--choco);
+    color: var(--choco);
+}
+
+.featureTitle {
+    margin: 0 0 4px;
+    color: var(--text);
+    font-family: var(--font-family);
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 136%;
+}
+
+.featureText {
+    margin: 0;
+    color: var(--text);
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 136%;
+}
+
+.stepsBlock {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    z-index: 3;
+    width: 100%;
+    margin: 16px 0 0;
+    padding: 14px 26px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border-radius: 10px;
+    background: var(--field);
+}
+
+.stepItem {
+    min-width: 0;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.stepNumber {
+    margin: 0 0 10px;
+    color: var(--choco);
+    font-family: var(--second-family);
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 100%;
+    letter-spacing: 0.01em;
+}
+
+.stepTitle {
+    margin: 0 0 4px;
+    color: var(--text);
+    font-family: var(--second-family);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 120%;
+    letter-spacing: 0.01em;
+}
+
+.stepText {
+    margin: 0;
+    color: var(--text);
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 167%;
+}
+
+.stepArrowWrap {
+    display: none;
+}
+
+.stepArrow {
+    display: block;
+    width: 100%;
+    height: 8px;
+    color: var(--choco);
+    fill: currentColor;
+}
+
+.stepArrow use {
+    fill: currentColor;
+}
+
+@media (min-width: 561px) {
+    .section {
+        padding: 56px 56px 195px;
+    }
+
+    .container {
+        width: min(1328px, 100%);
+        height: 716px;
+        min-height: 716px;
+        padding: 56px 40px;
+        display: block;
+        overflow: visible;
+        background: var(--back-black);
+    }
+
+    .photoShape {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 693px;
+        height: 716px;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+        border-radius: 0 10px 10px 10px;
+        background: transparent;
+    }
+
+    .photoShapeSvg {
+        width: 1042px;
+        height: 716px;
+        display: block;
+        max-width: none;
+        filter: drop-shadow(1px 1px 4px var(--gray-btn));
+    }
+
+    .content {
+        position: relative;
+        z-index: 2;
+        width: 595px;
+        max-width: 100%;
+        height: 620px;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .textArea {
+        width: 595px;
+        max-width: 100%;
+    }
+
+    .label {
+        margin: 0 0 8px;
+        font-size: 16px;
+        line-height: 150%;
+    }
+
+    .title {
+        max-width: 590px;
+        margin: 0 0 32px;
+        font-size: 40px;
+        line-height: 130%;
+    }
+
+    .text {
+        max-width: 595px;
+    }
+
+    .text p {
+        font-size: 18px;
+        line-height: 144%;
+    }
+
+    .expandedTextOpen {
+        max-height: 180px;
+        margin-top: 14px;
+    }
+
+    .expandedText p {
+        font-size: 18px;
+        line-height: 144%;
+    }
+
+    .detailsButton {
+        margin: 10px 0 60px auto;
+        font-size: 18px;
+        line-height: 144%;
+    }
+
+    .detailsButton:hover {
+        color: var(--button-hover);
+    }
+
+    .detailsButton:active {
+        color: var(--button-active);
+    }
+
+    .switchArea {
+        width: 839px;
+        max-width: none;
+        min-height: 106px;
+    }
+
+    .features {
+        position: absolute;
+        left: 40px;
+        bottom: 56px;
+        width: 839px;
+        max-width: none;
+        padding: 0;
+        margin: 0;
+        border-radius: 0;
+        background: transparent;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
 
     .featuresHidden {
-        opacity: 0;
-        visibility: hidden;
-        max-height: 0;
-        margin: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-        overflow: hidden;
-        pointer-events: none;
+        max-height: none;
+        padding: 0;
+        transform: translateY(10px);
     }
 
     .featureItem {
-        display: grid;
-        grid-template-columns: 28px 1fr;
-        gap: 16px;
-        align-items: center;
+        grid-template-columns: 30px 1fr;
+        gap: 11px;
     }
 
     .featureIcon {
@@ -443,65 +430,52 @@
     }
 
     .featureTitle {
-        margin: 0 0 4px;
-        font-size: 14px;
-            font-weight: 700;
-            line-height: 136%;
+        margin: 0 0 2px;
+        font-weight: 600;
+        font-size: 19px;
+        line-height: 147%;
     }
 
     .featureText {
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 136%;
+        font-size: 14px;
+        line-height: 143%;
     }
 
     .stepsBlock {
-        position: relative;
-        left: auto;
-        bottom: auto;
-        transform: none;
-        z-index: 3;
-        width: 100%;
-        margin: 16px 0 0;
-        padding: 14px 26px 32px;
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        border-radius: 10px;
-        background: var(--field);
+        position: absolute;
+        left: 50%;
+        bottom: -195px;
+        transform: translateX(-50%);
+        width: min(1233px, calc(100% - 112px));
+        margin: 0;
+        padding: 20px 26px 16px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 50px;
     }
 
     .stepItem {
-        min-width: 0;
-        height: auto;
-        display: flex;
-        flex-direction: column;
+        height: 100%;
     }
 
     .stepNumber {
-        margin: 0 0 10px;
-        line-height: 100%;
-            font-weight: 600;
-            font-size: 40px;
-            letter-spacing: 0.01em;
+        margin: 0 0 14px;
+        font-size: 48px;
     }
 
     .stepTitle {
-        margin: 0 0 4px;
-        line-height: 120%;
-            font-weight: 600;
-            font-size: 20px;
-            letter-spacing: 0.01em;
+        margin: 0 0 10px;
+        font-size: 22px;
     }
 
     .stepText {
-        margin: 0;
-            font-weight: 400;
-            font-size: 12px;
-            line-height: 167%;
+        font-size: 14px;
+        line-height: 143%;
     }
 
     .stepArrowWrap {
-        display: none;
+        display: block;
+        margin-top: auto;
+        padding-top: 27px;
     }
 }

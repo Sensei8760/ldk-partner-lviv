@@ -1,12 +1,13 @@
 .card {
     position: relative;
-    min-height: 559px;
-    background: var(--back-gray);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    min-height: 190px;
     border-radius: 14px;
-    padding: 42px 24px 40px 24px;
+    padding: 16px;
+    background: var(--gray-back);
+    display: grid;
+    grid-template-columns: 77px minmax(0, 1fr);
+    column-gap: 50px;
+    overflow: hidden;
 }
 
 .cardOutOfStock {
@@ -38,13 +39,15 @@
 .imageLink {
     display: block;
     text-decoration: none;
+    grid-row: 1 / 2;
+    align-self: stretch;
 }
 
 .imageWrapper {
     position: relative;
-    width: 240px;
-    height: 350px;
-    margin: 0 auto 24px;
+    width: 125px;
+    height: 158px;
+    margin: 0;
     flex-shrink: 0;
 }
 
@@ -60,9 +63,10 @@
 }
 
 .content {
+    min-width: 0;
     display: flex;
-    flex: 1;
     flex-direction: column;
+    height: 158px;
 }
 
 .titleLink {
@@ -71,16 +75,19 @@
 }
 
 .title {
-    margin: 0 0 14px;
-    font-family: var(--font-family);
+    width: 163px;
+    max-width: 140px;
+    min-height: 58px;
+    max-height: 58px;
+    margin: 0;
     display: -webkit-box;
-    line-clamp: 2;
-    -webkit-line-clamp: 2;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 40px;
+    font-family: var(--font-family);
     font-weight: 500;
-    font-size: 20px;
+    font-size: 16px;
     line-height: 120%;
     letter-spacing: 0.01em;
     color: var(--text-black);
@@ -89,10 +96,10 @@
 .bottom {
     margin-top: auto;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: 14px;
-    padding-right: 10px;
+    gap: 8px;
+    padding-right: 0;
 }
 
 .meta {
@@ -110,9 +117,9 @@
 }
 
 .priceValue {
-    font-weight: 700;
     font-family: var(--font-family);
-    font-size: 24px;
+    font-weight: 700;
+    font-size: 20px;
     letter-spacing: 0.01em;
     color: var(--text-black);
 }
@@ -122,8 +129,8 @@
     letter-spacing: 0.01em;
     color: var(--text-black);
     font-weight: 600;
-    font-size: 16px;
-    line-height: 175%;
+    font-size: 14px;
+    line-height: 140%;
 }
 
 .priceDiscountRow {
@@ -143,10 +150,10 @@
 .priceOldValue {
     letter-spacing: 0.01em;
     font-family: var(--font-family);
-        font-weight: 400;
-        font-size: 16px;
-        text-decoration: line-through;
-        color: var(--text-black);
+    font-weight: 400;
+    font-size: 16px;
+    text-decoration: line-through;
+    color: var(--text-black);
 }
 
 .priceOldCurrency {
@@ -158,21 +165,21 @@
     margin: 0;
     line-height: 1;
     text-align: right;
-        letter-spacing: 0.01em;
-        color: var(--discount);
+    letter-spacing: 0.01em;
+    color: var(--discount);
 }
 
 .priceSaleValue {
-    font-weight: 700;
-    font-size: 24px;
-    letter-spacing: 0.01em;
     font-family: var(--font-family);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.01em;
 }
 
 .priceSaleCurrency {
     font-weight: 600;
-        font-size: 16px;
-        line-height: 175%;
+    font-size: 14px;
+    line-height: 140%;
 }
 
 .stock {
@@ -189,8 +196,8 @@
 }
 
 .arrowButton {
-    width: 38px;
-    height: 30px;
+    width: 34px;
+    height: 26px;
     padding: 4px 8px;
     border-radius: 4px;
     background: var(--accept-button);
@@ -218,8 +225,8 @@
 }
 
 .arrowIcon {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     display: block;
     color: var(--text);
     fill: currentColor;
@@ -229,114 +236,95 @@
     fill: currentColor;
 }
 
-@media (hover: hover) and (pointer: fine) {
+@media (min-width: 561px) {
+    .card {
+        min-height: 559px;
+        background: var(--back-gray);
+        display: flex;
+        flex-direction: column;
+        border-radius: 14px;
+        padding: 42px 24px 40px 24px;
+    }
+
+    .imageLink {
+        display: block;
+        grid-row: auto;
+        align-self: auto;
+    }
+
+    .imageWrapper {
+        width: 240px;
+        height: 350px;
+        margin: 0 auto 24px;
+    }
+
+    .content {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        height: auto;
+    }
+
+    .title {
+        width: auto;
+        max-width: none;
+        margin: 0 0 14px;
+        display: -webkit-box;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 40px;
+        font-size: 20px;
+        line-height: 120%;
+    }
+
+    .bottom {
+        align-items: center;
+        gap: 14px;
+        padding-right: 10px;
+    }
+
+    .priceValue,
+    .priceSaleValue {
+        font-size: 24px;
+    }
+
+    .currency,
+    .priceSaleCurrency {
+        font-size: 16px;
+        line-height: 175%;
+    }
+
+    .arrowButton {
+        width: 38px;
+        height: 30px;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
     .arrowButton:hover {
         background: var(--button-hover);
         transform: translateY(-1px);
+    }
+
+    .arrowButton:active {
+        background: var(--button-active);
+        transform: translateY(0);
     }
 
     .arrowButtonDisabled:hover {
         background: var(--btn-disabled);
         transform: none;
     }
-}
 
-@media (max-width: 560px) {
-    .card {
-        min-height: 190px;
-        border-radius: 14px;
-        padding: 16px;
-        display: grid;
-        grid-template-columns: 77px minmax(0, 1fr);
-        column-gap: 50px;
-        background: var(--gray-back);
-    }
-
-    /* .favoriteButtonWrap {
-        top: 17px;
-        right: 22px;
-    } */
-
-    .imageLink {
-        grid-row: 1 / 2;
-        align-self: stretch;
-    }
-
-    .imageWrapper {
-        width: 125px;
-        height: 158px;
-        margin: 0;
-    }
-
-        .content {
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            height: 158px;
-        }
-    
-                                .title {
-                                    width: 163px;
-                                    max-width: 140px;
-                                    min-height: 58px;
-                                    max-height: 58px;
-                                    margin: 0;
-                                    display: -webkit-box;
-                                    line-clamp: 3;
-                                    -webkit-line-clamp: 3;
-                                    -webkit-box-orient: vertical;
-                                    overflow: hidden;
-                                    font-family: var(--font-family);
-                                    font-weight: 500;
-                                    font-size: 16px;
-                                    line-height: 120%;
-                                    letter-spacing: 0.01em;
-                                }
-    
-        .bottom {
-            margin-top: auto;
-            padding-right: 0;
-            align-items: flex-end;
-            gap: 8px;
-        }
-
-    .priceValue,
-    .priceSaleValue {
-        font-family: var(--font-family);
-            font-weight: 700;
-            font-size: 20px;
-            letter-spacing: 0.01em;
-    }
-    .currency,
-    .priceSaleCurrency {
-        font-size: 14px;
-        line-height: 140%;
-    }
-
-    .priceOldValue {
-        font-size: 16px;
-    }
-
-    .priceOldCurrency {
-        font-size: 14px;
-    }
-
-    .stock {
-        font-family: var(--font-family);
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 143%;
-    }
-
-    .arrowButton {
-        width: 34px;
-        height: 26px;
-        padding: 4px 8px;
-        border-radius: 4px;
+    .arrowButtonDisabled:active {
+        background: var(--btn-disabled);
+        transform: none;
     }
 
     .arrowIcon {
-        width: 18px;
-        height: 18px;
+        width: 22px;
+        height: 22px;
     }
 }

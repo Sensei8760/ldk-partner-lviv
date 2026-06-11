@@ -20,8 +20,8 @@
 }
 
 .md {
-    min-width: 142px;
-    height: 56px;
+    min-width: 138px;
+    height: 44px;
     border: 0.20px solid var(--choco-active);
     border-radius: 8px;
     background: transparent;
@@ -35,16 +35,53 @@
     transform: none;
     opacity: 1;
     background: var(--choco-hover);
+    border-color: var(--choco-active);
 }
 
 .md:active {
     transform: none;
     opacity: 1;
-    background: var(--choco-active);  
+    background: var(--choco-active);
+    border-color: var(--choco-active);
 }
 
 .active.md {
     background: var(--choco-active);
+    border-color: var(--choco-active);
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--choco-btn);
+    transition: color 0.2s ease;
+}
+
+.button:active .icon {
+    color: var(--button-active);
+}
+
+.active .icon {
+    color: var(--button-active);
+}
+
+.iconSvg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    fill: currentColor;
+}
+
+.text {
+    color: var(--text);
+    font-family: var(--font-family);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1;
 }
 
 .md .icon {
@@ -52,11 +89,6 @@
     width: 24px;
     height: 24px;
     color: var(--text);
-}
-
-.md:active .icon,
-.active.md .icon {
-    color: var(--text)
 }
 
 .md .iconSvg {
@@ -69,137 +101,52 @@
     order: 1;
     font-family: var(--font-family);
     white-space: nowrap;
-    font-size: 16px;
-        font-weight: 700;
-        line-height: 150%;
-        color: #fff;
-}
-
-.icon {
-    width: 24px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: #000000;
-    transition: color 0.2s ease;
-}
-
-.button:active .icon {
-    color: #0b5328;
-}
-
-.active .icon {
-    color: #0b5328;
-}
-
-.iconSvg {
-    width: 24px;
-    height: 24px;
-    display: block;
-    fill: currentColor;
-}
-
-.text {
-    color: #ffffff;
-    font-family: var(--font-family);
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1;
-}
-
-.active.md {
-    background: var(--choco-active);
-}
-
-.md .icon {
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 160%;
     color: var(--text);
 }
 
-.md:hover .icon,
-.md:focus-visible .icon,
+.md.button .icon,
+.md.button:hover .icon,
+.md.button:focus-visible .icon,
+.md.button:active .icon,
+.md.button.active .icon,
 .md:active .icon,
 .active.md .icon {
     color: var(--text);
 }
 
-.md:hover,
-.md:focus-visible {
-    background: var(--choco-hover);
-    border-color: var(--choco-active);
-}
+@media (min-width: 561px) {
+    .md {
+        min-width: 142px;
+        height: 56px;
+        padding: 10px 16px;
+    }
 
-.md:active,
-.active.md {
-    background: var(--choco-active);
-    border-color: var(--choco-active);
+    .md .text {
+        font-size: 16px;
+        line-height: 150%;
+    }
 }
 
 @media (hover: hover) and (pointer: fine) {
-    /* .md:hover .icon {
-            color: #13833f;
-        } */
-
-
     .button:hover {
-            transform: translateY(-1px);
-            opacity: 0.92;
-        }
-
-        .button:hover .icon {
-            color: #13833f;
-        }
-}
-
-@media (max-width: 1200px) {
-
-    .sm,
-    .icon,
-    .iconSvg {
-        width: 24px;
-        height: 24px;
+        transform: translateY(-1px);
+        opacity: 0.92;
     }
-}
 
-@media (max-width: 560px) {
-    .icon{
-        color: var(--choco-btn);
-    }
-        .md {
-            min-width: 138px;
-            height: 44px;
-            border-radius: 8px;
-            background: transparent;
-            padding: 10px 16px;
-            gap: 10px;
-            transition: background 0.2s ease, border-color 0.2s ease;
-        }
-.md .text {
-        font-size: 15px;
-        line-height: 160%;
-}
-    .md .icon {
-            color: var(--text);
-        }
-}
-.md.button .icon,
-.md.button:hover .icon,
-.md.button:focus-visible .icon,
-.md.button:active .icon,
-.md.button.active .icon {
-    color: var(--text);
-}
-
-@media (hover: hover) and (pointer: fine) {
-
-    .md.button:hover .icon,
-    .md.button:focus-visible .icon {
-        color: var(--text);
+    .button:hover .icon {
+        color: var(--button-hover);
     }
 
     .md.button:hover {
         transform: none;
         opacity: 1;
+    }
+
+    .md.button:hover .icon,
+    .md.button:focus-visible .icon {
+        color: var(--text);
     }
 }

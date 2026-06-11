@@ -2,65 +2,109 @@
 
 import { useEffect, useState, type MouseEvent } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './Header.module.css';
 import MobileMenu from './MobileMenu/MobileMenu';
 
+const CONTACTS_SCROLL_KEY = 'scrollToContacts';
+
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-  if (!isMenuOpen) {
-    return;
-  }
+    if (!isMenuOpen) {
+      return;
+    }
 
-  const scrollY = window.scrollY;
+    const scrollY = window.scrollY;
 
-  document.documentElement.style.overflow = 'hidden';
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${scrollY}px`;
-  document.body.style.left = '0';
-  document.body.style.right = '0';
-  document.body.style.width = '100%';
-  document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
 
-  return () => {
-    document.documentElement.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.width = '';
-    document.body.style.overflow = '';
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
 
-    window.scrollTo(0, scrollY);
-  };
-}, [isMenuOpen]);
+      window.scrollTo(0, scrollY);
+    };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (pathname !== '/') {
+      return;
+    }
+
+    const shouldScrollToContacts =
+      sessionStorage.getItem(CONTACTS_SCROLL_KEY) === 'true' ||
+      window.location.hash === '#contacts';
+
+    if (!shouldScrollToContacts) {
+      return;
+    }
+
+    sessionStorage.removeItem(CONTACTS_SCROLL_KEY);
+
+    const scrollToContacts = () => {
+      const contactsSection = document.getElementById('contacts');
+
+      if (!contactsSection) {
+        return;
+      }
+
+      contactsSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+
+      window.history.replaceState(null, '', '/#contacts');
+    };
+
+    const timeoutId = window.setTimeout(scrollToContacts, 300);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [pathname]);
 
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
 
   const handleContactsClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+
+    sessionStorage.setItem(CONTACTS_SCROLL_KEY, 'true');
     closeMenu();
 
-    if (window.location.pathname !== '/') {
+    if (pathname !== '/') {
+      router.push('/');
       return;
     }
 
-    event.preventDefault();
+    window.setTimeout(() => {
+      const contactsSection = document.getElementById('contacts');
 
-    const contactsSection = document.getElementById('contacts');
+      if (contactsSection) {
+        contactsSection.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
 
-    if (contactsSection) {
-      contactsSection.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-
-      window.history.pushState(null, '', '/#contacts');
-    }
+        window.history.replaceState(null, '', '/#contacts');
+      }
+    }, 300);
   };
 
   const getLinkClassName = (href: string) => {

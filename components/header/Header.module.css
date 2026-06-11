@@ -2,6 +2,8 @@
     width: 100%;
     background-color: var(--back-black);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    position: relative;
+    z-index: 50;
 }
 
 .section {
@@ -10,16 +12,19 @@
 
 .container {
     max-width: 1440px;
-    height: 80px;
+    height: 50px;
+    min-height: 50px;
     margin: 0 auto;
-    padding: 0 50px;
+    padding: 0 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 32px;
+    flex-wrap: nowrap;
+    gap: 20px;
 }
 
 .logoLink {
+    width: auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -30,17 +35,14 @@
 
 .logo {
     display: block;
-    width: 93px;
-    height: 69px;
+    width: 41px;
+    height: 30px;
     fill: currentColor;
     flex: 0 0 auto;
 }
 
 .nav {
-    display: flex;
-    align-items: center;
-    gap: 48px;
-    margin-left: auto;
+    display: none;
 }
 
 .navLink {
@@ -49,14 +51,9 @@
     transition: color 0.2s ease, opacity 0.2s ease;
     white-space: nowrap;
     font-family: var(--font-family);
-        font-weight: 600;
-        font-size: 20px;
-        line-height: 140%;
-}
-
-.navLink:hover,
-.navLink:focus-visible {
-    color: var(--button-hover);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 140%;
 }
 
 .navLink:active {
@@ -66,8 +63,27 @@
 .activeLink {
     color: var(--accept-button);
 }
+
 .burgerButton {
-    display: none;
+    width: 24px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.burgerButton:active {
+    color: var(--text);
+    transform: scale(0.96);
+}
+
+.burgerButtonOpen {
+    color: var(--text);
 }
 
 .burgerIcon {
@@ -78,19 +94,18 @@
     stroke: currentColor;
 }
 
-@media (max-width: 560px) {
+@media (min-width: 561px) {
     .header {
-        position: relative;
-        z-index: 50;
+        position: static;
+        z-index: auto;
     }
 
     .container {
-        height: 50px;
-        min-height: 50px;
-        padding: 0 16px;
-        flex-wrap: nowrap;
+        height: 80px;
+        min-height: 80px;
+        padding: 0 50px;
         justify-content: space-between;
-        gap: 20px;
+        gap: 32px;
     }
 
     .logoLink {
@@ -98,33 +113,27 @@
     }
 
     .logo {
-        width: 41px;
-        height: 30px;
+        width: 93px;
+        height: 69px;
     }
 
     .nav {
-        display: none;
+        display: flex;
+        align-items: center;
+        gap: 48px;
+        margin-left: auto;
+    }
+
+    .navLink:hover,
+    .navLink:focus-visible {
+        color: var(--button-hover);
+    }
+
+    .navLink:active {
+        color: var(--button-active);
     }
 
     .burgerButton {
-        width: 24px;
-        height: 20px;
-        padding: 0;
-        border: none;
-        background: transparent;
-        color: var(--text);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-    }
-
-    .burgerButton:active {
-        color: var(--text);
-        transform: scale(0.96);
-    }
-
-    .burgerButtonOpen {
-        color: var(--text);
+        display: none;
     }
 }

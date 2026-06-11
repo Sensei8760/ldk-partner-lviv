@@ -1,28 +1,27 @@
 .section {
     background: var(--backgr);
-    padding: 28px 56px;
+    padding: 16px;
 }
 
 .container {
-    width: min(1328px, 100%);
+    width: 100%;
+    min-height: auto;
     margin: 0 auto;
-    min-height: 672px;
-    padding: 56px 40px;
-    display: grid;
-    grid-template-columns: minmax(0, 690px) 1fr;
-    align-items: center;
-    gap: 69px;
-    background: var(--back-black);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
     border-radius: 10px;
+    background: var(--back-black);
 }
 
 .content {
-    width: 690px;
+    width: 100%;
     max-width: 100%;
 }
 
 .label {
-    margin: 0 0 8px;
+    margin: 0 0 7px;
     font-family: var(--font-family);
     font-weight: 700;
     font-size: 16px;
@@ -33,20 +32,20 @@
 }
 
 .title {
-    max-width: 690px;
-    margin: 0 0 32px;
+    max-width: 100%;
+    margin: 0 0 20px;
     color: var(--text);
     font-family: var(--second-family);
     font-weight: 600;
-    font-size: 40px;
-    line-height: 130%;
+    font-size: 25px;
+    line-height: 124%;
     letter-spacing: 0.01em;
 }
 
 .text {
     display: grid;
-    gap: 24px;
-    max-width: 690px;
+    gap: 2px;
+    max-width: 100%;
 }
 
 .text p {
@@ -54,19 +53,72 @@
     color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
-    font-size: 18px;
-    line-height: 144%;
+    font-size: 14px;
+    line-height: 136%;
+}
+
+.mobileExpandableText {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    display: block;
+    transform: translateY(-6px);
+    transition:
+        max-height 0.35s ease,
+        opacity 0.25s ease,
+        transform 0.35s ease,
+        margin-top 0.35s ease;
+}
+
+.mobileExpandableTextOpen {
+    max-height: 360px;
+    opacity: 1;
+    margin-top: 14px;
+    transform: translateY(0);
+}
+
+.mobileExpandableText p+p {
+    margin-top: 14px;
+}
+
+.detailsButton {
+    width: fit-content;
+    margin: 6px 0 0 auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--accept-button);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 136%;
+    cursor: pointer;
+}
+
+.detailsIcon {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    transition: transform 0.2s ease;
+    transform: rotate(-90deg);
+}
+
+.detailsIconOpen {
+    transform: rotate(90deg);
 }
 
 .gallery {
-    justify-self: end;
-    width: 489px;
+    width: 100%;
     max-width: 100%;
+    justify-self: auto;
     display: grid;
-    grid-template-columns: 1.45fr 0.95fr;
-    grid-template-rows: 252px 252px;
-    gap: 17px;
-    row-gap: 16px;
+    grid-template-columns: 179px 1fr;
+    grid-template-rows: 160px 179px;
+    row-gap: 10px;
+    column-gap: 13px;
 }
 
 .imageBox {
@@ -92,135 +144,97 @@
     object-fit: cover;
     display: block;
 }
-.mobileExpandableText {
-    display: grid;
-    gap: 24px;
-}
 
-.detailsButton {
-    display: none;
-}
-@media (max-width: 560px) {
+@media (min-width: 561px) {
     .section {
-        padding: 16px;
+        padding: 28px 56px;
     }
 
     .container {
-        width: 100%;
-        min-height: auto;
-        padding: 24px 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
+        width: min(1328px, 100%);
+        min-height: 672px;
+        padding: 56px 40px;
+        display: grid;
+        grid-template-columns: minmax(0, 690px) 1fr;
+        align-items: center;
+        gap: 69px;
         border-radius: 10px;
-        background: var(--back-black);
     }
 
     .content {
-        width: 100%;
+        width: 690px;
         max-width: 100%;
     }
 
     .label {
-        margin: 0 0 7px;
+        margin: 0 0 8px;
         font-size: 16px;
         line-height: 150%;
-            font-weight: 700;
     }
 
     .title {
-        max-width: 100%;
-        margin: 0 0 20px;
-        letter-spacing: 0.01em;
-                    font-weight: 600;
-                    font-size: 25px;
-                    line-height: 124%;
+        max-width: 690px;
+        margin: 0 0 32px;
+        font-size: 40px;
+        line-height: 130%;
     }
 
     .text {
         display: grid;
-        gap: 2px;
-        max-width: 100%;
+        gap: 24px;
+        max-width: 690px;
     }
 
     .text p {
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 136%;
+        font-size: 18px;
+        line-height: 144%;
+    }
+
+    .mobileExpandableText {
+        display: grid;
+        gap: 24px;
+        max-height: none;
+        opacity: 1;
+        overflow: visible;
+        transform: none;
+        transition: none;
+    }
+
+    .mobileExpandableTextOpen {
+        max-height: none;
+        opacity: 1;
+        margin-top: 0;
+        transform: none;
+    }
+
+    .mobileExpandableText p+p {
+        margin-top: 0;
+    }
+
+        .detailsButton:hover {
+            color: var(--button-hover);
+        }
+    
+        .detailsButton:active {
+            color: var(--button-active);
+        }
+
+    .detailsButton {
+        display: none;
     }
 
     .gallery {
-        width: 100%;
+        justify-self: end;
+        width: 489px;
         max-width: 100%;
-        justify-self: auto;
         display: grid;
-        grid-template-columns: 179px 1fr;
-        grid-template-rows: 160px 179px;
-        row-gap: 10px;
-        column-gap: 13px;
+        grid-template-columns: 1.45fr 0.95fr;
+        grid-template-rows: 252px 252px;
+        gap: 17px;
+        row-gap: 16px;
     }
 
     .imageBox {
         border-radius: 10px;
-        overflow: hidden;
     }
-
-    .image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-        .mobileExpandableText {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            display: block;
-            transform: translateY(-6px);
-            transition:
-                max-height 0.35s ease,
-                opacity 0.25s ease,
-                transform 0.35s ease,
-                margin-top 0.35s ease;
-        }
-    
-        .mobileExpandableTextOpen {
-            max-height: 360px;
-            opacity: 1;
-            margin-top: 14px;
-            transform: translateY(0);
-        }
-    
-        .mobileExpandableText p+p {
-            margin-top: 14px;
-        }
-    
-        .detailsButton {
-            width: fit-content;
-            margin: 6px 0 0 auto;
-            padding: 0;
-            border: none;
-            background: transparent;
-            color: var(--accept-button);
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            font-family: var(--font-family);
-            font-weight: 400;
-            cursor: pointer;
-                font-size: 14px;
-                line-height: 136%;
-        }
-    
-        .detailsIcon {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-            transition: transform 0.2s ease;
-            transform: rotate(-90deg);
-        }
-    
-        .detailsIconOpen {
-            transform: rotate(90deg);
-        }
 }

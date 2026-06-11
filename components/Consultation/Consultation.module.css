@@ -1,46 +1,49 @@
 .section {
     width: 100%;
     background-color: var(--backgr);
-    padding: 74px 0;
+    padding: 25px 0;
 }
 
 .container {
-    max-width: 1440px;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 0 61px;
+    padding: 0 27px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .title {
-    margin-bottom: 12px;
+    width: 100%;
+    margin: 0 0 8px;
     text-align: center;
     color: var(--text);
     font-family: var(--second-family);
     font-weight: 600;
+    font-size: 25px;
+    line-height: 130%;
     letter-spacing: 0.01em;
-        font-size: 40px;
-        line-height: 130%;
 }
 
 .subtitle {
-    margin-bottom: 34px;
+    max-width: 100%;
+    margin: 0 0 24px;
     text-align: center;
     color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
-    line-height: 125%;
+    font-size: 17px;
+    line-height: 136%;
     letter-spacing: 0.01em;
-        font-size: 22px;
-
 }
 
 .button {
-    margin-bottom: 34px;
-    min-width: 337px;
-    height: 64px;
-    padding: 20px 30px;
+    width: 263px;
+    min-width: 0;
+    height: 52px;
+    margin: 0 0 24px;
+    padding: 0 20px;
     border: none;
     appearance: none;
     -webkit-appearance: none;
@@ -53,11 +56,11 @@
     justify-content: center;
     gap: 10px;
     font-family: var(--font-family);
-    letter-spacing: 0.01em;
-    transition: background-color 0.2s ease;
     font-weight: 500;
-    font-size: 20px;
-    line-height: 120%;
+    font-size: 16px;
+    line-height: 150%;
+    letter-spacing: 0.01em;
+    text-align: center;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
@@ -68,8 +71,8 @@
 }
 
 .arrow {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -78,36 +81,38 @@
 }
 
 .arrowIcon {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     display: block;
     fill: currentColor;
 }
 
 .list {
+    width: fit-content;
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 13px;
+    gap: 11px;
     padding: 0;
-    margin: 0;
+    margin: 0 auto;
+    align-items: flex-start;
 }
 
 .listItem {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 7px;
     color: var(--text);
     font-family: var(--font-family);
     font-weight: 400;
-    font-size: 16px;
+    font-size: 12px;
     line-height: 131%;
     letter-spacing: 0.01em;
 }
 
 .checkIcon {
-    width: 22px;
-    height: 22px;
+    width: 16px;
+    height: 16px;
     flex-shrink: 0;
     display: block;
 }
@@ -116,95 +121,79 @@
     fill: unset;
 }
 
-@media (hover: hover) and (pointer: fine) {
+@media (min-width: 561px) {
+    .section {
+        padding: 74px 0;
+    }
+
+    .container {
+        max-width: 1440px;
+        padding: 0 61px;
+    }
+
+    .title {
+        margin-bottom: 12px;
+        font-size: 40px;
+        line-height: 130%;
+        letter-spacing: 0.01em;
+    }
+
+    .subtitle {
+        margin-bottom: 34px;
+        font-size: 22px;
+        line-height: 125%;
+        letter-spacing: 0.01em;
+    }
+
+    .button {
+        width: auto;
+        min-width: 337px;
+        height: 64px;
+        margin-bottom: 34px;
+        padding: 20px 30px;
+        border-radius: 16px;
+        font-size: 20px;
+        line-height: 120%;
+        letter-spacing: 0.01em;
+    }
 
     .button:hover,
     .button:focus-visible {
         background-color: var(--button-hover);
         transform: translateY(-2px);
     }
-}
 
-@media (max-width: 560px) {
-    .section {
-        padding: 30px 0 20px;
-    }
-
-    .container {
-        width: 100%;
-        max-width: 100%;
-        padding: 0 27px;
-        align-items: center;
-    }
-
-    .title {
-        width: 100%;
-        margin: 0 0 8px;
-        font-family: var(--second-family);
-        font-weight: 600;
-        text-align: center;
-            font-size: 25px;
-            text-align: center;
-    }
-
-    .subtitle {
-        max-width: 100%;
-        margin: 0 0 24px;
-        font-family: var(--font-family);
-        letter-spacing: 0.01em;
-        text-align: center;
-            font-weight: 400;
-            font-size: 17px;
-            line-height: 136%;
-
-    }
-
-    .button {
-        width: 263px;
-        min-width: 0;
-        height: 52px;
-        margin: 0 0 24px;
-        padding: 0 20px;
-        border-radius: 16px;
-        gap: 10px;
-        font-family: var(--font-family);
-        font-weight: 500;
-        text-align: center;
-            font-size: 16px;
-            line-height: 150%;
-            letter-spacing: 0.01em;
+    .button:active {
+        background-color: var(--button-active);
+        transform: translateY(0);
     }
 
     .arrow {
-        width: 18px;
-        height: 18px;
+        width: 24px;
+        height: 24px;
     }
 
     .arrowIcon {
-        width: 18px;
-        height: 18px;
+        width: 24px;
+        height: 24px;
     }
 
     .list {
-        width: fit-content;
-        margin: 0 auto;
-        gap: 11px;
-        padding: 0;
-        align-items: flex-start;
+        width: auto;
+        gap: 13px;
+        margin: 0;
+        align-items: stretch;
     }
 
     .listItem {
-        gap: 7px;
-        font-family: var(--font-family);
+        gap: 11px;
+        font-size: 16px;
         line-height: 131%;
         letter-spacing: 0.01em;
-            font-weight: 400;
-            font-size: 12px;
     }
 
     .checkIcon {
-        width: 16px;
-        height: 16px;
-        flex-shrink: 0;
+        width: 22px;
+        height: 22px;
     }
 }

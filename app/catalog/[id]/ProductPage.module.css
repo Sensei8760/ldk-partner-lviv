@@ -1,39 +1,39 @@
 .productPage {
-    padding: 72px 20px 82px 20px;
+    padding: 34px 16px 38px;
     background: var(--backgr);
     min-height: 100vh;
 }
 
 .container {
-    max-width: 1205px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
 .layout {
-    display: grid;
-    grid-template-columns: 423px 1fr;
-    gap: 52px;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .imageBlock {
-    width: 483px;
-    margin-left: -60px;
+    width: 100%;
+    max-width: 330px;
+    margin: 0 auto;
 }
 
 .gallery {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
 }
 
 .imageWrapper {
     position: relative;
     width: 100%;
-    height: 543px;
+    height: 440px;
     background: var(--backgr);
-    border-radius: 0;
+    border-radius: 14px;
     overflow: visible;
     border: none;
     cursor: zoom-in;
@@ -48,15 +48,16 @@
     height: 100%;
     object-fit: contain;
     display: block;
-    border-radius: 10px;
+    padding: 0;
+    border-radius: 14px;
 }
 
 .galleryArrowOverlay {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 44px;
-    height: 44px;
+    width: 34px;
+    height: 34px;
     border: none;
     border-radius: 50%;
     background: var(--text);
@@ -78,16 +79,66 @@
 }
 
 .galleryArrowOverlayLeft {
-    left: 45px;
+    left: 10px;
 }
 
 .galleryArrowOverlayRight {
-    right: 45px;
+    right: 10px;
+}
+
+.galleryArrowIcon {
+    width: 14px;
+    height: 14px;
+    display: block;
+    fill: currentColor;
+}
+
+.galleryArrowOverlayLeft .galleryArrowIcon {
+    transform: rotate(180deg);
+}
+
+.galleryFooter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 0;
+}
+
+.galleryDots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.galleryDot {
+    width: 8px;
+    height: 8px;
+    border: none;
+    border-radius: 50%;
+    background: var(--gray-btn);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.galleryDotActive {
+    background: var(--choco);
+    transform: scale(1.08);
+}
+
+.galleryCounter {
+    display: none;
 }
 
 .infoBlock {
-    position: relative;
+    display: block;
+    width: 100%;
+    min-width: 0;
     padding-top: 0;
+    position: relative;
 }
 
 .title {
@@ -95,11 +146,24 @@
     margin: 0 0 24px;
     font-family: var(--font-family);
     color: var(--text);
-        font-weight: 600;
-        font-size: 40px;
-        line-height: 130%;
-        letter-spacing: 0.01em;
-        color: var(--text);
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 120%;
+    letter-spacing: 0.01em;
+}
+
+.productTopRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 44px;
+}
+
+.priceInfo {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 }
 
 .priceBlock {
@@ -114,16 +178,16 @@
     margin: 0;
     line-height: 1;
     font-family: var(--font-family);
-        font-weight: 700;
-        font-size: 32px;
-        letter-spacing: 0.01em;
-        color: var(--text);
+    font-weight: 700;
+    font-size: 30px;
+    letter-spacing: 0.01em;
+    color: var(--text);
 }
 
 .price span {
     font-weight: 600;
-        font-size: 20px;
-        line-height: 140%;
+    font-size: 19px;
+    line-height: 147%;
 }
 
 .oldPrice {
@@ -132,9 +196,9 @@
     text-decoration: line-through;
     opacity: 0.85;
     font-family: var(--font-family);
-        font-weight: 400;
-        font-size: 15px;
-        color: var(--text);
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--text);
 }
 
 .oldPrice span {
@@ -147,25 +211,25 @@
     line-height: 1;
     font-weight: 700;
     font-family: var(--font-family);
-        font-size: 32px;
-        letter-spacing: 0.01em;
-        color: var(--discount);
+    font-size: 30px;
+    letter-spacing: 0.01em;
+    color: var(--discount);
 }
 
 .salePrice span {
     font-weight: 600;
-        font-size: 20px;
-        line-height: 140%;
+    font-size: 19px;
+    line-height: 147%;
 }
 
 .stock {
-    margin: 0 0 34px;
+    margin: 0;
     opacity: 0.9;
     font-family: var(--font-family);
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 143%;
-        color: var(--back-gray);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 143%;
+    color: var(--back-gray);
 }
 
 .stock span {
@@ -187,41 +251,62 @@
 .actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    flex-shrink: 0;
+    gap: 0;
     padding-top: 0;
 }
 
 .sizeAvailability {
+    width: calc(100% + 24px);
+    margin-left: -12px;
     grid-column: 1 / -1;
     border-top: none;
     padding-top: 0;
     display: flex;
     flex-direction: column;
     gap: 0;
+    overflow: hidden;
 }
 
 .sizeAvailabilityTitle {
-    display: none;
+    display: block;
+    margin: 0 0 14px;
+    padding: 0 12px;
+    font-family: var(--font-family);
+    color: var(--text);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 140%;
 }
 
 .sizeAvailabilityList {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-bottom: 24px;
-    /* max-width: 560px; */
-    
+    display: flex;
+    grid-template-columns: none;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    padding: 0 12px 20px;
+    margin: 0 0 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.sizeAvailabilityList::-webkit-scrollbar {
+    display: none;
 }
 
 .sizeAvailabilityItem {
+    flex: 0 0 127px;
+    min-height: 78px;
+    scroll-snap-align: end;
     background: var(--field);
     border: none;
     border-radius: 14px;
-    padding: 10px 24px;
-    min-height: 66px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .sizeAvailabilityItemOut {
@@ -229,21 +314,22 @@
 }
 
 .sizeAvailabilityName {
-    font-weight: 700;
+    white-space: nowrap;
     font-family: var(--font-family);
-        font-size: 16px;
-        line-height: 150%;
-        color: var(--text);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 136%;
+    color: var(--text);
 }
 
 .sizeAvailabilityStock {
     opacity: 0.85;
     font-family: var(--font-family);
-        font-weight: 300;
-        font-size: 16px;
-        line-height: 131%;
-        letter-spacing: 0.01em;
-        color: var(--text);
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 127%;
+    letter-spacing: 0.01em;
+    color: var(--text);
 }
 
 .sizeAvailabilityStockOut {
@@ -253,30 +339,34 @@
 
 .description {
     grid-column: 1 / -1;
-    margin: 0 0 24px;
+    margin: 0 0 12px;
     font-family: var(--font-family);
-        font-weight: 600;
-        font-size: 20px;
-        line-height: 140%;
-        color: var(--text);
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 140%;
+    color: var(--text);
 }
 
 .characteristics {
     grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
     background: var(--field);
     border: none;
     border-radius: 14px;
-    padding: 24px;
-    width: 458px;
+    padding: 16px 10px;
+    margin-top: 0;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .characteristicsTitle {
-    margin: 0 0 28px;
+    margin: 0 0 19px;
     font-family: var(--font-family);
-        font-weight: 600;
-        font-size: 20px;
-        line-height: 140%;
-        color: var(--text);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 140%;
+    color: var(--text);
 }
 
 .characteristicsList {
@@ -288,70 +378,121 @@
     gap: 10px;
 }
 
+.characteristicsListWrap {
+    max-height: 166px;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+}
+
+.characteristicsListWrapOpen {
+    max-height: 900px;
+}
+
 .characteristicItem {
-    font-size: 12px;
-    line-height: 1.35;
+    font-size: 10px;
+    line-height: 140%;
+    color: var(--text);
+    overflow-wrap: anywhere;
+}
+
+.characteristicLabel,
+.characteristicValue {
+    font-family: var(--font-family);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 136%;
     color: var(--text);
 }
 
-.characteristicLabel {
+.showAllCharacteristics {
+    position: relative;
+    width: 100%;
+    margin: 19px auto 0;
+    padding: 10px 0 0;
+    border: none;
+    background: transparent;
+    color: var(--button-hover);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
     font-family: var(--font-family);
-        font-weight: 700;
-        font-size: 16px;
-        line-height: 150%;
-        color: var(--text);
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 136%;
 }
 
-.characteristicValue {
-    font-family: var(--font-family);
-        font-size: 16px;
-        line-height: 150%;
-        color: var(--text);
-        font-weight: 400;
+.showAllCharacteristics::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--border-black);
+}
+
+.showAllCharacteristicsIcon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    transition: transform 0.2s ease;
+    transform: rotate(180deg);
+}
+
+.showAllCharacteristicsIconOpen {
+    transform: rotate(90deg);
 }
 
 .zoomOverlay {
     position: fixed;
     inset: 0;
     z-index: 1000;
+    padding: 0 16px;
     background: rgba(17, 17, 17, 0.86);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
 }
 
 .zoomContent {
     position: relative;
-    width: min(1100px, 100%);
+    width: 100%;
+    max-width: 343px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 18px;
+    gap: 0;
 }
 
 .zoomClose {
     position: absolute;
-    top: -8px;
-    right: -8px;
-    width: 46px;
-    height: 46px;
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
     border: none;
     border-radius: 50%;
     background: var(--text);
     color: var(--text-black);
-    font-size: 22px;
+    font-size: 18px;
+    line-height: 1;
     cursor: pointer;
-    z-index: 3;
+    z-index: 5;
+}
+
+.zoomClose:active {
+    color: var(--button-active);
 }
 
 .zoomImageWrapper {
     position: relative;
     width: 100%;
-    max-width: 900px;
-    aspect-ratio: 1 / 1;
-    background: var(--text);
-    border-radius: 20px;
+    max-width: 643px;
+    height: 457px;
+    aspect-ratio: auto;
+    background: var(--backgr);
+    border-radius: 14px;
     overflow: hidden;
 }
 
@@ -363,15 +504,15 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 54px;
-    height: 54px;
+    width: 34px;
+    height: 34px;
     padding: 0;
     border: none;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--text);
     color: var(--text-black);
     cursor: pointer;
-    z-index: 2;
+    z-index: 4;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -385,63 +526,16 @@
 }
 
 .zoomArrowLeft {
-    left: 12px;
+    left: 10px;
 }
 
 .zoomArrowRight {
-    right: 12px;
-}
-
-.galleryFooter {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-top: 0;
-}
-
-.galleryDots {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.galleryDot {
-    width: 12px;
-    height: 12px;
-    border: none;
-    border-radius: 50%;
-    background: var(--gray-btn);
-    cursor: pointer;
-    padding: 0;
-    transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.galleryDotActive {
-    background: var(--choco);
-    transform: scale(1.08);
-}
-
-.galleryCounter {
-    display: none;
-}
-
-.galleryArrowIcon {
-    width: 24px;
-    height: 24px;
-    display: block;
-    fill: currentColor;
-}
-
-.galleryArrowOverlayLeft .galleryArrowIcon {
-    transform: rotate(180deg);
+    right: 10px;
 }
 
 .zoomArrowIcon {
-    width: 24px;
-    height: 24px;
+    width: 14px;
+    height: 14px;
     display: block;
     flex-shrink: 0;
     fill: currentColor;
@@ -451,31 +545,242 @@
 .zoomArrowLeft .zoomArrowIcon {
     transform: rotate(180deg);
 }
-.productTopRow {
-    display: flex;
-    align-items: flex-start;
-    gap: 235px;
-}
 
-.priceInfo {
-    display: flex;
-    flex-direction: column;
-}
+@media (min-width: 561px) {
+    .productPage {
+        padding: 72px 20px 82px 20px;
+    }
 
-.showAllCharacteristics {
-    display: none;
-}
-.characteristicsListWrap {
-    overflow: visible;
-}
+    .container {
+        max-width: 1205px;
+    }
 
-.characteristicsListWrapOpen {
-    overflow: visible;
-}
+    .layout {
+        display: grid;
+        grid-template-columns: 423px 1fr;
+        gap: 52px;
+        align-items: start;
+    }
 
-@media (hover: hover) and (pointer: fine) {
+    .imageBlock {
+        width: 483px;
+        max-width: none;
+        margin-left: -60px;
+    }
+
+    .gallery {
+        gap: 20px;
+    }
+
+    .imageWrapper {
+        width: 100%;
+        height: 543px;
+        border-radius: 0;
+    }
+
+    .image {
+        border-radius: 10px;
+    }
+
+    .galleryArrowOverlay {
+        width: 44px;
+        height: 44px;
+    }
+
+    .galleryArrowOverlayLeft {
+        left: 45px;
+    }
+
+    .galleryArrowOverlayRight {
+        right: 45px;
+    }
+
+    .galleryArrowIcon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .galleryFooter {
+        gap: 14px;
+    }
+
+    .galleryDot {
+        width: 12px;
+        height: 12px;
+    }
+
+    .infoBlock {
+        position: relative;
+        padding-top: 0;
+    }
+
+    .title {
+        margin: 0 0 24px;
+        font-size: 40px;
+        line-height: 130%;
+    }
+
+    .productTopRow {
+        gap: 235px;
+        margin-bottom: 0;
+        justify-content: flex-start;
+    }
+
+    .price,
+    .salePrice {
+        font-size: 32px;
+    }
+
+    .price span,
+    .salePrice span {
+        font-size: 20px;
+        line-height: 140%;
+    }
+
+    .stock {
+        margin: 0 0 34px;
+    }
+
+    .actions {
+        gap: 12px;
+    }
+
+    .sizeAvailability {
+        width: auto;
+        margin-left: 0;
+        overflow: visible;
+    }
+
+    .sizeAvailabilityTitle {
+        display: none;
+    }
+
+    .sizeAvailabilityList {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        overflow: visible;
+        scroll-snap-type: none;
+        padding: 0;
+        margin-bottom: 24px;
+    }
+
+    .sizeAvailabilityItem {
+        flex: initial;
+        min-height: 66px;
+        scroll-snap-align: none;
+        padding: 10px 24px;
+        gap: 8px;
+    }
+
+    .sizeAvailabilityName {
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 150%;
+    }
+
+    .sizeAvailabilityStock {
+        font-size: 16px;
+        line-height: 131%;
+    }
+
+    .description {
+        margin: 0 0 24px;
+        font-size: 20px;
+        line-height: 140%;
+    }
+
+    .characteristics {
+        width: 458px;
+        max-width: none;
+        padding: 24px;
+    }
+
+    .characteristicsTitle {
+        margin: 0 0 28px;
+    }
+
+    .characteristicsListWrap,
+    .characteristicsListWrapOpen {
+        max-height: none;
+        overflow: visible;
+        transition: none;
+    }
+
+    .characteristicItem {
+        font-size: 12px;
+        line-height: 1.35;
+    }
+
+    .characteristicLabel {
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 150%;
+    }
+
+    .characteristicValue {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 150%;
+    }
+
+    .showAllCharacteristics {
+        display: none;
+    }
+
+    .zoomOverlay {
+        padding: 24px;
+    }
+
+    .zoomContent {
+        width: min(1100px, 100%);
+        max-width: none;
+        gap: 18px;
+    }
+
+    .zoomClose {
+        top: -8px;
+        right: -8px;
+        width: 46px;
+        height: 46px;
+        font-size: 22px;
+    }
+
+    .zoomImageWrapper {
+        width: 100%;
+        max-width: 900px;
+        height: auto;
+        aspect-ratio: 1 / 1;
+        background: var(--text);
+        border-radius: 20px;
+    }
+
+    .zoomArrow {
+        width: 54px;
+        height: 54px;
+        background: rgba(255, 255, 255, 0.92);
+    }
+
+    .zoomArrowLeft {
+        left: 12px;
+    }
+
+    .zoomArrowRight {
+        right: 12px;
+    }
+
+    .zoomArrowIcon {
+        width: 24px;
+        height: 24px;
+    }
+
     .galleryArrowOverlay:hover {
         color: var(--button-hover);
+    }
+
+    .galleryArrowOverlay:active {
+        color: var(--button-active);
+        transform: translateY(-50%) scale(0.96);
     }
 
     .zoomArrow:hover {
@@ -483,370 +788,18 @@
         background: var(--text);
     }
 
+    .zoomArrow:active {
+        color: var(--button-active);
+        transform: translateY(-50%) scale(0.96);
+    }
+
     .galleryDot:hover {
         transform: scale(1.08);
         background: var(--choco-hover);
     }
-}
 
-@media (max-width: 560px) {
-    .productPage {
-        padding: 34px 16px 38px;
+    .galleryDot:active {
+        transform: scale(1.08);
+        background: var(--choco);
     }
-
-    .container {
-        max-width: 100%;
-        margin: 0 auto;
-    }
-
-    .layout {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-   .imageBlock {
-       width: 100%;
-       max-width: 330px;
-       margin: 0 auto;
-   }
-
-    .gallery {
-        gap: 16px;
-    }
-
-        .imageWrapper {
-            width: 100%;
-            height: 440px;
-            border-radius: 14px;
-            background: var(--backgr);
-        }
-    .image {
-        object-fit: contain;
-        padding: 0;
-        border-radius: 14px;
-    }
-
-    .galleryArrowOverlay {
-        width: 34px;
-        height: 34px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-    }
-
-    .galleryArrowOverlayLeft {
-        left: 10px;
-    }
-
-    .galleryArrowOverlayRight {
-        right: 10px;
-    }
-
-    .galleryArrowIcon {
-        width: 14px;
-        height: 14px;
-    }
-
-    .galleryFooter {
-        margin-top: 0;
-        gap: 10px;
-    }
-
-    .galleryDots {
-        gap: 10px;
-    }
-
-    .galleryDot {
-        width: 8px;
-        height: 8px;
-    }
-.galleryDotActive {
-    background: var(--choco);
-}
-    .infoBlock {
-        display: block;
-        width: 100%;
-        min-width: 0;
-        padding-top: 0;
-    }
-
-    .title {
-        margin: 0 0 24px;
-        line-height: 120%;
-        font-family: var(--font-family);
-            font-weight: 600;
-            font-size: 25px;
-            letter-spacing: 0.01em;
-    }
-
-    .productTopRow {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 44px;
-    }
-
-    .priceInfo {
-        min-width: 0;
-    }
-
-    .priceBlock {
-        margin: 0 0 2px;
-    }
-
-    .price,
-    .salePrice {
-        line-height: 1;
-        font-family: var(--font-family);
-            font-weight: 700;
-            font-size: 30px;
-            letter-spacing: 0.01em;
-    }
-
-    .price span,
-    .salePrice span {
-        font-weight: 600;
-            font-size: 19px;
-            line-height: 147%;
-    }
-
-    .oldPrice {
-        margin-top: 8px;
-        font-family: var(--font-family);
-            font-weight: 400;
-            font-size: 15px;
-    }
-
-    .oldPrice span {
-        font-size: 13px;
-    }
-
-    .stock {
-        margin: 0;
-        font-family: var(--font-family);
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 143%;
-    }
-
-.sizeAvailabilityTitle {
-    display: block;
-    margin: 0 0 14px;
-    padding: 0 12px;
-    font-family: var(--font-family);
-    color: var(--text);
-        font-weight: 600;
-        font-size: 20px;
-        line-height: 140%;
-}
-
-    .actions {
-        flex-shrink: 0;
-        gap: 0;
-    }
-
-    .sizeAvailability {
-        width: calc(100% + 24px);
-        margin-left: -12px;
-        overflow: hidden;
-    }
-
-    .sizeAvailabilityList {
-        display: flex;
-        grid-template-columns: none;
-        gap: 8px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        scroll-snap-type: x mandatory;
-        padding: 0 12px 20px;
-        margin: 0 0 4px;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .sizeAvailabilityList::-webkit-scrollbar {
-        display: none;
-    }
-
-    .sizeAvailabilityItem {
-        flex: 0 0 127px;
-        min-height: 78px;
-        scroll-snap-align: end;
-        border-radius: 14px;
-        padding: 10px;
-        gap: 8px;
-    }
-
-    .sizeAvailabilityName {
-        white-space: nowrap;
-        font-family: var(--font-family);
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 136%;
-    }
-
-    .sizeAvailabilityStock {
-        font-family: var(--font-family);
-            font-weight: 300;
-            font-size: 15px;
-            line-height: 127%;
-            letter-spacing: 0.01em;
-    }
-
-    .description {
-        margin: 0 0 12px;
-        font-size: 12px;
-        line-height: 140%;
-    }
-
-    .characteristics {
-        width: 100%;
-        max-width: 100%;
-        border-radius: 14px;
-        padding: 16px 10px;
-        margin-top: 0;
-        overflow: hidden;
-        box-sizing: border-box;
-    }
-
-    .characteristicsTitle {
-        margin: 0 0 19px;
-        font-family: var(--font-family);
-            font-weight: 600;
-            font-size: 20px;
-            line-height: 140%;
-    }
-
-    .characteristicsList {
-        gap: 10px;
-        
-    }
-
-    .characteristicItem {
-        font-size: 10px;
-        line-height: 140%;
-        overflow-wrap: anywhere;
-    }
-
-    .characteristicLabel,
-    .characteristicValue {
-        font-family: var(--font-family);
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 136%;
-    }
-
-        .showAllCharacteristics {
-            position: relative;
-            width: 100%;
-            margin: 19px auto 0;
-            padding: 10px 0 0;
-            border: none;
-            background: transparent;
-            color: var(--button-hover);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-            font-family: var(--font-family);
-            font-weight: 500;
-            cursor: pointer;
-                font-size: 14px;
-                line-height: 136%;
-        }
-
-.showAllCharacteristics::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    border-top: 1px solid var(--border-black);
-}
-
-    .showAllCharacteristicsIcon {
-        width: 16px;
-        height: 16px;
-        fill: currentColor;
-        transition: transform 0.2s ease;
-     transform: rotate(180deg);
-    }
-
-    .showAllCharacteristicsIconOpen {
-        transform: rotate(90deg);
-    }
-        .characteristicsListWrap {
-            max-height: 166px;
-            overflow: hidden;
-            transition: max-height 0.35s ease;
-        }
-    
-        .characteristicsListWrapOpen {
-            max-height: 900px;
-        }
-
-                .zoomOverlay {
-                    padding: 0 16px;
-                    background: rgba(17, 17, 17, 0.86);
-                    align-items: center;
-                    justify-content: center;
-                }
-        
-                .zoomContent {
-                    width: 100%;
-                    max-width: 343px;
-                    gap: 0;
-                }
-        
-                .zoomImageWrapper {
-                    width: 100%;
-                    max-width: 643px;
-                    height: 457px;
-                    aspect-ratio: auto;
-                    border-radius: 14px;
-                    background: var(--backgr);
-                    overflow: hidden;
-                }
-        
-                .zoomImage {
-                    object-fit: contain;
-                }
-        
-                .zoomClose {
-                    top: 10px;
-                    right: 10px;
-                    width: 34px;
-                    height: 34px;
-                    border-radius: 50%;
-                    background: var(--text);
-                    color: var(--text-black);
-                    font-size: 18px;
-                    line-height: 1;
-                    z-index: 5;
-                }
-.zoomClose:active {
-    color: var(--button-active);
-}
-        
-                .zoomArrow {
-                    width: 34px;
-                    height: 34px;
-                    background: var(--text);
-                    color: var(--text-black);
-                    border-radius: 50%;
-                    z-index: 4;
-                }
-        
-                .zoomArrowLeft {
-                    left: 10px;
-                }
-        
-                .zoomArrowRight {
-                    right: 10px;
-                }
-        
-                .zoomArrowIcon {
-                    width: 14px;
-                    height: 14px;
-                }
 }
