@@ -29,6 +29,10 @@
   --choco-active: #6B4F3A;
   --border-black: #1c1c1c;
   --stock-gray: #afafaf;
+  --gray-search: #9c9c9c;
+  --red-btn: rgba(206, 14, 14, 0.5);
+  --green-btn: rgba(84, 209, 135, 0.5);
+  --checkbox: #404040;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -1,421 +1,140 @@
 .page {
-    padding: 40px 20px 80px;
-    background: #f6f6f6;
+    min-height: 100vh;
+    padding: 61px 20px 56px;
+    background: var(--backgr);
 }
 
 .container {
-    max-width: 1440px;
+    max-width: 1420px;
     margin: 0 auto;
 }
 
 .top {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 24px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 61px;
+    text-align: center;
 }
 
 .title {
-    margin: 0 0 8px;
-    font-size: 34px;
+    margin: 0;
+    font-weight: 700;
+    font-family: var(--second-family);
+        font-weight: 600;
+        font-size: 48px;
+        line-height: 108%;
+        letter-spacing: 0.01em;
+        text-align: center;
+        color: var(--text);
 }
 
 .subtitle {
     margin: 0;
-    color: #666;
+    color: #a8a8a8;
 }
 
 .logoutButton {
-    border: none;
-    border-radius: 10px;
-    padding: 12px 16px;
-    background: #222;
-    color: #fff;
+    background: transparent;
+    color: var(--text);
     cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    border: 2px solid var(--accept-button);
+        border-radius: 16px;
+        padding: 20px 30px;
+        width: 434px;
+        height: 64px;
+        font-family: var(--font-family);
+            font-weight: 500;
+            font-size: 20px;
+            line-height: 120%;
+            letter-spacing: 0.01em;
 }
 
-.form {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 18px;
-    padding: 24px;
-    display: grid;
-    gap: 18px;
+.logoutButton:hover {
+    background: #13833f;
+    border-color: #13833f;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+.logoutButton:active {
+    background: #0b5328;
+    border-color: #0b5328;
+    transform: scale(0.99);
 }
 
-.field {
-    display: grid;
-    gap: 8px;
-}
+/* ===== MAIN LAYOUT ===== */
 
-.field label {
-    font-weight: 700;
-    font-size: 14px;
-}
-
-.field input,
-.field select,
-.field textarea {
-    width: 100%;
-    border: 1px solid #d9d9d9;
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 14px;
-    outline: none;
-}
-
-.field textarea {
-    resize: vertical;
-}
-
-.hitRow {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.submitButton {
-    border: none;
-    border-radius: 12px;
-    padding: 14px 18px;
-    background: #2f6f60;
-    color: #fff;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.success {
-    margin: 0;
-    color: #11853d;
-}
-
-.error {
-    margin: 0;
-    color: #d43b3b;
-}
-
-@media (max-width: 768px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
-
-    .top {
-        flex-direction: column;
-    }
-}
-.stylesGrid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px 16px;
-    padding: 14px;
-    border: 1px solid #d9d9d9;
-    border-radius: 10px;
-    background: #fafafa;
-}
-
-.styleOption {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    font-size: 14px;
-}
-
-.styleOption input {
-    margin-top: 2px;
-}
-.adminContent {
-    display: grid;
-    gap: 24px;
-}
-
-.formHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-}
-
-.sectionTitle {
-    margin: 0;
-    font-size: 24px;
-    font-weight: 700;
-}
-
-.secondaryButton {
-    border: 1px solid #d0d0d0;
-    background: #fff;
-    border-radius: 10px;
-    padding: 10px 14px;
-    cursor: pointer;
-}
-
-.productsManager {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 18px;
-    padding: 24px;
-}
-
-.productsList {
-    display: grid;
-    gap: 14px;
-}
-
-.productRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 14px 0;
-    border-bottom: 1px solid #ececec;
-}
-
-.productRow:last-child {
-    border-bottom: none;
-}
-
-.productInfo {
-    min-width: 0;
-}
-
-.productTitle {
-    margin: 0 0 6px;
-    font-weight: 700;
-    color: #111;
-}
-
-.productMeta {
-    margin: 0;
-    color: #666;
-    font-size: 14px;
-    word-break: break-word;
-}
-
-.productActions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-}
-
-.editButton,
-.deleteButton {
-    border: none;
-    border-radius: 10px;
-    padding: 10px 14px;
-    color: #fff;
-    cursor: pointer;
-}
-
-.editButton {
-    background: #2f6f60;
-}
-
-.deleteButton {
-    background: #d43b3b;
-}
-
-@media (max-width: 768px) {
-    .formHeader {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .productRow {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .productActions {
-        width: 100%;
-    }
-}
-.productsManagerHeader {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 18px;
-}
-
-.searchBox {
-    width: 100%;
-    max-width: 320px;
-}
-
-.searchInput {
-    width: 100%;
-    border: 1px solid #d9d9d9;
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 14px;
-    outline: none;
-}
-
-.searchInput:focus {
-    border-color: #8a8a8a;
-}
-
-.showMoreProductsButton {
-    margin-top: 18px;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 18px;
-    background: #2f6f60;
-    color: #fff;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.showMoreProductsButton:hover {
-    opacity: 0.95;
-}
-
-@media (max-width: 768px) {
-    .productsManagerHeader {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .searchBox {
-        max-width: 100%;
-    }
-}
-.characteristicsGrid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px 16px;
-}
-
-.characteristicField {
-    display: grid;
-    gap: 8px;
-}
-
-.characteristicField label {
-    font-weight: 700;
-    font-size: 14px;
-}
-
-.characteristicField input {
-    width: 100%;
-    border: 1px solid #d9d9d9;
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 14px;
-    outline: none;
-}
-
-.fieldError {
-    margin-top: 6px;
-    color: #d32f2f;
-    font-size: 13px;
-    line-height: 1.35;
-}
-@media (max-width: 768px) {
-    .characteristicsGrid {
-        grid-template-columns: 1fr;
-    }
-}
-.imagePreviewBox {
-    margin-top: 10px;
-}
-
-.imagePreviewFrame {
-    position: relative;
-    width: 160px;
-    aspect-ratio: 1 / 1;
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid #e3e3e3;
-    background: #ffffff;
-}
-
-.imagePreview {
-    object-fit: contain;
-}
-.stateBox {
-    background: #fafafa;
-    border: 1px solid #ececec;
-    border-radius: 16px;
-    padding: 22px;
-}
-
-.stateTitle {
-    margin: 0 0 8px;
-    font-size: 22px;
-    font-weight: 700;
-    color: #111111;
-}
-
-.stateText {
-    margin: 0;
-    font-size: 15px;
-    line-height: 1.6;
-    color: #666666;
-}
-
-.retryButton {
-    margin-top: 16px;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 18px;
-    background: #2f6f60;
-    color: #ffffff;
-    font-weight: 700;
-    cursor: pointer;
-}
 .adminLayout {
     display: grid;
-    grid-template-columns: 360px minmax(0, 1fr);
-    gap: 24px;
+    grid-template-columns: 420px 954px;
+    grid-template-rows: 686px auto;
+    column-gap: 18px;
+    row-gap: 0;
     align-items: start;
 }
 
-.mainColumn {
-    min-width: 0;
+.mainColumn,
+.adminContent {
+    display: contents;
 }
 
+/* ===== LEFT COLUMN: LOGS ===== */
+
 .logPanel {
-    position: sticky;
-    top: 24px;
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 18px;
-    padding: 24px;
+    grid-column: 1;
+    grid-row: 1;
+    width: 420px;
+    height: 686px;
+    overflow: hidden;
+    background: var(--field);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
 }
 
 .logPanelHeader {
     margin-bottom: 18px;
+    margin-top: 10px;
+}
+
+.logPanel .sectionTitle {
+    font-size: 26px;
+    text-align: center;
 }
 
 .logSubtitle {
-    margin: 8px 0 0;
-    color: #666;
-    font-size: 14px;
-    line-height: 1.5;
+    display: none;
 }
 
 .logList {
     display: grid;
-    gap: 14px;
-    max-height: calc(100vh - 180px);
+    gap: 10px;
+    height: 574px;
     overflow: auto;
     padding-right: 4px;
 }
 
+.logList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.logList::-webkit-scrollbar-track {
+    background: #151515;
+    border-radius: 999px;
+}
+
+.logList::-webkit-scrollbar-thumb {
+    background: #0e6c33;
+    border-radius: 999px;
+}
+
 .logItem {
-    border: 1px solid #ececec;
+    border: 3px solid var(--backgr);
     border-radius: 14px;
-    padding: 14px;
-    background: #fafafa;
+    padding: 24px;
+    background: var(--back-black);
 }
 
 .logTop {
@@ -430,74 +149,77 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 999px;
-    padding: 6px 10px;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
+    border-radius: 14px;
+    padding: 10px;
+    font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 143%;
 }
 
 .logActionCreate {
-    background: rgba(17, 133, 61, 0.12);
-    color: #11853d;
+    background: #dff2e6;
+    color: #0e6c33;
 }
 
 .logActionUpdate {
-    background: rgba(47, 111, 96, 0.12);
-    color: #2f6f60;
+    background: #88674d;
+    color: #ffffff;
 }
 
 .logActionDelete {
-    background: rgba(212, 59, 59, 0.12);
-    color: #d43b3b;
+    background: #8a8a8a;
+    color: #ffffff;
 }
 
 .logTime {
-    color: #666;
-    font-size: 12px;
     white-space: nowrap;
+    text-align: right;
+    font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 13px;
+        line-height: 154%;
+        color: var(--text);
 }
 
 .logProductTitle {
-    margin: 0 0 6px;
-    font-weight: 700;
-    color: #111;
-    line-height: 1.45;
+    margin: 0 0 10px;
+    color: var(--text);
+    font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 140%;
 }
 
 .logProductSlug {
-    margin: 0 0 8px;
-    color: #777;
-    font-size: 13px;
+    margin: 0 0 2px;
     word-break: break-word;
+    font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 143%;
+        color: var(--text);
 }
 
 .logActor {
-    margin: 0 0 4px;
-    color: #222;
-    font-size: 14px;
+    margin: 0 0 2px;
+    color: var(--text);
+    font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 143%;
 }
 
 .logActorEmail {
-    margin: 0;
-    color: #666;
-    font-size: 13px;
+    margin-top: 2px;
+    color: var(--text);
+        font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 143%;
     word-break: break-word;
 }
 
-@media (max-width: 1100px) {
-    .adminLayout {
-        grid-template-columns: 1fr;
-    }
-
-    .logPanel {
-        position: static;
-    }
-
-    .logList {
-        max-height: none;
-    }
-}
 .logDetailsList {
     margin: 10px 0 0;
     padding-left: 18px;
@@ -506,7 +228,900 @@
 }
 
 .logDetailsItem {
-    color: #444;
+    color: var(--text);
+        font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 143%;
+}
+
+/* ===== LEFT COLUMN: PRODUCTS ===== */
+
+.productsManager {
+    grid-column: 1;
+    grid-row: 2;
+    width: 420px;
+    margin-top: 255px;
+    background: var(--field);
+    border-radius: 14px;
+    padding: 24px 16px 16px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+    align-self: start;
+}
+
+.productsManager .sectionTitle {
+    font-family: var(--font-family);
+        font-weight: 500;
+        font-size: 32px;
+        text-align: center;
+        color: var(--text);
+}
+
+.productsManagerHeader {
+    display: grid;
+    gap: 28px;
+    margin-bottom: 18px;
+}
+
+/* ===== SEARCH ===== */
+
+.searchBox {
+    position: relative;
+    width: 100%;
+    height: 44px;
+    min-height: 44px;
+    max-height: 44px;
+    overflow: hidden;
+}
+
+.searchInput {
+    display: block;
+    width: 100%;
+    height: 44px;
+    min-height: 44px;
+    max-height: 44px;
+    border: 3px solid var(--backgr);
+    border-radius: 8px;
+    padding: 0 50px 0 16px;
+    background: var(--back-black);
+    color: var(--gray-search);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: var(--font-family);
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 150%;
+        text-align: end;
+}
+
+.searchInput::placeholder {
+    color: #777777;
+}
+
+.searchInput:focus {
+    border-color: var(--accept-button);
+    box-shadow: 0 0 0 3px rgba(14, 108, 51, 0.16);
+}
+
+.searchIcon {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    width: 24px;
+    height: 24px;
+    color: var(--accept-button);
+    fill: currentColor;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* ===== PRODUCT LIST ===== */
+
+.productsList {
+    display: grid;
+    gap: 10px;
+    min-height: 414px;
+}
+
+.productRow {
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 24px;
+    min-height: 130px;
+    padding: 24px;
+    border: 3px solid var(--backgr);
+    border-radius: 14px;
+    background: var(--back-black);
+}
+
+.productInfo {
+    min-width: 0;
+}
+
+.productTitle {
+    margin: 0 0 4px;
+    font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 140%;
+        color: var(--text);
+}
+
+.productMeta {
+    margin: 0;
+    word-break: break-word;
+    font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 143%;
+        color: var(--text);
+}
+
+.productActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.editButton,
+.deleteButton,
+.retryButton {
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    border-radius: 14px;
+        padding: 12px 24px;
+        font-family: var(--font-family);
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 143%;
+            color: var(--text);
+            height: 44px;
+        
+}
+
+.editButton:hover,
+.deleteButton:hover,
+.retryButton:hover {
+    opacity: 0.92;
+}
+
+.editButton:active,
+.deleteButton:active,
+.retryButton:active {
+    transform: scale(0.99);
+}
+
+.editButton {
+    background: var(--green-btn);
+}
+
+.deleteButton {
+    background: var(--red-btn);
+}
+
+.retryButton {
+    background: var(--green-btn);
+}
+
+/* ===== SHOW MORE PRODUCTS ===== */
+
+.showMoreProductsButton {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+    width: max-content;
+    margin-top: 21px;
+    margin-left: auto;
+    border: none;
+    padding: 0;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    min-height: 24px;
+    transition: color 0.2s ease, opacity 0.2s ease;
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 131%;
+    letter-spacing: 0.01em;
+}
+
+.showMoreProductsButton:hover {
+    color: var(--button-hover);
+}
+
+.showMoreProductsButton:active {
+    opacity: 0.8;
+    color: var(--button-active);
+}
+
+.showMoreProductsIcon {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    color: var(--text);
+    flex-shrink: 0;
+}
+.showMoreProductsIcon:hover {
+    color: var(--button-hover);
+}
+
+.showMoreProductsIcon:active {
+    opacity: 0.8;
+    color: var(--button-active);
+}
+
+/* ===== RIGHT FORM ===== */
+
+.form {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: 954px;
+    background: var(--field);
+    border-radius: 14px;
+    padding: 40px 49px;
+    display: grid;
+    gap: 56px;
+    color: var(--text);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+}
+
+.formHeader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.sectionTitle {
+    margin: 0;
+    line-height: 1.2;
+    font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 36px;
+        text-align: center;
+        color: var(--text);
+}
+
+.form .sectionTitle {
+    text-align: center;
+}
+
+/* ===== TOP FORM GRID ===== */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 70px;
+    align-items: start;
+}
+
+.field {
+    display: grid;
+    gap: 16px;
+    align-self: start;
+}
+
+.field label,
+.characteristicField label,
+.sizeInputGroup label {
+    font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 24px;
+        color: var(--text);
+}
+
+.field input,
+.field select,
+.characteristicField input,
+.sizeInputGroup input {
+    width: 100%;
+    height: 54px;
+    min-height: 44px;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 0 12px;
+    background: var(--backgr);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 144%;
+        color: var(--text);
+}
+
+.field input::placeholder,
+.field textarea::placeholder,
+.characteristicField input::placeholder,
+.sizeInputGroup input::placeholder {
+    color: var(--gray-search);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.characteristicField input:focus,
+.sizeInputGroup input:focus {
+    border-color: var(--accept-button);
+    box-shadow: 0 0 0 3px rgba(14, 108, 51, 0.16);
+}
+
+.field textarea {
+    width: 100%;
+    min-height: 110px;
+    padding: 14px;
+    outline: none;
+    resize: vertical;
+    border: 1px solid #404040;
+        border-radius: 6px;
+        padding: 12px;
+        background: var(--backgr);
+        font-family: var(--font-family);
+            font-weight: 400;
+            font-size: 18px;
+            line-height: 144%;
+            color: var(--text);
+}
+
+.field input[type="file"] {
+    display: none;
+}
+
+/* ===== PHOTO CONTROL ===== */
+
+.photoControl {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    height: 98px;
+    min-height: 98px;
+}
+
+.photoControl:has(.photoDeleteButton) {
+    grid-template-columns: minmax(0, 1fr) 118px;
+}
+
+.photoButtonFull,
+.photoButtonReplace,
+.photoDeleteButton {
+    width: 100%;
+    height: 98px;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    background: var(--backgr);
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 144%;
+        text-align: center;
+}
+
+.photoButtonFull:hover,
+.photoButtonReplace:hover,
+.photoDeleteButton:hover {
+    border-color: var(--button-hover);
+}
+
+.photoButtonFull {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.photoButtonReplace {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    padding: 0 16px;
+    overflow: hidden;
+}
+
+.photoDeleteButton {
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    color: var(--discount);
+    font-weight: 700;
+}
+
+.photoDeleteButton:hover {
+    color: var(--discount);
+    border-color: #343434;
+}
+
+.photoButtonIcon {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    color: var(--text);
+    flex-shrink: 0;
+}
+
+.photoThumb {
+    position: relative;
+    width: 44px;
+    height: 54px;
+    min-width: 44px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #343434;
+    background: #0f0f0f;
+}
+
+.photoThumbImage {
+    object-fit: cover;
+}
+
+.imageActions {
+    display: none;
+}
+
+.imagePreviewBox {
+    display: none;
+}
+
+.grid .field:has(.photoControl) .stateText {
+    display: none;
+}
+
+/* ===== BUTTONS ===== */
+
+.secondaryButton {
+    border: 1px solid #404040;
+    border-radius: 6px;
+    background: var(--backgr);
+    color: var(--text);
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.secondaryButton:hover {
+    border-color: #0e6c33;
+}
+
+.formHeader .secondaryButton {
+    position: absolute;
+    right: 0;
+    top: -6px;
+}
+
+/* ===== CUSTOM CHECKBOX ===== */
+
+.customCheck {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text);
+}
+
+.customCheckInput {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.customCheckBox {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border: 2px solid var(--checkbox);
+    border-radius: 4px;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.customCheckIcon {
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+    fill: currentColor;
+    color: var(--accept-button);
+    transition: opacity 0.2s ease;
+}
+
+.customCheckInput:checked+.customCheckBox {
+    border-color: var(--accept-button);
+}
+
+.customCheckInput:checked+.customCheckBox .customCheckIcon {
+    opacity: 1;
+}
+
+.customCheckInput:focus-visible+.customCheckBox {
+    box-shadow: 0 0 0 3px rgba(14, 108, 51, 0.18);
+}
+
+.customCheckLabel {
+    color: var(--text);
+    font-family: var(--font-family);
+        letter-spacing: 0.01em;
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 144%;
+            color: var(--text);
+}
+
+.styleOption {
+    display: block;
+}
+
+/* ===== DOOR TYPE IN TOP GRID ===== */
+
+.grid>.field:nth-child(7) .stylesGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.grid>.field:nth-child(7) .styleOption {
+    font-size: 14px;
+}
+
+/* ===== SIZES SECTION ===== */
+
+.sizesSection {
+    padding-top: 56px;
+    border-top: 1.50px solid var(--backgr);
+}
+
+.sizesSection .field {
+    gap: 36px;
+}
+
+.sizesGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0 88px;
+    align-items: start;
+}
+
+.sizeCard {
+    display: grid;
+    gap: 16px;
+    padding: 0;
+    border: none;
+}
+
+.sizeHeader {
+    display: block;
+}
+
+.sizeHeader input {
+    display: none;
+}
+
+.sizeName {
+    display: block;
+    color: #f2f2f2;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.sizeInputs {
+    display: grid;
+    grid-template-columns: 88px 88px;
+    gap: 14px;
+}
+
+.sizeInputGroup {
+    display: grid;
+    gap: 7px;
+}
+
+.sizeInputGroup label {
+    font-weight: 400;
+        font-size: 16px;
+}
+
+.sizeInputGroup input {
+    width: 88px;
+    height: 39px;
+    min-height: 30px;
+    padding: 0 12px;
+    line-height: 34px;
+}
+
+.sizeInputGroup input:disabled {
+    opacity: 1;
+    color: var(--gray-search);
+    cursor: not-allowed;
+}
+
+/* ===== STYLES SECTION ===== */
+
+.form>.field>.stylesGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 56px;
+    padding: 36px 56px;
+    border: 1px solid var(--checkbox);
+    border-radius: 6px;
+    background: var(--backgr);
+}
+
+.grid>.field>.stylesGrid {
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.form>.field>.stylesGrid .styleOption {
+    font-size: 13px;
+}
+
+/* ===== CHARACTERISTICS ===== */
+
+.characteristicsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 93px;
+}
+
+.characteristicField {
+    display: grid;
+    gap: 12px;
+}
+
+.characteristicField label {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.characteristicField input {
+    height: 54px;
+    min-height: 54px;
+}
+
+/* опис нижче, щоб форма була як на референсі */
+.form>.field:has(textarea) {
+    order: 20;
+}
+
+.form>.field:has(.characteristicsGrid) {
+    order: 10;
+}
+
+/* ===== HIT + FOOTER ===== */
+
+.hitRow {
+    order: 30;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #f2f2f2;
+}
+
+.formFooter {
+    order: 40;
+    display: grid;
+    gap: 18px;
+}
+
+.deleteCardButton {
+    justify-self: end;
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-family);
+        font-size: 20px;
+        color: #ad4343;
+}
+
+.deleteCardButton:hover {
+    color: #ff6f6f;
+}
+
+.submitButton {
+    width: 100%;
+    height: 64px;
+    border: none;
+    border-radius: 16px;
+    background: var(--accept-button);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    font-family: var(--font-family);
+        font-weight: 500;
+        font-size: 20px;
+        line-height: 120%;
+        letter-spacing: 0.01em;
+}
+
+.submitButton:hover {
+    background: var(--button-hover);
+}
+
+.submitButton:active {
+    background: var(--button-active);
+    transform: scale(0.995);
+}
+
+.submitButton:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+/* ===== STATES ===== */
+
+.stateBox {
+    background: #111111;
+    border: 1px solid #292929;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.stateTitle {
+    margin: 0 0 8px;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.stateText {
+    padding-bottom: 20px;
+    margin: 0;
+    color: #a8a8a8;
     font-size: 13px;
     line-height: 1.45;
+    border-bottom: 1.50px solid var(--backgr);
+}
+
+.fieldError {
+    margin: 0;
+    color: var(--discount);
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.success {
+    margin: 0;
+    color: var(--accept-button);
+}
+
+.error {
+    margin: 0;
+    color: var(--discount);
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1450px) {
+    .container {
+        max-width: 100%;
+    }
+
+    .adminLayout {
+        grid-template-columns: 360px minmax(0, 954px);
+    }
+
+    .logPanel,
+    .productsManager {
+        width: 360px;
+    }
+
+    .form {
+        width: 100%;
+    }
+}
+
+@media (max-width: 1100px) {
+    .adminLayout {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .mainColumn,
+    .adminContent {
+        display: grid;
+        gap: 20px;
+    }
+
+    .logPanel,
+    .productsManager,
+    .form {
+        grid-column: auto;
+        grid-row: auto;
+        width: 100%;
+        height: auto;
+        margin-top: 0;
+    }
+
+    .logList {
+        height: auto;
+        max-height: none;
+    }
+
+    .productsList {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .page {
+        padding: 30px 14px 56px;
+    }
+
+    .title {
+        font-size: 36px;
+    }
+
+    .logoutButton {
+        width: 100%;
+    }
+
+    .form {
+        padding: 28px 18px;
+    }
+
+    .grid,
+    .sizesGrid,
+    .characteristicsGrid,
+    .form>.field>.stylesGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .sizesGrid {
+        gap: 22px;
+    }
+
+    .sizeInputs {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .sizeInputGroup input {
+        width: 100%;
+    }
+
+    .formHeader {
+        display: grid;
+        gap: 14px;
+        justify-content: stretch;
+    }
+
+    .formHeader .secondaryButton {
+        position: static;
+        width: 100%;
+    }
+
+    .productActions {
+        grid-template-columns: 1fr;
+    }
+
+    .photoControl:has(.photoDeleteButton) {
+        grid-template-columns: 1fr;
+        height: auto;
+        gap: 10px;
+    }
+
+    .photoButtonReplace,
+    .photoDeleteButton {
+        border-radius: 5px;
+        border: 1px solid #343434;
+    }
+
+    .photoDeleteButton {
+        height: 48px;
+    }
 }

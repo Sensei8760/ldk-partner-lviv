@@ -17,10 +17,12 @@
 .modal {
     position: relative;
     width: 100%;
-    max-width: 520px;
+    max-width: 333px;
+    min-height: 634px;
     border-radius: 18px;
-    background: #ebebeb;
-    padding: 32px;
+    border: 0.50px solid var(--choco);
+    background: var(--backgr);
+    padding: 40px 10px;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
     animation: modalContentIn 0.22s ease forwards;
 }
@@ -31,113 +33,138 @@
 
 .closeButton {
     position: absolute;
-    top: 14px;
-    right: 14px;
-    width: 36px;
-    height: 36px;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
     border: none;
     border-radius: 50%;
     background: transparent;
-    color: #111111;
-    font-size: 30px;
+    color: var(--text);
+    font-size: 28px;
     line-height: 1;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.closeButton:hover {
+    color: var(--button-hover);
+}
+
+.closeButton:active {
+    color: var(--button-active);
+    transform: scale(0.95);
 }
 
 .title {
-    margin: 0 0 10px;
-    color: #111111;
-    font-family: var(--font-family);
-    font-weight: 700;
-    font-size: 28px;
-    line-height: 120%;
+    max-width: 290px;
+    margin: 0 auto 10px;
+    color: var(--text);
+    font-weight: 600;
+    line-height: 108%;
+    text-align: center;
+    font-family: var(--second-family);
+        font-size: 25px;
+        letter-spacing: 0.01em;
 }
 
 .subtitle {
-    margin: 0 0 24px;
-    color: #303035;
-    font-family: var(--font-family);
+    max-width: 265px;
+    margin: 0 auto 24px;
+    color: var(--text);
     font-weight: 400;
-    font-size: 16px;
-    line-height: 140%;
+    line-height: 122%;
+    letter-spacing: 0.01em;
+    text-align: center;
+    font-family: var(--font-family);
+        font-size: 18px;
 }
 
 .form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 26px;
 }
 
 .field {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .label {
-    color: #111111;
+    color: var(--text);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 125%;
     font-family: var(--font-family);
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 140%;
 }
 
 .input,
 .textarea {
     width: 100%;
-    border: 1px solid #c7c7c7;
-    border-radius: 10px;
-    background: #ffffff;
-    color: #111111;
+    border: none;
+    border-radius: 16px;
+    background: var(--field);
+    color: var(--text);
     outline: none;
     font-family: var(--font-family);
     font-weight: 400;
     font-size: 16px;
-    line-height: 140%;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    line-height: 125%;
+    transition: box-shadow 0.2s ease, background 0.2s ease;
+        color: var(--gray-searc);
 }
 
 .input {
-    height: 48px;
-    padding: 0 14px;
+    height: 56px;
+    padding: 0 12px;
 }
 
 .textarea {
     min-height: 110px;
-    resize: vertical;
-    padding: 12px 14px;
+    resize: none;
+    padding: 18px 12px;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+    color: var(--gray-search);
 }
 
 .input:focus,
 .textarea:focus {
-    border-color: #0e6c33;
-    box-shadow: 0 0 0 2px rgba(14, 108, 51, 0.14);
+    box-shadow: 0 0 0 2px rgba(14, 108, 51, 0.45);
 }
 
 .submitButton {
-    margin-top: 4px;
+    margin-top: 0;
     width: 100%;
-    height: 56px;
+    height: 52px;
     border: none;
-    border-radius: 14px;
-    background: #0e6c33;
-    color: #ffffff;
+    border-radius: 16px;
+    background: var(--accept-button);
+    color: var(--text);
     cursor: pointer;
     font-family: var(--font-family);
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 120%;
+    font-weight: 500;
+    font-size: 16px;
     transition: background 0.2s ease, transform 0.2s ease;
+        line-height: 150%;
+        letter-spacing: 0.01em;
 }
 
 .submitButton:hover,
 .submitButton:focus-visible {
-    background: #13833f;
+    background: var(--button-hover);
     transform: translateY(-1px);
 }
 
 .submitButton:active {
-    background: #0b5328;
+    background: var(--button-active);
     transform: translateY(0);
 }
 
@@ -200,18 +227,57 @@
     }
 }
 
-@media (max-width: 640px) {
+@media (min-width: 561px) {
     .modal {
-        padding: 26px 18px 22px;
-        border-radius: 16px;
+        max-width: 751px;
+        min-height: auto;
+        padding: 40px 80px 62px;
+    border-radius: 18px;
     }
 
     .title {
-        font-size: 24px;
+        max-width: 100%;
+            font-weight: 600;
+            font-size: 40px;
+            line-height: 130%;
+            letter-spacing: 0.01em;
+            text-align: center;
+    }
+
+    .subtitle {
+        max-width: 591px;
+        margin-bottom: 38px;
+        font-family: var(--font-family);
+            font-weight: 400;
+            font-size: 28px;
+    }
+.label {
+    font-weight: 400;
+    line-height: 125%;
+        font-size: 20px;
+}
+    .input {
+        height: 60px;
+        padding: 0 16px;
+    }
+.field {
+    gap: 12px;
+}
+.form {
+    gap: 32px;
+}
+    .textarea {
+        min-height: 120px;
+        padding: 18px 16px;
     }
 
     .submitButton {
-        height: 52px;
-        font-size: 16px;
+        height: 56px;
+        font-size: 18px;
     }
+        .submitButton {
+            height: 64px;
+                font-size: 20px;
+                line-height: 120%;
+        }
 }

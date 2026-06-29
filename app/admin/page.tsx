@@ -66,24 +66,19 @@ export default async function AdminPage() {
     <main className={styles.page}>
       <div className={styles.container}>
         <div className={styles.top}>
-          <div>
-            <h1 className={styles.title}>Панель персоналу</h1>
-            <p className={styles.subtitle}>
-              Увійшов: {session.user.name} ({session.user.role})
-            </p>
-          </div>
+  <h1 className={styles.title}>Панель персоналу</h1>
 
-          <form
-            action={async () => {
-              'use server';
-              await signOut({ redirectTo: '/' });
-            }}
-          >
-            <button className={styles.logoutButton} type="submit">
-              Вийти
-            </button>
-          </form>
-        </div>
+  <form
+    action={async () => {
+      'use server';
+      await signOut({ redirectTo: '/' });
+    }}
+  >
+    <button className={styles.logoutButton} type="submit">
+      Вийти з адмін-сторінки
+    </button>
+  </form>
+</div>
 
         <div className={styles.adminLayout}>
           <aside className={styles.logPanel}>

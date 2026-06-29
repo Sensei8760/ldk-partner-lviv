@@ -174,8 +174,8 @@ useEffect(() => {
         </h3>
 
         <p className={styles.subtitle}>
-          Залиште контакти, і ми допоможемо підібрати двері.
-        </p>
+  Залиште контакти, і ми зв’яжемося з вами.
+</p>
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <input
@@ -194,7 +194,7 @@ useEffect(() => {
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              placeholder="Ваше ім’я"
+              placeholder="Наприклад: Олена"
               autoComplete="name"
               required
             />
@@ -219,7 +219,7 @@ useEffect(() => {
               className={styles.textarea}
               value={comment}
               onChange={(event) => setComment(event.target.value)}
-              placeholder="Напишіть, які двері вас цікавлять"
+              placeholder="Напишіть, які двері вас цікавлять..."
               rows={4}
               maxLength={1000}
             />
